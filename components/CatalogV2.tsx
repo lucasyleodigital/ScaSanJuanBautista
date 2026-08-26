@@ -26,7 +26,7 @@ const products: ProductCard[] = [
     litersPerBottle: 5,
     totalLiters: 15,
     price: 85,
-    description: "15 litros de Picual puro, 3 garrafas de vidrio. Directo de la cooperativa a tu cocina — sin nadie de por medio subiendo el precio. €5.67/L.",
+    description: "15 litros de Picual puro, 3 garrafas de 5L. Directo de la cooperativa a tu cocina — sin nadie de por medio subiendo el precio. €5.67/L.",
     highlight: "15 litros de Picual puro",
   },
   {

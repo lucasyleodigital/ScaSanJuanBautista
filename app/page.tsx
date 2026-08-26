@@ -5,6 +5,7 @@ import TerroirV2 from "@/components/TerroirV2";
 import ProcesoV2 from "@/components/ProcesoV2";
 import ProductoV2 from "@/components/ProductoV2";
 import CatalogV2 from "@/components/CatalogV2";
+import FaqV2 from "@/components/FaqV2";
 import FormularioContactoV2 from "@/components/FormularioContactoV2";
 import CierreV2 from "@/components/CierreV2";
 import Footer from "@/components/Footer";
@@ -29,6 +30,9 @@ export default function Home() {
 
         {/* CAP 5: Catálogo con precios y CTAs */}
         <CatalogV2 />
+
+        {/* Preguntas frecuentes */}
+        <FaqV2 />
 
         {/* CAP 6: Formulario de contacto */}
         <section id="formulario-contacto">
