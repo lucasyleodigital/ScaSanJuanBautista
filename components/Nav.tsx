@@ -34,10 +34,9 @@ export default function Nav() {
   return (
     <nav
       className={`fixed top-0 right-0 left-0 z-[1000] flex items-center justify-between px-6 py-5 transition-[background,padding,box-shadow] duration-300 md:px-10 ${
-        solid
-          ? "bg-negro/88 py-3.5 shadow-[0_1px_0_var(--rule)] backdrop-blur-xl"
-          : ""
+        solid ? "py-3.5 shadow-[0_1px_0_var(--rule)]" : ""
       }`}
+      style={{ backgroundColor: solid ? "rgba(6, 13, 3, 0.95)" : "transparent" }}
     >
       <a href="#inicio" className="flex items-center gap-3 no-underline">
         <Image

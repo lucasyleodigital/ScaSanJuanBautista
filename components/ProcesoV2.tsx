@@ -244,7 +244,6 @@ export default function ProcesoV2() {
                 border: `1px solid ${colors.rule}`,
                 borderRadius: "8px",
                 padding: spacing.lg,
-                backdropFilter: "blur(16px)",
               }}
             >
               {/* Número */}

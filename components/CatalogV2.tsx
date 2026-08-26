@@ -100,7 +100,6 @@ export default function CatalogV2() {
                 border: `1px solid ${colors.rule}`,
                 borderRadius: "12px",
                 padding: spacing.lg,
-                backdropFilter: "blur(16px)",
                 transition: `all ${motion.durationStd}ms ${motion.easeSmooth}`,
                 cursor: "pointer",
               }}

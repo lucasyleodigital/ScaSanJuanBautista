@@ -67,7 +67,6 @@ export default function TerroirV2() {
           background: `linear-gradient(135deg, rgba(45, 74, 43, 0.1) 0%, transparent 100%)`,
           padding: spacing.xxxl,
           borderRadius: "12px",
-          backdropFilter: "blur(8px)",
           border: `1px solid ${colors.rule}`,
         }}
       >
@@ -119,7 +118,6 @@ export default function TerroirV2() {
               border: `1px solid ${colors.rule}`,
               borderRadius: "8px",
               padding: spacing.lg,
-              backdropFilter: "blur(16px)",
             }}
           >
             <div
@@ -163,7 +161,6 @@ export default function TerroirV2() {
               border: `1px solid ${colors.rule}`,
               borderRadius: "8px",
               padding: spacing.lg,
-              backdropFilter: "blur(16px)",
             }}
           >
             <div
@@ -207,7 +204,6 @@ export default function TerroirV2() {
               border: `1px solid ${colors.rule}`,
               borderRadius: "8px",
               padding: spacing.lg,
-              backdropFilter: "blur(16px)",
             }}
           >
             <div

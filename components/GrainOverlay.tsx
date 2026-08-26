@@ -23,21 +23,33 @@ export default function GrainOverlay() {
     canvas.width = size;
     canvas.height = size;
 
+    // Precalcular un puñado de frames de ruido UNA sola vez y ciclar entre
+    // ellos, en vez de generar 16.384 píxeles aleatorios de nuevo en cada
+    // actualización para siempre: eso corría continuamente en el hilo
+    // principal durante toda la sesión y competía con el scroll/cursor.
+    const FRAME_COUNT = 8;
+    const frames: ImageData[] = [];
+    for (let f = 0; f < FRAME_COUNT; f++) {
+      const imageData = ctx.createImageData(size, size);
+      for (let i = 0; i < imageData.data.length; i += 4) {
+        const v = Math.random() * 255;
+        imageData.data[i] = v;
+        imageData.data[i + 1] = v;
+        imageData.data[i + 2] = v;
+        imageData.data[i + 3] = 22;
+      }
+      frames.push(imageData);
+    }
+
     let raf = 0;
     let frame = 0;
+    let idx = 0;
 
     const draw = () => {
       frame++;
       if (frame % 3 === 0) {
-        const imageData = ctx.createImageData(size, size);
-        for (let i = 0; i < imageData.data.length; i += 4) {
-          const v = Math.random() * 255;
-          imageData.data[i] = v;
-          imageData.data[i + 1] = v;
-          imageData.data[i + 2] = v;
-          imageData.data[i + 3] = 22;
-        }
-        ctx.putImageData(imageData, 0, 0);
+        ctx.putImageData(frames[idx], 0, 0);
+        idx = (idx + 1) % FRAME_COUNT;
       }
       raf = requestAnimationFrame(draw);
     };

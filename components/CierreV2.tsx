@@ -73,11 +73,10 @@ export default function CierreV2() {
       <div
         className="relative z-10 max-w-4xl mx-auto text-center"
         style={{
-          background: `linear-gradient(135deg, ${colors.doradoSuave} 0%, transparent 100%)`,
+          background: `linear-gradient(135deg, ${colors.doradoSuave} 0%, rgba(6, 13, 3, 0.75) 100%)`,
           border: `1px solid ${colors.rule}`,
           borderRadius: "12px",
           padding: "clamp(24px, 6vw, 80px)",
-          backdropFilter: "blur(16px)",
         }}
       >
         {/* Título épico */}
@@ -93,6 +92,7 @@ export default function CierreV2() {
             wordBreak: "keep-all",
             overflowWrap: "normal",
             whiteSpace: "normal",
+            textShadow: "0 4px 24px rgba(0, 0, 0, 0.6)",
           }}
         >
           Compra Directo. Apoya la Cooperativa.
@@ -106,6 +106,7 @@ export default function CierreV2() {
             color: colors.txMedio,
             lineHeight: "1.7",
             marginBottom: spacing.xxl,
+            textShadow: "0 2px 12px rgba(0, 0, 0, 0.7)",
           }}
         >
 68 años vendiendo directo, desde antes de que "comprar directo" fuera una tendencia. 500 familias, un aceite, cero intermediarios. Cuando compras aquí, tu dinero llega a quien realmente lo cultivó — no se queda repartido por el camino.
