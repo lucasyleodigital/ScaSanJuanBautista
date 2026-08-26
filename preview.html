@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SCA San Juan Bautista Peñolite — Aceite AOVE Picual Sierra de Segura</title>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/ScrollTrigger.min.js"></script>
+  <style>
+    :root {
+      --negro: #060D03;
+      --verde-oliva: #2D4A2B;
+      --dorado: #C8961E;
+      --crema: #F5F1E8;
+      --tx-medio: rgba(240, 232, 204, 0.6);
+      --tx-bajo: rgba(240, 232, 204, 0.35);
+      --rule: rgba(200, 150, 30, 0.2);
+      --dorado-suave: rgba(200, 150, 30, 0.12);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: auto; }
+    body {
+      background: var(--negro);
+      color: var(--crema);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+    ::selection { background: var(--dorado); color: var(--negro); }
+
+    /* NAVBAR */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s;
+      backdrop-filter: blur(8px);
+    }
+    .navbar.solid {
+      background: rgba(6, 13, 3, 0.9);
+      border-bottom: 1px solid var(--rule);
+      padding: 14px 40px;
+    }
+    .nav-logo {
+      font-family: 'EB Garamond', serif;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .nav-cta {
+      padding: 8px 20px;
+      border: 1px solid var(--dorado);
+      color: var(--dorado);
+      cursor: pointer;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      transition: all 0.3s;
+    }
+    .nav-cta:hover {
+      background: var(--dorado);
+      color: var(--negro);
+    }
+    @media (max-width: 820px) {
+      .navbar { padding: 16px 24px; }
+      .nav-cta { padding: 6px 12px; font-size: 10px; }
+    }
+
+    /* HERO */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: linear-gradient(135deg, var(--verde-oliva) 0%, var(--negro) 70%);
+      padding-top: 80px;
+    }
+    .hero-content {
+      text-align: center;
+      max-width: 900px;
+      padding: 0 24px;
+      z-index: 10;
+    }
+    .hero-eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--dorado);
+      opacity: 0;
+      transform: translateY(16px);
+      animation: fadeInUp 0.8s ease-out forwards;
+    }
+    .hero-title {
+      font-family: 'EB Garamond', serif;
+      font-size: clamp(48px, 9vw, 100px);
+      line-height: 1.1;
+      color: var(--crema);
+      margin: 20px 0 24px;
+      font-weight: 500;
+      animation: fadeInUp 0.8s ease-out 0.1s forwards;
+      opacity: 0;
+    }
+    .hero-subtitle {
+      font-size: 18px;
+      color: var(--tx-medio);
+      max-width: 600px;
+      margin: 0 auto;
+      animation: fadeInUp 0.8s ease-out 0.2s forwards;
+      opacity: 0;
+    }
+    .hero-cta {
+      margin-top: 48px;
+      animation: fadeInUp 0.8s ease-out 0.3s forwards;
+      opacity: 0;
+    }
+    .cta-button {
+      padding: 14px 32px;
+      background: var(--dorado);
+      color: var(--negro);
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+    .cta-button:hover {
+      transform: scale(1.08);
+      box-shadow: 0 12px 32px rgba(200, 150, 30, 0.3);
+    }
+
+    /* TERROIR */
+    .terroir {
+      position: relative;
+      padding: 80px 24px;
+      background: var(--negro);
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .section-title {
+      font-family: 'EB Garamond', serif;
+      font-size: clamp(42px, 6vw, 72px);
+      color: var(--crema);
+      margin-bottom: 24px;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(40px);
+      animation: fadeInUp 0.8s ease-out forwards;
+    }
+    .section-subtitle {
+      font-size: 18px;
+      color: var(--tx-medio);
+      max-width: 700px;
+      margin: 0 auto;
+      opacity: 0;
+      animation: fadeInUp 0.8s ease-out 0.1s forwards;
+    }
+
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .bento-card {
+      background: linear-gradient(135deg, var(--dorado-suave) 0%, transparent 100%);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 24px;
+      backdrop-filter: blur(16px);
+      opacity: 0;
+      transform: translateY(60px);
+      animation: fadeInUp 0.8s ease-out forwards;
+    }
+    .bento-card:nth-child(2) { animation-delay: 0.15s; }
+    .bento-card:nth-child(3) { animation-delay: 0.3s; }
+    .bento-card h3 {
+      font-family: 'EB Garamond', serif;
+      font-size: 24px;
+      color: var(--crema);
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+    .bento-card p {
+      font-size: 14px;
+      color: var(--tx-medio);
+      line-height: 1.6;
+    }
+    .bento-image {
+      width: 100%;
+      height: 200px;
+      background: linear-gradient(135deg, var(--verde-oliva), var(--negro));
+      border-radius: 6px;
+      margin-bottom: 16px;
+    }
+
+    /* PROCESO */
+    .proceso {
+      padding: 80px 24px;
+      background: var(--negro);
+    }
+    .proceso-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+      margin-top: 60px;
+    }
+    .paso-card {
+      background: linear-gradient(135deg, var(--dorado-suave) 0%, transparent 100%);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 24px;
+      opacity: 0;
+      transform: translateY(60px);
+      animation: fadeInUp 0.8s ease-out forwards;
+    }
+    .paso-card:nth-child(1) { animation-delay: 0s; }
+    .paso-card:nth-child(2) { animation-delay: 0.12s; }
+    .paso-card:nth-child(3) { animation-delay: 0.24s; }
+    .paso-card:nth-child(4) { animation-delay: 0.36s; }
+    .paso-card:nth-child(5) { animation-delay: 0.48s; }
+    .paso-card:nth-child(6) { animation-delay: 0.6s; }
+    .paso-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      background: var(--dorado);
+      color: var(--negro);
+      border-radius: 50%;
+      font-family: 'EB Garamond', serif;
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .paso-icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+    .paso-card h3 {
+      font-family: 'EB Garamond', serif;
+      font-size: 20px;
+      color: var(--crema);
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+    .paso-card p {
+      font-size: 14px;
+      color: var(--tx-medio);
+      line-height: 1.6;
+    }
+
+    /* CATÁLOGO */
+    .catalogo {
+      padding: 80px 24px;
+      background: var(--negro);
+    }
+    .catalogo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 32px;
+      max-width: 1200px;
+      margin: 60px auto 0;
+    }
+    .product-card {
+      background: linear-gradient(135deg, var(--dorado-suave) 0%, transparent 100%);
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      padding: 24px;
+      opacity: 0;
+      animation: fadeInUp 0.8s ease-out forwards;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .product-card:nth-child(1) { animation-delay: 0s; }
+    .product-card:nth-child(2) { animation-delay: 0.2s; }
+    .product-card:hover {
+      transform: translateY(-12px);
+      box-shadow: 0 20px 40px rgba(200, 150, 30, 0.2);
+    }
+    .product-image {
+      width: 100%;
+      height: 280px;
+      background: linear-gradient(135deg, var(--verde-oliva), var(--negro));
+      border-radius: 8px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+    }
+    .product-title {
+      font-family: 'EB Garamond', serif;
+      font-size: 28px;
+      color: var(--crema);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .product-subtitle {
+      font-size: 14px;
+      color: var(--dorado);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .product-desc {
+      font-size: 14px;
+      color: var(--tx-medio);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    .product-specs {
+      background: var(--dorado-suave);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: 16px;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+    .product-price {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--rule);
+      padding-top: 16px;
+      margin-bottom: 16px;
+    }
+    .price-amount {
+      font-family: 'EB Garamond', serif;
+      font-size: 32px;
+      color: var(--dorado);
+      font-weight: 700;
+    }
+    .price-per-liter {
+      font-size: 12px;
+      color: var(--tx-bajo);
+    }
+    .product-cta {
+      width: 100%;
+      padding: 12px;
+      background: var(--dorado);
+      color: var(--negro);
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.3s;
+    }
+    .product-cta:hover {
+      background: var(--verde-oliva);
+      color: var(--dorado);
+    }
+
+    /* FORMULARIO */
+    .formulario {
+      padding: 80px 24px;
+      background: var(--verde-oliva);
+    }
+    .form-container {
+      max-width: 600px;
+      margin: 60px auto 0;
+      opacity: 0;
+      animation: fadeInUp 0.8s ease-out forwards;
+    }
+    .form-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .form-group.full {
+      grid-template-columns: 1fr;
+    }
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      color: var(--dorado);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 12px;
+      background: var(--dorado-suave);
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: var(--crema);
+      transition: all 0.3s;
+    }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: var(--tx-bajo);
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--dorado);
+      box-shadow: 0 0 0 3px var(--dorado-suave);
+    }
+    .form-group textarea {
+      grid-column: 1 / -1;
+      resize: vertical;
+      min-height: 100px;
+    }
+    .form-submit {
+      width: 100%;
+      padding: 16px;
+      background: var(--dorado);
+      color: var(--negro);
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.3s;
+    }
+    .form-submit:hover {
+      transform: scale(1.02);
+      box-shadow: 0 12px 32px rgba(200, 150, 30, 0.3);
+    }
+
+    /* CIERRE */
+    .cierre {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 24px;
+      background: linear-gradient(180deg, var(--negro) 0%, var(--verde-oliva) 100%);
+      overflow: hidden;
+    }
+    .cierre-card {
+      max-width: 600px;
+      text-align: center;
+      background: linear-gradient(135deg, var(--dorado-suave) 0%, transparent 100%);
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      padding: 80px 40px;
+      opacity: 0;
+      animation: fadeInUp 0.8s ease-out forwards;
+    }
+    .cierre-title {
+      font-family: 'EB Garamond', serif;
+      font-size: clamp(42px, 7vw, 72px);
+      color: var(--crema);
+      margin-bottom: 24px;
+      font-weight: 600;
+    }
+    .cierre-subtitle {
+      font-size: 18px;
+      color: var(--tx-medio);
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+    .cierre-ctas {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .cierre-ctas a {
+      padding: 14px 32px;
+      border: 2px solid var(--dorado);
+      color: var(--dorado);
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      border-radius: 4px;
+      transition: all 0.3s;
+      cursor: pointer;
+      display: inline-block;
+    }
+    .cierre-ctas a:hover {
+      background: var(--dorado);
+      color: var(--negro);
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 40px 24px;
+      text-align: center;
+      border-top: 1px solid var(--rule);
+      font-size: 12px;
+      color: var(--tx-bajo);
+    }
+
+    /* ANIMACIONES */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--dorado);
+      opacity: 0.5;
+      animation: pulse 2s infinite;
+    }
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-logo">SCA Peñolite</div>
+    <button class="nav-cta" onclick="document.getElementById('formulario').scrollIntoView({behavior: 'smooth'})">Solicitar</button>
+  </nav>
+
+  <!-- CAP 1: HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-content">
+      <div class="hero-eyebrow">Sierra de Segura · Desde 1958</div>
+      <h1 class="hero-title">Raíces Profundas Aceite Puro</h1>
+      <p class="hero-subtitle">
+        Cooperativa SCA San Juan Bautista de Peñolite. Aceite virgen extra Picual 100% con certificación D.O. Sierra de Segura. Acidez máxima 0,5°.
+      </p>
+      <div class="hero-cta">
+        <button class="cta-button">Descubre nuestro AOVE</button>
+      </div>
+    </div>
+    <div class="scroll-hint">Desplaza para continuar</div>
+  </section>
+
+  <!-- CAP 2: TERROIR -->
+  <section class="terroir">
+    <div class="section-header">
+      <h2 class="section-title">La Tierra: Terroir Excepcional</h2>
+      <p class="section-subtitle">Donde el clima y la montaña crean esencia. 840 metros de altitud, oscilación térmica extrema y suelo de ladera que favorece la calidad excepcional.</p>
+    </div>
+    <div class="bento-grid">
+      <div class="bento-card">
+        <div class="bento-image"></div>
+        <h3>Altitud de Montaña</h3>
+        <p>840 metros sobre el nivel del mar. Condiciones extremas que crean un aceite intenso, fragante, con polifenoles excepcionales.</p>
+      </div>
+      <div class="bento-card">
+        <div class="bento-image"></div>
+        <h3>Variedad Picual</h3>
+        <p>100% Picual de montaña. Aroma frutado con notas de manzana, tomate y hierba fresca.</p>
+      </div>
+      <div class="bento-card">
+        <div class="bento-image"></div>
+        <h3>Sostenibilidad</h3>
+        <p>Cooperativa de socios locales. Métodos tradicionales y respeto al ecosistema de la Sierra de Segura.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CAP 3: PROCESO -->
+  <section class="proceso">
+    <div class="section-header">
+      <h2 class="section-title">Las Manos: Proceso Artesanal</h2>
+      <p class="section-subtitle">Cosechado a mano. Prensado con respeto. Cada paso cuida la pureza del aceite desde el olivar hasta tu mesa.</p>
+    </div>
+    <div class="proceso-grid">
+      <div class="paso-card">
+        <div class="paso-number">1</div>
+        <div class="paso-icon">🌿</div>
+        <h3>Cosecha Manual</h3>
+        <p>Nuestros cooperativistas cosechan a mano, preservando el fruto en su punto óptimo de madurez.</p>
+      </div>
+      <div class="paso-card">
+        <div class="paso-number">2</div>
+        <div class="paso-icon">🚚</div>
+        <h3>Transporte</h3>
+        <p>Transporte inmediato en cajas de 20 kg para máxima frescura.</p>
+      </div>
+      <div class="paso-card">
+        <div class="paso-number">3</div>
+        <div class="paso-icon">⚙️</div>
+        <h3>Prensa</h3>
+        <p>Prensado en frío a menos de 27°C. Sin químicos. Sin aditivos.</p>
+      </div>
+      <div class="paso-card">
+        <div class="paso-number">4</div>
+        <div class="paso-icon">✓</div>
+        <h3>Control de Calidad</h3>
+        <p>Análisis de laboratorio: acidez, polifenoles, pureza. Cada lote certificado.</p>
+      </div>
+      <div class="paso-card">
+        <div class="paso-number">5</div>
+        <div class="paso-icon">🫒</div>
+        <h3>Embotellado</h3>
+        <p>Envasado en vidrio opaco para preservar propiedades. Etiquetado manual.</p>
+      </div>
+      <div class="paso-card">
+        <div class="paso-number">6</div>
+        <div class="paso-icon">📦</div>
+        <h3>Distribución</h3>
+        <p>Listo para envío a toda España. Desde Peñolite a tu cocina.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CAP 5: CATÁLOGO -->
+  <section class="catalogo">
+    <div class="section-header">
+      <h2 class="section-title">La Elección: Nuestros Formatos</h2>
+      <p class="section-subtitle">Aceite de Oliva Virgen Extra Picual 100% con D.O. Sierra de Segura. Acidez máxima 0,5°. Envío por toda España.</p>
+    </div>
+    <div class="catalogo-grid">
+      <div class="product-card">
+        <div class="product-image">🫒</div>
+        <h3 class="product-title">Caja 3 Garrafas × 5L</h3>
+        <p class="product-subtitle">Para quienes saben de calidad</p>
+        <p class="product-desc">Ideal para hogar y pequeño comercio. Formato premium para familia grande.</p>
+        <div class="product-specs">
+          <strong style="color: var(--crema);">15 litros de AOVE Picual puro</strong><br/>
+          3 botellas × 5L
+        </div>
+        <div class="product-price">
+          <span class="price-amount">85€</span>
+          <span class="price-per-liter">€5.67/L</span>
+        </div>
+        <button class="product-cta">Solicitar Presupuesto</button>
+      </div>
+
+      <div class="product-card">
+        <div class="product-image">🫒</div>
+        <h3 class="product-title">Caja 12 Garrafas × 2L</h3>
+        <p class="product-subtitle">Para los que confían en lo mejor</p>
+        <p class="product-desc">Formato ideal para hostelería, distribución y consumo profesional.</p>
+        <div class="product-specs">
+          <strong style="color: var(--crema);">24 litros de AOVE Picual D.O.</strong><br/>
+          12 botellas × 2L
+        </div>
+        <div class="product-price">
+          <span class="price-amount">69€</span>
+          <span class="price-per-liter">€2.88/L</span>
+        </div>
+        <button class="product-cta">Solicitar Presupuesto</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CAP 6: FORMULARIO -->
+  <section class="formulario" id="formulario">
+    <div class="section-header">
+      <h2 class="section-title" style="color: var(--crema);">Solicita tu Presupuesto</h2>
+      <p class="section-subtitle" style="color: var(--tx-medio);">Completa el formulario y nos pondremos en contacto en 24 horas para preparar tu presupuesto de compra y envío.</p>
+    </div>
+    <form class="form-container" onsubmit="handleFormSubmit(event)">
+      <div class="form-group">
+        <div>
+          <label>Nombre completo</label>
+          <input type="text" required placeholder="Tu nombre">
+        </div>
+        <div>
+          <label>Email</label>
+          <input type="email" required placeholder="tu@email.com">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div>
+          <label>Teléfono</label>
+          <input type="tel" required placeholder="+34 123 456 789">
+        </div>
+        <div>
+          <label>Empresa (opcional)</label>
+          <input type="text" placeholder="Tu empresa">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div>
+          <label>Tipo de comprador</label>
+          <select required>
+            <option>Particular</option>
+            <option>Hostelería</option>
+            <option>Retail/Tienda</option>
+            <option>Distribuidor</option>
+          </select>
+        </div>
+        <div>
+          <label>Formato deseado</label>
+          <select required>
+            <option>Caja 3 garrafas × 5L (85€)</option>
+            <option>Caja 12 garrafas × 2L (69€)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div>
+          <label>Cantidad de cajas</label>
+          <input type="number" min="1" value="1" required>
+        </div>
+        <div>
+          <label>Código postal</label>
+          <input type="text" required placeholder="28001">
+        </div>
+      </div>
+
+      <div class="form-group full">
+        <label>Mensaje (opcional)</label>
+        <textarea placeholder="Cuéntanos más sobre tu pedido..."></textarea>
+      </div>
+
+      <button type="submit" class="form-submit">Enviar Presupuesto</button>
+    </form>
+  </section>
+
+  <!-- CAP 7: CIERRE -->
+  <section class="cierre">
+    <div class="cierre-card">
+      <h2 class="cierre-title">Únete a la Comunidad Peñolite</h2>
+      <p class="cierre-subtitle">
+        Cada gota cuenta. Somos más de 500 socios trabajando juntos desde 1958 para traerte el mejor aceite de oliva virgen extra de la Sierra de Segura. Desde nuestras montañas a tu mesa.
+      </p>
+      <div class="cierre-ctas">
+        <a onclick="document.getElementById('formulario').scrollIntoView({behavior: 'smooth'})">Solicitar Presupuesto</a>
+        <a href="mailto:sanjuanbautista.sca@gmail.com">Contactar Directamente</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div style="margin-bottom: 16px;">
+      <strong>SCA San Juan Bautista Peñolite</strong><br/>
+      Carretera Peñolite, 1 · 23359 Puente de Génave, Jaén
+    </div>
+    <div>
+      📧 sanjuanbautista.sca@gmail.com · 📞 +34 953 435 316<br/>
+      © 2026 · Cooperativa del Campo San Juan Bautista
+    </div>
+  </footer>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Navbar solid on scroll
+    window.addEventListener('scroll', () => {
+      const navbar = document.getElementById('navbar');
+      if (window.scrollY > 100) {
+        navbar.classList.add('solid');
+      } else {
+        navbar.classList.remove('solid');
+      }
+    });
+
+    // Form submit
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      alert('✅ Presupuesto enviado!\n\nNos pondremos en contacto en 24 horas.\n\nDatos:\n📧 sanjuanbautista.sca@gmail.com\n📞 +34 953 435 316');
+      e.target.reset();
+    }
+
+    // ScrollTrigger animations
+    gsap.utils.toArray('.bento-card').forEach((card, i) => {
+      gsap.from(card, {
+        scrollTrigger: {
+          trigger: card,
+          start: 'top 80%',
+        },
+        opacity: 0,
+        y: 60,
+        delay: i * 0.15,
+        duration: 0.8,
+      });
+    });
+
+    gsap.utils.toArray('.paso-card').forEach((card, i) => {
+      gsap.from(card, {
+        scrollTrigger: {
+          trigger: card,
+          start: 'top 80%',
+        },
+        opacity: 0,
+        y: 60,
+        delay: i * 0.12,
+        duration: 0.8,
+      });
+    });
+
+    gsap.utils.toArray('.product-card').forEach((card, i) => {
+      gsap.from(card, {
+        scrollTrigger: {
+          trigger: card,
+          start: 'top 75%',
+        },
+        opacity: 0,
+        y: 80,
+        rotationY: 8,
+        delay: i * 0.2,
+        duration: 1,
+      });
+    });
+
+    // Parallax
+    gsap.to('.product-card', {
+      scrollTrigger: {
+        trigger: '.catalogo',
+        start: 'top 50%',
+        end: 'bottom 20%',
+        scrub: 1.5,
+      },
+      y: -40,
+      ease: 'none',
+    });
+  </script>
+</body>
+</html>

@@ -1,26 +1,197 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ── Paleta: oliva nocturno + dorado AOVE ────────────────── */
+  --negro: #060d03;
+  --verde-noche: #0c1606;
+  --verde-oscuro: #162608;
+  --verde-oliva: #243d0f;
+  --verde-medio: #3a5a18;
+  --dorado: #c8961e;
+  --ambar: #e8b840;
+  --dorado-suave: rgba(200, 150, 30, 0.12);
+  --crema: #f2edd8;
+  --pergamino: #e6ddc0;
+  --blanco-calido: #fdfaf2;
+  --tx-crema: #f0e8cc;
+  --tx-medio: rgba(240, 232, 204, 0.6);
+  --tx-bajo: rgba(240, 232, 204, 0.35);
+  --tx-oscuro: #1a1910;
+  --tx-medio-osc: #4a4832;
+  --rule: rgba(200, 150, 30, 0.2);
+
+  --background: var(--negro);
+  --foreground: var(--tx-crema);
+
+  /* ── Timing de animación: tokens globales, no por componente ── */
+  --ease-divine: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-oil: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-fill: cubic-bezier(0.83, 0, 0.17, 1);
+  --dur-fast: 0.3s;
+  --dur-base: 0.6s;
+  --dur-slow: 1s;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-negro: var(--negro);
+  --color-verde-noche: var(--verde-noche);
+  --color-verde-oscuro: var(--verde-oscuro);
+  --color-verde-oliva: var(--verde-oliva);
+  --color-verde-medio: var(--verde-medio);
+  --color-dorado: var(--dorado);
+  --color-ambar: var(--ambar);
+  --color-dorado-suave: var(--dorado-suave);
+  --color-crema: var(--crema);
+  --color-pergamino: var(--pergamino);
+  --color-blanco-calido: var(--blanco-calido);
+  --color-tx-crema: var(--tx-crema);
+  --color-tx-medio: var(--tx-medio);
+  --color-tx-bajo: var(--tx-bajo);
+  --color-tx-oscuro: var(--tx-oscuro);
+  --color-tx-medio-osc: var(--tx-medio-osc);
+  --color-rule: var(--rule);
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-fraunces);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--negro);
+  color-scheme: dark;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--dorado);
+  color: var(--negro);
+}
+
+:focus-visible {
+  outline: 1px solid var(--dorado);
+  outline-offset: 3px;
+}
+
+::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--verde-oliva);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--dorado);
+}
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--verde-oliva) transparent;
+}
+
+/* ── Reveals de un solo uso, sin loop — seguros para reduced-motion salvo el propio fade ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(36px);
+  transition:
+    opacity 0.9s var(--ease-divine),
+    transform 0.9s var(--ease-divine);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:not(.force-motion) .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  html:not(.force-motion) * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+@media (hover: none) {
+  .magnetic {
+    transform: none !important;
+  }
+}
+
+@keyframes hero-float {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-7px);
+  }
+}
+
+@keyframes wheel-drop {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  70% {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+}
+
+@keyframes seal-stamp {
+  0% {
+    opacity: 0;
+    transform: scale(2.2) rotate(-6deg);
+    filter: blur(5px);
+  }
+  50% {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(2.2) rotate(-6deg);
+  }
+  68% {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(0.96) rotate(1deg);
+  }
+  84% {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1.03) rotate(-0.4deg);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.cert-card {
+  opacity: 0;
+  transform: scale(2.2) rotate(-6deg);
+  filter: blur(5px);
+}
+.cert-card.stamped {
+  animation: seal-stamp 0.8s cubic-bezier(0.32, 1.55, 0.4, 1) forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  html:not(.force-motion) .cert-card {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    animation: none !important;
+  }
 }
