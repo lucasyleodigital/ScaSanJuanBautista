@@ -72,11 +72,18 @@ body {
   color: var(--negro);
 }
 
-/* Con el menú móvil abierto, nada decorativo debe poder dibujarse
-   por encima ni interferir con la legibilidad del texto. */
+/* Con el menú móvil abierto, nada decorativo ni el contenido de fondo
+   debe poder dibujarse por encima ni interferir con la legibilidad del
+   menú: se oculta todo lo que no sea el propio <nav>, y se bloquea el
+   scroll de fondo. */
+body.nav-menu-open {
+  overflow: hidden;
+}
 body.nav-menu-open #grain-overlay,
 body.nav-menu-open #custom-cursor-dot,
-body.nav-menu-open #custom-cursor-ring {
+body.nav-menu-open #custom-cursor-ring,
+body.nav-menu-open #contenido,
+body.nav-menu-open footer {
   display: none !important;
 }
 
