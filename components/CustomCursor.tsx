@@ -6,15 +6,20 @@ import { useEffect, useRef } from "react";
  * Cursor decorativo — solo dispositivos con puntero real (hover: hover).
  * Nunca sustituye el cursor nativo en touch, y no atrapa el foco de teclado.
  *
- * El crecimiento al pasar sobre elementos activos se hace con
- * transform: scale() (no width/height): animar width/height fuerza layout
- * en cada fotograma — Chrome lo marca como Layout Shift en Speed Insights.
- * Como la posición también se fija por JS vía transform, la escala se
- * combina en la misma cadena de transform para no pisarse entre sí.
+ * La posición se actualiza por JS en cada frame/evento vía transform en un
+ * contenedor SIN transición (debe seguir al ratón al instante). El
+ * crecimiento al pasar sobre elementos activos vive en un hijo interno
+ * aparte, con su propia transición de transform: scale() — así el punto/
+ * anillo no "flotan" detrás del cursor real (si transform tuviera
+ * transition en el mismo elemento que la posición, cada movimiento de
+ * ratón se animaría con easing en vez de seguirlo al instante, dando la
+ * sensación de un cursor lento que de repente da un salto).
  */
 export default function CustomCursor() {
-  const dotRef = useRef<HTMLDivElement>(null);
-  const ringRef = useRef<HTMLDivElement>(null);
+  const dotOuterRef = useRef<HTMLDivElement>(null);
+  const dotInnerRef = useRef<HTMLDivElement>(null);
+  const ringOuterRef = useRef<HTMLDivElement>(null);
+  const ringInnerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
@@ -26,10 +31,18 @@ export default function CustomCursor() {
     let isActive = false;
     let raf = 0;
 
+    const applyActive = (active: boolean) => {
+      if (dotInnerRef.current) {
+        dotInnerRef.current.style.transform = `scale(${active ? 2 : 1})`;
+      }
+      if (ringInnerRef.current) {
+        ringInnerRef.current.style.transform = `scale(${active ? 16 / 9 : 1})`;
+      }
+    };
+
     const onMove = (e: PointerEvent) => {
-      if (dotRef.current) {
-        const scale = isActive ? 2 : 1;
-        dotRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%) scale(${scale})`;
+      if (dotOuterRef.current) {
+        dotOuterRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
       }
       ringX = e.clientX;
       ringY = e.clientY;
@@ -40,12 +53,12 @@ export default function CustomCursor() {
       const active = target.closest("a, button, [data-cursor-active]");
       isActive = Boolean(active);
       document.body.classList.toggle("cur-active", isActive);
+      applyActive(isActive);
     };
 
     const loop = () => {
-      if (ringRef.current) {
-        const scale = isActive ? 16 / 9 : 1;
-        ringRef.current.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%) scale(${scale})`;
+      if (ringOuterRef.current) {
+        ringOuterRef.current.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
       }
       raf = requestAnimationFrame(loop);
     };
@@ -67,16 +80,26 @@ export default function CustomCursor() {
     <>
       <div
         id="custom-cursor-dot"
-        ref={dotRef}
+        ref={dotOuterRef}
         aria-hidden="true"
-        className="pointer-events-none fixed top-0 left-0 z-[9999] hidden h-2 w-2 rounded-full bg-ambar transition-[transform,background-color] duration-200 [.cur-active_&]:bg-white pointer-fine:block"
-      />
+        className="pointer-events-none fixed top-0 left-0 z-[9999] hidden h-2 w-2 pointer-fine:block"
+      >
+        <div
+          ref={dotInnerRef}
+          className="h-full w-full rounded-full bg-ambar transition-[transform,background-color] duration-200 [.cur-active_&]:bg-white"
+        />
+      </div>
       <div
         id="custom-cursor-ring"
-        ref={ringRef}
+        ref={ringOuterRef}
         aria-hidden="true"
-        className="pointer-events-none fixed top-0 left-0 z-[9999] hidden h-9 w-9 rounded-full border border-dorado/50 transition-[transform,border-color] duration-200 [.cur-active_&]:border-dorado/25 pointer-fine:block"
-      />
+        className="pointer-events-none fixed top-0 left-0 z-[9999] hidden h-9 w-9 pointer-fine:block"
+      >
+        <div
+          ref={ringInnerRef}
+          className="h-full w-full rounded-full border border-dorado/50 transition-[transform,border-color] duration-200 [.cur-active_&]:border-dorado/25"
+        />
+      </div>
     </>
   );
 }
