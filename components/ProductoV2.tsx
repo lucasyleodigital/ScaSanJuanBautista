@@ -148,7 +148,7 @@ export default function ProductoV2() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 1fr",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(320px, 100%), 1fr))",
             gap: spacing.xxl,
             alignItems: "center",
             marginBottom: spacing.xxxl,
@@ -305,7 +305,7 @@ export default function ProductoV2() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(260px, 100%), 1fr))",
               gap: spacing.md,
               fontSize: "14px",
               color: colors.txMedio,

@@ -103,18 +103,18 @@ export default function TerroirV2() {
         {/* Bento Grid */}
         <div
           ref={cardsRef}
+          className="terroir-grid"
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gridTemplateColumns: "1fr",
             gap: spacing.lg,
             marginBottom: spacing.xxxl,
           }}
         >
           {/* Card 1: Grande - Terreno */}
           <div
-            className="terroir-card"
+            className="terroir-card terroir-card-large"
             style={{
-              gridColumn: "span 2",
               background: `linear-gradient(135deg, ${colors.doradoSuave} 0%, transparent 100%)`,
               border: `1px solid ${colors.rule}`,
               borderRadius: "8px",
@@ -285,6 +285,17 @@ export default function TerroirV2() {
           ))}
         </div>
       </div>
+
+      <style>{`
+        @media (min-width: 768px) {
+          .terroir-grid {
+            grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)) !important;
+          }
+          .terroir-card-large {
+            grid-column: span 2;
+          }
+        }
+      `}</style>
     </section>
   );
 }

@@ -77,7 +77,7 @@ export default function CierreV2() {
           background: `linear-gradient(135deg, ${colors.doradoSuave} 0%, transparent 100%)`,
           border: `1px solid ${colors.rule}`,
           borderRadius: "12px",
-          padding: spacing.xxxl,
+          padding: "clamp(24px, 6vw, 80px)",
           backdropFilter: "blur(16px)",
         }}
       >
@@ -225,7 +225,7 @@ export default function CierreV2() {
             borderTop: `1px solid ${colors.rule}`,
             paddingTop: spacing.lg,
             display: "grid",
-            gridTemplateColumns: "1fr 1fr",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))",
             gap: spacing.lg,
             fontSize: "14px",
             color: colors.txMedio,
