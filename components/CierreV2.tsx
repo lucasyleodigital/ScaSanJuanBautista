@@ -57,7 +57,6 @@ export default function CierreV2() {
         backgroundImage: "url(/images/cierre/olivares-atardecer.jpg)",
         backgroundSize: "cover",
         backgroundPosition: "center",
-        backgroundAttachment: "fixed",
         backgroundColor: colors.negro,
       }}
     >

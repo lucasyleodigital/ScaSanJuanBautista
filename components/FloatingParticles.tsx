@@ -83,8 +83,29 @@ export default function FloatingParticles({ count = 22 }: { count?: number }) {
       raf = requestAnimationFrame(tick);
     };
 
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+    // Solo animar mientras la sección está visible: sin esto, las
+    // partículas de cada sección (Terroir, Catálogo...) seguían corriendo
+    // en requestAnimationFrame para siempre aunque estuvieran fuera de
+    // pantalla, sumando trabajo continuo de compositor/GC que contribuía
+    // a los tirones de scroll.
+    const container = containerRef.current;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          if (!raf) raf = requestAnimationFrame(tick);
+        } else if (raf) {
+          cancelAnimationFrame(raf);
+          raf = 0;
+        }
+      },
+      { threshold: 0 }
+    );
+    if (container) io.observe(container);
+
+    return () => {
+      io.disconnect();
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, []);
 
   return (

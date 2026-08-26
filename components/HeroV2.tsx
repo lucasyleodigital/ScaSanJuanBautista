@@ -57,21 +57,15 @@ export default function HeroV2() {
         end: "bottom center",
         scrub: 1.2,
         onUpdate: (self) => {
-          // Aumentar peso de fuente según scroll con easing
+          // Asignación directa de estilo en vez de crear un tween nuevo por
+          // cada frame de scroll: scrub ya suaviza self.progress, así que
+          // gsap.to() aquí solo añadía creación/cancelación de tweens en
+          // cada tick y provocaba tirones al hacer scroll.
+          if (!titleRef.current || !subtitleRef.current) return;
           const easedProgress = gsap.parseEase("power2.inOut")(self.progress);
           const weight = gsap.utils.interpolate(400, 700, easedProgress);
-          gsap.to(titleRef.current, {
-            fontVariationSettings: `"opsz" ${400 + self.getVelocity() * 0.1}, "wght" ${weight}`,
-            duration: 0.1,
-            overwrite: "auto",
-          });
-
-          // Fade out del subtítulo
-          gsap.to(subtitleRef.current, {
-            opacity: 1 - self.progress * 0.5,
-            duration: 0.1,
-            overwrite: "auto",
-          });
+          titleRef.current.style.fontVariationSettings = `"opsz" ${400 + self.getVelocity() * 0.1}, "wght" ${weight}`;
+          subtitleRef.current.style.opacity = String(1 - self.progress * 0.5);
         },
       });
     }, heroRef);
@@ -88,7 +82,6 @@ export default function HeroV2() {
         backgroundImage: "url(/images/hero/olivares-amanecer.jpg)",
         backgroundSize: "cover",
         backgroundPosition: "center",
-        backgroundAttachment: "fixed",
       }}
     >
       {/* Overlay cinematográfico */}
