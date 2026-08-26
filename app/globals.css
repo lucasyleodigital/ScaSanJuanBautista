@@ -72,6 +72,14 @@ body {
   color: var(--negro);
 }
 
+/* Con el menú móvil abierto, nada decorativo debe poder dibujarse
+   por encima ni interferir con la legibilidad del texto. */
+body.nav-menu-open #grain-overlay,
+body.nav-menu-open #custom-cursor-dot,
+body.nav-menu-open #custom-cursor-ring {
+  display: none !important;
+}
+
 :focus-visible {
   outline: 1px solid var(--dorado);
   outline-offset: 3px;

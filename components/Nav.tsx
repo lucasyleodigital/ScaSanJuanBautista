@@ -23,6 +23,14 @@ export default function Nav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Oculta el grano decorativo y el cursor personalizado mientras el
+  // menú móvil está abierto, para que nada pueda interferir visualmente
+  // con la legibilidad del texto (aunque su z-index ya es más bajo).
+  useEffect(() => {
+    document.body.classList.toggle("nav-menu-open", open);
+    return () => document.body.classList.remove("nav-menu-open");
+  }, [open]);
+
   return (
     <nav
       className={`fixed top-0 right-0 left-0 z-[1000] flex items-center justify-between px-6 py-5 transition-[background,padding,box-shadow] duration-300 md:px-10 ${
@@ -85,13 +93,17 @@ export default function Nav() {
       </button>
 
       {open && (
-        <div className="fixed inset-0 top-[60px] z-[999] flex flex-col gap-6 bg-negro px-8 py-10 md:hidden">
+        <div
+          className="fixed inset-0 top-[60px] z-[10001] flex flex-col gap-6 bg-negro px-8 py-10 md:hidden"
+          style={{ backgroundColor: "#060d03", backdropFilter: "none" }}
+        >
           {LINKS.map((l) => (
             <a
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
               className="font-serif text-2xl text-tx-crema"
+              style={{ color: "#f0e8cc" }}
             >
               {l.label}
             </a>

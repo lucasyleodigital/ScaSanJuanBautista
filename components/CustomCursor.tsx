@@ -66,11 +66,13 @@ export default function CustomCursor() {
   return (
     <>
       <div
+        id="custom-cursor-dot"
         ref={dotRef}
         aria-hidden="true"
         className="pointer-events-none fixed top-0 left-0 z-[9999] hidden h-2 w-2 rounded-full bg-ambar transition-[transform,background-color] duration-200 [.cur-active_&]:bg-white pointer-fine:block"
       />
       <div
+        id="custom-cursor-ring"
         ref={ringRef}
         aria-hidden="true"
         className="pointer-events-none fixed top-0 left-0 z-[9999] hidden h-9 w-9 rounded-full border border-dorado/50 transition-[transform,border-color] duration-200 [.cur-active_&]:border-dorado/25 pointer-fine:block"
