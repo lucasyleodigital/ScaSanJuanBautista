@@ -58,7 +58,8 @@ export default function HeroV2() {
         scrub: 1.2,
         onUpdate: (self) => {
           // Aumentar peso de fuente según scroll con easing
-          const weight = gsap.utils.interpolate(400, 700, self.progress, {ease: "power2.inOut"});
+          const easedProgress = gsap.parseEase("power2.inOut")(self.progress);
+          const weight = gsap.utils.interpolate(400, 700, easedProgress);
           gsap.to(titleRef.current, {
             fontVariationSettings: `"opsz" ${400 + self.getVelocity() * 0.1}, "wght" ${weight}`,
             duration: 0.1,

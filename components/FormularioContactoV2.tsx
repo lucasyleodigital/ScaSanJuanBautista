@@ -201,6 +201,7 @@ export default function FormularioContactoV2() {
               {/* Nombre */}
               <div>
                 <label
+                  htmlFor="nombre"
                   style={{
                     display: "block",
                     fontFamily: typography.fontSans,
@@ -214,6 +215,7 @@ export default function FormularioContactoV2() {
                   Nombre completo
                 </label>
                 <input
+                  id="nombre"
                   type="text"
                   name="nombre"
                   value={formData.nombre}
@@ -240,6 +242,7 @@ export default function FormularioContactoV2() {
               {/* Email */}
               <div>
                 <label
+                  htmlFor="email"
                   style={{
                     display: "block",
                     fontFamily: typography.fontSans,
@@ -253,6 +256,7 @@ export default function FormularioContactoV2() {
                   Email
                 </label>
                 <input
+                  id="email"
                   type="email"
                   name="email"
                   value={formData.email}
@@ -279,6 +283,7 @@ export default function FormularioContactoV2() {
               {/* Teléfono */}
               <div>
                 <label
+                  htmlFor="telefono"
                   style={{
                     display: "block",
                     fontFamily: typography.fontSans,
@@ -292,6 +297,7 @@ export default function FormularioContactoV2() {
                   Teléfono
                 </label>
                 <input
+                  id="telefono"
                   type="tel"
                   name="telefono"
                   value={formData.telefono}
@@ -318,6 +324,7 @@ export default function FormularioContactoV2() {
               {/* Empresa */}
               <div>
                 <label
+                  htmlFor="empresa"
                   style={{
                     display: "block",
                     fontFamily: typography.fontSans,
@@ -331,6 +338,7 @@ export default function FormularioContactoV2() {
                   Empresa (opcional)
                 </label>
                 <input
+                  id="empresa"
                   type="text"
                   name="empresa"
                   value={formData.empresa}
@@ -353,6 +361,7 @@ export default function FormularioContactoV2() {
               {/* Tipo de comprador */}
               <div>
                 <label
+                  htmlFor="tipoComprador"
                   style={{
                     display: "block",
                     fontFamily: typography.fontSans,
@@ -366,6 +375,7 @@ export default function FormularioContactoV2() {
                   Tipo de comprador
                 </label>
                 <select
+                  id="tipoComprador"
                   name="tipoComprador"
                   value={formData.tipoComprador}
                   onChange={handleChange}
@@ -461,6 +471,7 @@ export default function FormularioContactoV2() {
               {/* Cantidad */}
               <div>
                 <label
+                  htmlFor="cantidad"
                   style={{
                     display: "block",
                     fontFamily: typography.fontSans,
@@ -474,6 +485,7 @@ export default function FormularioContactoV2() {
                   Cantidad de cajas
                 </label>
                 <input
+                  id="cantidad"
                   type="number"
                   name="cantidad"
                   min="1"
@@ -495,6 +507,7 @@ export default function FormularioContactoV2() {
               {/* Código postal */}
               <div>
                 <label
+                  htmlFor="codigoPostal"
                   style={{
                     display: "block",
                     fontFamily: typography.fontSans,
@@ -508,6 +521,7 @@ export default function FormularioContactoV2() {
                   Código postal
                 </label>
                 <input
+                  id="codigoPostal"
                   type="text"
                   name="codigoPostal"
                   value={formData.codigoPostal}
@@ -535,6 +549,7 @@ export default function FormularioContactoV2() {
             {/* Mensaje */}
             <div style={{ marginBottom: spacing.xl }}>
               <label
+                htmlFor="mensaje"
                 style={{
                   display: "block",
                   fontFamily: typography.fontSans,
@@ -548,6 +563,7 @@ export default function FormularioContactoV2() {
                 Mensaje (opcional)
               </label>
               <textarea
+                id="mensaje"
                 name="mensaje"
                 value={formData.mensaje}
                 onChange={handleChange}

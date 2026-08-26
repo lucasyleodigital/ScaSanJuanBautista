@@ -1,11 +1,22 @@
+import Image from "next/image";
+
 export default function Footer() {
   return (
     <footer className="relative border-t border-rule bg-negro px-6 pt-16 pb-10 md:px-10">
       <div className="mx-auto max-w-[1100px]">
         <div className="mb-12 grid grid-cols-1 gap-10 md:grid-cols-[2fr_1fr_1fr]">
           <div>
-            <div className="mb-1.5 font-serif text-base text-tx-crema">
-              San Juan Bautista de Peñolite
+            <div className="mb-3 flex items-center gap-3">
+              <Image
+                src="/images/logo/logo-footer.png"
+                alt="SCA San Juan Bautista de Peñolite"
+                width={40}
+                height={40}
+                className="h-10 w-10 shrink-0"
+              />
+              <div className="font-serif text-base text-tx-crema">
+                San Juan Bautista de Peñolite
+              </div>
             </div>
             <p className="max-w-xs text-[11px] leading-relaxed text-tx-bajo">
               Cooperativa de aceite de oliva virgen extra fundada en 1958 en
@@ -24,8 +35,8 @@ export default function Footer() {
           <FooterCol
             title="Cooperativa"
             links={[
-              ["Solicitar pedido", "#pedido"],
-              ["Contacto", "#contacto"],
+              ["Solicitar pedido", "#formulario-contacto"],
+              ["Contacto", "#cooperativa"],
             ]}
           />
         </div>

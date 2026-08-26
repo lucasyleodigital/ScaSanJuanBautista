@@ -17,9 +17,26 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
+  // TODO: cambiar por el dominio definitivo cuando se configure (p. ej. tras conectar un dominio propio en Vercel)
+  metadataBase: new URL("https://web-cinematic-lucasyleo-projects.vercel.app"),
   title: "SCA San Juan Bautista de Peñolite — AOVE Picual · Sierra de Segura · Desde 1958",
   description:
-    "Aceite de Oliva Virgen Extra Picual 100% de la Sierra de Segura. Cooperativa fundada en 1958 en Peñolite, Jaén. Acidez máxima 0,5°.",
+    "Aceite de Oliva Virgen Extra Picual 100% de la Sierra de Segura, directo de la cooperativa. Fundada en 1958 en Peñolite, Jaén.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/images/logo/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
+  openGraph: {
+    title: "SCA San Juan Bautista de Peñolite",
+    description:
+      "Aceite de Oliva Virgen Extra Picual 100% de la Sierra de Segura, directo de la cooperativa. Fundada en 1958 en Peñolite, Jaén.",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+    locale: "es_ES",
+    type: "website",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

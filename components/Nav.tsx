@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { Menu, X } from "lucide-react";
 
 const LINKS = [
@@ -30,12 +31,22 @@ export default function Nav() {
           : ""
       }`}
     >
-      <a href="#inicio" className="flex flex-col gap-0.5 no-underline">
-        <span className="font-serif text-[15px] tracking-[0.06em] text-tx-crema">
-          San Juan Bautista de Peñolite
-        </span>
-        <span className="font-sans text-[8.5px] tracking-[0.22em] text-dorado uppercase opacity-80">
-          AOVE Picual · D.O. Sierra de Segura
+      <a href="#inicio" className="flex items-center gap-3 no-underline">
+        <Image
+          src="/images/logo/logo-nav.png"
+          alt="SCA San Juan Bautista de Peñolite"
+          width={44}
+          height={44}
+          className="h-9 w-9 shrink-0 md:h-11 md:w-11"
+          priority
+        />
+        <span className="flex flex-col gap-0.5">
+          <span className="font-serif text-[15px] tracking-[0.06em] text-tx-crema">
+            San Juan Bautista de Peñolite
+          </span>
+          <span className="font-sans text-[8.5px] tracking-[0.22em] text-dorado uppercase opacity-80">
+            AOVE Picual · D.O. Sierra de Segura
+          </span>
         </span>
       </a>
 
