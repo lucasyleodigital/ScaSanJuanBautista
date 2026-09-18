@@ -123,8 +123,8 @@ export default function TerroirV2() {
             <div
               style={{
                 width: "100%",
-                height: "240px",
-                backgroundImage: 'url(/images/terroir/altitud-montana.jpg)',
+                height: "260px",
+                backgroundImage: 'url(/images/terroir/terroir-sierra-segura.png)',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 borderRadius: "6px",

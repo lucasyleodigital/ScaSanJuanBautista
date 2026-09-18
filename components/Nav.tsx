@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Volume2, VolumeX } from "lucide-react";
+import { useAudio } from "./AudioEngine";
 
 const LINKS = [
   { href: "#historia", label: "Historia" },
@@ -15,6 +16,7 @@ const LINKS = [
 export default function Nav() {
   const [solid, setSolid] = useState(false);
   const [open, setOpen] = useState(false);
+  const { isMuted, toggleMute } = useAudio();
 
   useEffect(() => {
     const onScroll = () => setSolid(window.scrollY > 40);
@@ -23,9 +25,6 @@ export default function Nav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Oculta el grano decorativo y el cursor personalizado mientras el
-  // menú móvil está abierto, para que nada pueda interferir visualmente
-  // con la legibilidad del texto (aunque su z-index ya es más bajo).
   useEffect(() => {
     document.body.classList.toggle("nav-menu-open", open);
     return () => document.body.classList.remove("nav-menu-open");
@@ -72,24 +71,50 @@ export default function Nav() {
         ))}
       </ul>
 
-      <a
-        href="#formulario-contacto"
-        data-cursor-active
-        className="group relative hidden overflow-hidden border border-dorado px-5 py-2 font-sans text-[10.5px] tracking-[0.16em] text-dorado uppercase transition-colors duration-350 hover:text-negro md:block"
-      >
-        <span className="absolute inset-0 origin-bottom scale-y-0 bg-dorado transition-transform duration-350 ease-[cubic-bezier(.83,0,.17,1)] group-hover:scale-y-100" />
-        <span className="relative">Solicitar Pedido</span>
-      </a>
+      <div className="flex items-center gap-4">
+        {/* Sound Toggle Button */}
+        <button
+          onClick={toggleMute}
+          className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-dorado/40 bg-black/40 text-dorado text-xs hover:border-dorado transition-all"
+          title={isMuted ? "Activar Sonido UI" : "Desactivar Sonido UI"}
+          data-cursor="SONIDO"
+        >
+          {isMuted ? (
+            <VolumeX className="w-3.5 h-3.5 opacity-60" />
+          ) : (
+            <>
+              <Volume2 className="w-3.5 h-3.5 text-dorado animate-pulse" />
+              <div className="flex items-end gap-0.5 h-3">
+                <span className="w-0.5 h-full bg-dorado animate-bounce" style={{ animationDelay: "0ms" }} />
+                <span className="w-0.5 h-2/3 bg-dorado animate-bounce" style={{ animationDelay: "150ms" }} />
+                <span className="w-0.5 h-4/5 bg-dorado animate-bounce" style={{ animationDelay: "300ms" }} />
+              </div>
+            </>
+          )}
+          <span className="font-mono text-[10px] hidden sm:inline uppercase tracking-widest">
+            {isMuted ? "Sound Off" : "Sound On"}
+          </span>
+        </button>
 
-      <button
-        type="button"
-        aria-label={open ? "Cerrar menú" : "Abrir menú"}
-        aria-expanded={open}
-        onClick={() => setOpen((v) => !v)}
-        className="text-tx-crema md:hidden"
-      >
-        {open ? <X size={22} /> : <Menu size={22} />}
-      </button>
+        <a
+          href="#formulario-contacto"
+          data-cursor-active
+          className="group relative hidden overflow-hidden border border-dorado px-5 py-2 font-sans text-[10.5px] tracking-[0.16em] text-dorado uppercase transition-colors duration-350 hover:text-negro md:block"
+        >
+          <span className="absolute inset-0 origin-bottom scale-y-0 bg-dorado transition-transform duration-350 ease-[cubic-bezier(.83,0,.17,1)] group-hover:scale-y-100" />
+          <span className="relative">Solicitar Pedido</span>
+        </a>
+
+        <button
+          type="button"
+          aria-label={open ? "Cerrar menú" : "Abrir menú"}
+          aria-expanded={open}
+          onClick={() => setOpen((v) => !v)}
+          className="text-tx-crema md:hidden"
+        >
+          {open ? <X size={22} /> : <Menu size={22} />}
+        </button>
+      </div>
 
       {open && (
         <div
@@ -119,3 +144,4 @@ export default function Nav() {
     </nav>
   );
 }
+

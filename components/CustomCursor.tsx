@@ -1,25 +1,16 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useAudio } from "./AudioEngine";
 
-/**
- * Cursor decorativo — solo dispositivos con puntero real (hover: hover).
- * Nunca sustituye el cursor nativo en touch, y no atrapa el foco de teclado.
- *
- * La posición se actualiza por JS en cada frame/evento vía transform en un
- * contenedor SIN transición (debe seguir al ratón al instante). El
- * crecimiento al pasar sobre elementos activos vive en un hijo interno
- * aparte, con su propia transición de transform: scale() — así el punto/
- * anillo no "flotan" detrás del cursor real (si transform tuviera
- * transition en el mismo elemento que la posición, cada movimiento de
- * ratón se animaría con easing en vez de seguirlo al instante, dando la
- * sensación de un cursor lento que de repente da un salto).
- */
 export default function CustomCursor() {
   const dotOuterRef = useRef<HTMLDivElement>(null);
   const dotInnerRef = useRef<HTMLDivElement>(null);
   const ringOuterRef = useRef<HTMLDivElement>(null);
   const ringInnerRef = useRef<HTMLDivElement>(null);
+  const labelRef = useRef<HTMLSpanElement>(null);
+  const [cursorText, setCursorText] = useState<string>("");
+  const { playHover } = useAudio();
 
   useEffect(() => {
     if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
@@ -28,21 +19,24 @@ export default function CustomCursor() {
 
     let ringX = 0;
     let ringY = 0;
+    let currentRingX = 0;
+    let currentRingY = 0;
     let isActive = false;
     let raf = 0;
+    let lastHoveredElem: Element | null = null;
 
-    const applyActive = (active: boolean) => {
+    const applyActive = (active: boolean, text?: string) => {
       if (dotInnerRef.current) {
-        dotInnerRef.current.style.transform = `scale(${active ? 2 : 1})`;
+        dotInnerRef.current.style.transform = `scale(${active ? (text ? 0 : 2.5) : 1})`;
       }
       if (ringInnerRef.current) {
-        ringInnerRef.current.style.transform = `scale(${active ? 16 / 9 : 1})`;
+        ringInnerRef.current.style.transform = `scale(${active ? (text ? 2.8 : 1.8) : 1})`;
       }
     };
 
     const onMove = (e: PointerEvent) => {
       if (dotOuterRef.current) {
-        dotOuterRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+        dotOuterRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
       }
       ringX = e.clientX;
       ringY = e.clientY;
@@ -50,15 +44,30 @@ export default function CustomCursor() {
 
     const onOver = (e: PointerEvent) => {
       const target = e.target as HTMLElement;
-      const active = target.closest("a, button, [data-cursor-active]");
+      const active = target.closest("a, button, [data-cursor-active], [data-cursor]");
+      
+      if (active && active !== lastHoveredElem) {
+        lastHoveredElem = active;
+        playHover();
+      } else if (!active) {
+        lastHoveredElem = null;
+      }
+
       isActive = Boolean(active);
+      const text = active?.getAttribute("data-cursor") || "";
+      setCursorText(text);
+
       document.body.classList.toggle("cur-active", isActive);
-      applyActive(isActive);
+      applyActive(isActive, text);
     };
 
     const loop = () => {
+      // Smooth LERP movement for ring
+      currentRingX += (ringX - currentRingX) * 0.15;
+      currentRingY += (ringY - currentRingY) * 0.15;
+
       if (ringOuterRef.current) {
-        ringOuterRef.current.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
+        ringOuterRef.current.style.transform = `translate3d(${currentRingX}px, ${currentRingY}px, 0) translate(-50%, -50%)`;
       }
       raf = requestAnimationFrame(loop);
     };
@@ -74,7 +83,7 @@ export default function CustomCursor() {
       window.removeEventListener("pointerover", onOver);
       cancelAnimationFrame(raf);
     };
-  }, []);
+  }, [playHover]);
 
   return (
     <>
@@ -82,24 +91,35 @@ export default function CustomCursor() {
         id="custom-cursor-dot"
         ref={dotOuterRef}
         aria-hidden="true"
-        className="pointer-events-none fixed top-0 left-0 z-[9999] hidden h-2 w-2 pointer-fine:block"
+        className="pointer-events-none fixed top-0 left-0 z-[9999] hidden h-2.5 w-2.5 pointer-fine:block"
       >
         <div
           ref={dotInnerRef}
-          className="h-full w-full rounded-full bg-ambar transition-[transform,background-color] duration-200 [.cur-active_&]:bg-white"
+          className="h-full w-full rounded-full bg-dorado shadow-[0_0_12px_rgba(200,150,30,0.8)] transition-[transform,background-color] duration-200 [.cur-active_&]:bg-amber-300"
         />
       </div>
+
       <div
         id="custom-cursor-ring"
         ref={ringOuterRef}
         aria-hidden="true"
-        className="pointer-events-none fixed top-0 left-0 z-[9999] hidden h-9 w-9 pointer-fine:block"
+        className="pointer-events-none fixed top-0 left-0 z-[9998] hidden h-10 w-10 pointer-fine:block"
       >
         <div
           ref={ringInnerRef}
-          className="h-full w-full rounded-full border border-dorado/50 transition-[transform,border-color] duration-200 [.cur-active_&]:border-dorado/25"
-        />
+          className="relative flex h-full w-full items-center justify-center rounded-full border border-dorado/60 bg-dorado/5 backdrop-blur-[2px] transition-[transform,border-color,background-color] duration-300 [.cur-active_&]:border-dorado [.cur-active_&]:bg-dorado/20"
+        >
+          {cursorText && (
+            <span
+              ref={labelRef}
+              className="px-1 text-[9px] font-bold tracking-widest text-tx-crema uppercase animate-fade-in"
+            >
+              {cursorText}
+            </span>
+          )}
+        </div>
       </div>
     </>
   );
 }
+

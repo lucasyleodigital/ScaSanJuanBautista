@@ -4,6 +4,7 @@ import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import GrainOverlay from "@/components/GrainOverlay";
 import CustomCursor from "@/components/CustomCursor";
+import { AudioProvider } from "@/components/AudioEngine";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -17,7 +18,6 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  // TODO: cambiar por el dominio definitivo cuando se configure (p. ej. tras conectar un dominio propio en Vercel)
   metadataBase: new URL("https://web-cinematic-lucasyleo-projects.vercel.app"),
   title: "SCA San Juan Bautista de Peñolite — AOVE Picual · Sierra de Segura · Desde 1958",
   description:
@@ -49,13 +49,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         className="min-h-full flex flex-col bg-negro text-tx-crema font-sans"
         suppressHydrationWarning
       >
-        {/*
-          ?motion=on fuerza el motion completo aunque el SO pida
-          prefers-reduced-motion — imprescindible para demos en equipos con
-          animaciones del sistema desactivadas. Se aplica antes de la
-          hidratación para que los overrides CSS de globals.css (que miran
-          html:not(.force-motion)) ya vean la clase en el primer paint.
-        */}
         <script
           dangerouslySetInnerHTML={{
             __html: `try{var p=new URLSearchParams(location.search).get("motion")==="on";if(p)sessionStorage.setItem("penolite-force-motion","1");if(p||sessionStorage.getItem("penolite-force-motion")==="1")document.documentElement.classList.add("force-motion")}catch(e){}`,
@@ -67,10 +60,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Saltar al contenido
         </a>
-        <CustomCursor />
-        <GrainOverlay />
-        <SmoothScroll>{children}</SmoothScroll>
+        <AudioProvider>
+          <CustomCursor />
+          <GrainOverlay />
+          <SmoothScroll>{children}</SmoothScroll>
+        </AudioProvider>
       </body>
     </html>
   );
 }
+

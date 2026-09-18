@@ -161,9 +161,9 @@ export default function ProcesoV2() {
           }}
         >
           {[
-            { src: "/images/proceso/cosecha-manual.jpg", label: "Cosecha" },
-            { src: "/images/proceso/prensa.jpg", label: "Prensa Tradicional" },
-            { src: "/images/proceso/embotellado.jpg", label: "Embotellado" },
+            { src: "/images/proceso/proceso-almazara-artesanal.png", label: "Extracción en Frío" },
+            { src: "/images/terroir/terroir-sierra-segura.png", label: "Sierra de Segura" },
+            { src: "/images/producto/aove-garrafa-luxury.png", label: "Envasado Garantizado" },
           ].map((img) => (
             <div
               key={img.src}

@@ -54,7 +54,7 @@ export default function CierreV2() {
       ref={sectionRef}
       className="relative min-h-screen flex items-center justify-center overflow-hidden py-32 px-6"
       style={{
-        backgroundImage: "url(/images/cierre/olivares-atardecer.jpg)",
+        backgroundImage: "url(/images/cierre/cosecha-manos-olivas.webp)",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundColor: colors.negro,

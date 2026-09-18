@@ -159,13 +159,13 @@ export default function ProductoV2() {
             ref={bottleRef}
             style={{
               perspective: "1000px",
-              minHeight: "400px",
-              backgroundImage: "url(/images/producto/botella-hero.jpg)",
+              minHeight: "440px",
+              backgroundImage: "url(/images/producto/aove-garrafa-luxury.png)",
               backgroundSize: "cover",
               backgroundPosition: "center",
               border: `1px solid ${colors.rule}`,
               borderRadius: "12px",
-              boxShadow: "0 10px 30px rgba(200,150,30,0.2)",
+              boxShadow: "0 10px 30px rgba(200,150,30,0.25)",
             }}
           />
 
