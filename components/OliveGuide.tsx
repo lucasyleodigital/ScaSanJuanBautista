@@ -31,23 +31,20 @@ export default function OliveGuide() {
     let current: HTMLElement | null = null;
     let ticking = false;
 
+    // OJO: varios de estos títulos reportan getBoundingClientRect() con
+    // width/height corruptos (un bug de layout aparte — con width:0 y
+    // height inflada a cientos de px, medido en producción). rect.top
+    // es el único dato fiable, así que todo el cálculo se apoya solo
+    // en eso: ni el centro vertical del bloque ni el ancho.
+    const iconSize = 34;
+    const margin = 16;
+
     const moveTo = (el: HTMLElement) => {
       const outer = outerRef.current;
       if (!outer) return;
       const rect = el.getBoundingClientRect();
-      const iconSize = 34;
-      const margin = 16;
-
-      const spaceRight = window.innerWidth - rect.right;
-      const spaceLeft = rect.left;
-      const x =
-        spaceRight > iconSize + margin * 2
-          ? rect.right + margin
-          : spaceLeft > iconSize + margin * 2
-          ? rect.left - iconSize - margin
-          : window.innerWidth - iconSize - margin;
-
-      const y = rect.top + rect.height / 2 - iconSize / 2;
+      const x = window.innerWidth - iconSize - margin;
+      const y = rect.top;
       outer.style.transform = `translate3d(${x}px, ${y}px, 0)`;
     };
 
@@ -58,9 +55,7 @@ export default function OliveGuide() {
       let closest: HTMLElement | null = null;
       let closestDist = Infinity;
       for (const el of landmarks) {
-        const rect = el.getBoundingClientRect();
-        const center = rect.top + rect.height / 2;
-        const dist = Math.abs(center - viewportCenter);
+        const dist = Math.abs(el.getBoundingClientRect().top - viewportCenter);
         if (dist < closestDist) {
           closestDist = dist;
           closest = el;
