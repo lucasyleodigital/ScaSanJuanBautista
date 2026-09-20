@@ -10,6 +10,12 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+// Access key de Web3Forms — envía el formulario directo a
+// sca.sanjuanbautistaonline@gmail.com sin backend propio. Gratis hasta
+// 250 envíos/mes. Si en el futuro se pasa a Resend con dominio propio,
+// solo hay que cambiar el fetch de handleSubmit.
+const WEB3FORMS_ACCESS_KEY = "ce93b6c3-2a1b-4f9d-b8c9-6a8dc15e8c66";
+
 interface FormData {
   nombre: string;
   email: string;
@@ -39,6 +45,8 @@ export default function FormularioContactoV2() {
 
   const [validation, setValidation] = useState<Record<string, boolean>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState(false);
 
   // Validación en tiempo real
   const validateField = (name: string, value: string) => {
@@ -82,23 +90,43 @@ export default function FormularioContactoV2() {
     validateField(name, value);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     // Validar todos los campos
     const allValid = Object.values(validation).every((v) => v);
+    if (!allValid || sending) return;
 
-    if (allValid) {
-      // Animación de éxito
-      gsap.to(formRef.current, {
-        opacity: 0,
-        y: -20,
-        duration: 0.5,
+    setSending(true);
+    setSendError(false);
+
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_ACCESS_KEY,
+          subject: `Solicitud de presupuesto — ${formData.nombre} (${formData.formato})`,
+          from_name: "Web SCA San Juan Bautista de Peñolite",
+          nombre: formData.nombre,
+          email: formData.email,
+          telefono: formData.telefono,
+          empresa: formData.empresa || "—",
+          tipo_comprador: formData.tipoComprador,
+          formato: formData.formato,
+          cantidad_cajas: formData.cantidad,
+          codigo_postal: formData.codigoPostal,
+          mensaje: formData.mensaje || "—",
+        }),
       });
 
-      setSubmitted(true);
+      const result = await res.json();
+      if (!result.success) throw new Error(result.message || "Envío rechazado");
 
-      // Simular envío
+      gsap.to(formRef.current, { opacity: 0, y: -20, duration: 0.5 });
+      setSubmitted(true);
+      setSending(false);
+
       setTimeout(() => {
         setSubmitted(false);
         setFormData((prev) => ({
@@ -112,13 +140,13 @@ export default function FormularioContactoV2() {
           codigoPostal: "",
           mensaje: "",
         }));
+        setValidation({});
 
-        gsap.to(formRef.current, {
-          opacity: 1,
-          y: 0,
-          duration: 0.5,
-        });
-      }, 2000);
+        gsap.to(formRef.current, { opacity: 1, y: 0, duration: 0.5 });
+      }, 3000);
+    } catch {
+      setSending(false);
+      setSendError(true);
     }
   };
 
@@ -586,6 +614,7 @@ export default function FormularioContactoV2() {
             {/* Botón envío */}
             <button
               type="submit"
+              disabled={sending}
               style={{
                 width: "100%",
                 padding: "16px",
@@ -597,11 +626,13 @@ export default function FormularioContactoV2() {
                 letterSpacing: "0.16em",
                 textTransform: "uppercase",
                 fontWeight: 600,
-                cursor: "pointer",
+                cursor: sending ? "wait" : "pointer",
+                opacity: sending ? 0.7 : 1,
                 borderRadius: "4px",
                 transition: `all ${motion.durationStd}ms`,
               }}
               onMouseEnter={(e) => {
+                if (sending) return;
                 gsap.to(e.currentTarget, {
                   scale: 1.02,
                   boxShadow: `0 12px 32px rgba(200, 150, 30, 0.3)`,
@@ -616,8 +647,42 @@ export default function FormularioContactoV2() {
                 });
               }}
             >
-              Enviar Presupuesto
+              {sending ? "Enviando..." : "Enviar Presupuesto"}
             </button>
+
+            {sendError && (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: spacing.sm,
+                  marginTop: spacing.md,
+                  padding: spacing.md,
+                  background: "rgba(255, 68, 68, 0.1)",
+                  border: "1px solid rgba(255, 68, 68, 0.4)",
+                  borderRadius: "4px",
+                }}
+              >
+                <AlertCircle size={20} color="#ff4444" style={{ flexShrink: 0 }} />
+                <p
+                  style={{
+                    fontFamily: typography.fontSans,
+                    fontSize: "13px",
+                    color: colors.txMedio,
+                    lineHeight: "1.5",
+                  }}
+                >
+                  No se ha podido enviar. Escríbenos directamente a{" "}
+                  <a
+                    href="mailto:sca.sanjuanbautistaonline@gmail.com"
+                    style={{ color: colors.dorado }}
+                  >
+                    sca.sanjuanbautistaonline@gmail.com
+                  </a>{" "}
+                  o inténtalo de nuevo en unos minutos.
+                </p>
+              </div>
+            )}
           </form>
         ) : (
           // Mensaje de éxito
