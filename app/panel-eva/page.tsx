@@ -160,6 +160,14 @@ function PedidosTab() {
     await supabase.from("pedidos").update({ estado }).eq("id", id);
   };
 
+  const deletePedido = async (id: string, nombre: string) => {
+    if (!window.confirm(`¿Borrar el pedido de "${nombre}"? Esta acción no se puede deshacer.`)) {
+      return;
+    }
+    setPedidos((prev) => prev?.filter((p) => p.id !== id) ?? null);
+    await supabase.from("pedidos").delete().eq("id", id);
+  };
+
   if (error) return <p className="text-sm text-red-400">Error: {error}</p>;
   if (!pedidos) return <p className="text-sm text-tx-bajo">Cargando pedidos…</p>;
   if (pedidos.length === 0) return <p className="text-sm text-tx-bajo">Todavía no hay pedidos.</p>;
@@ -176,6 +184,7 @@ function PedidosTab() {
             <th className="p-3">Envío</th>
             <th className="p-3">Total</th>
             <th className="p-3">Estado</th>
+            <th className="p-3"></th>
           </tr>
         </thead>
         <tbody>
@@ -209,6 +218,15 @@ function PedidosTab() {
                     </option>
                   ))}
                 </select>
+              </td>
+              <td className="p-3">
+                <button
+                  onClick={() => deletePedido(p.id, p.nombre)}
+                  className="text-xs text-red-400 hover:text-red-300"
+                  title="Borrar pedido"
+                >
+                  Borrar
+                </button>
               </td>
             </tr>
           ))}

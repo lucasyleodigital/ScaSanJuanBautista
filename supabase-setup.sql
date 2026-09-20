@@ -60,3 +60,7 @@ grant select, update on public.pedidos to authenticated;
 
 grant select on public.pricing_config to anon;
 grant select, update on public.pricing_config to authenticated;
+
+-- Permite a Eva borrar pedidos (p. ej. si el cliente se echa atrás)
+create policy "pedidos solo eva borra" on pedidos for delete using (auth.role() = 'authenticated');
+grant delete on public.pedidos to authenticated;
