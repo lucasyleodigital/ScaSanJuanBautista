@@ -3,10 +3,10 @@
 import { useEffect, useRef } from "react";
 
 /**
- * Aceitunas doradas en suspensión — pequeños óvalos ascendiendo
- * lentamente. Decoración pura, sin significado narrativo. La forma de
- * aceituna es solo un óvalo (ancho algo menor que el alto con
- * border-radius:50%), no un SVG — mismo coste que el círculo anterior.
+ * Aceitunas doradas en suspensión — cada una es un SVG diminuto
+ * (cuerpo + rabito + hojita) en vez del óvalo CSS anterior, para que
+ * se reconozcan de verdad como aceitunas. Decoración pura, sin
+ * significado narrativo.
  *
  * Movidas con requestAnimationFrame + estilo inline, NO con
  * animation-duration de CSS: Chrome/Edge, cuando el sistema tiene
@@ -51,7 +51,7 @@ function buildParticles(count: number): Particle[] {
 
 export default function FloatingParticles({ count = 14 }: { count?: number }) {
   const particlesRef = useRef<Particle[]>(buildParticles(count));
-  const spanRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const spanRefs = useRef<(HTMLDivElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -117,26 +117,59 @@ export default function FloatingParticles({ count = 14 }: { count?: number }) {
       style={{ zIndex: 0 }}
       aria-hidden="true"
     >
-      {particlesRef.current.map((p, i) => (
-        <span
-          key={i}
-          ref={(el) => {
-            spanRefs.current[i] = el;
-          }}
-          style={{
-            position: "absolute",
-            bottom: 0,
-            left: `${p.left}%`,
-            width: `${p.size * 0.68}px`,
-            height: `${p.size}px`,
-            borderRadius: "50%",
-            background: `rgba(200, 150, 30, ${p.opacity})`,
-            boxShadow: `0 0 ${p.size * 2}px rgba(200, 150, 30, ${p.opacity * 0.7})`,
-            opacity: 0,
-            willChange: "transform, opacity",
-          }}
-        />
-      ))}
+      {particlesRef.current.map((p, i) => {
+        const w = p.size * 0.72;
+        const h = p.size * 1.35; // deja hueco arriba para el rabito/hoja
+        return (
+          <div
+            key={i}
+            ref={(el) => {
+              spanRefs.current[i] = el;
+            }}
+            style={{
+              position: "absolute",
+              bottom: 0,
+              left: `${p.left}%`,
+              width: `${w}px`,
+              height: `${h}px`,
+              opacity: 0,
+              willChange: "transform, opacity",
+            }}
+          >
+            <svg
+              width={w}
+              height={h}
+              viewBox="0 0 20 27"
+              fill="none"
+              style={{
+                filter: `drop-shadow(0 0 ${p.size * 0.6}px rgba(200, 150, 30, ${p.opacity * 0.7}))`,
+              }}
+            >
+              {/* Cuerpo */}
+              <ellipse cx="10" cy="16" rx="6.3" ry="9" fill={`rgba(200, 150, 30, ${p.opacity})`} />
+              {/* Brillo */}
+              <ellipse cx="7.8" cy="11.5" rx="1.9" ry="2.6" fill={`rgba(240, 210, 150, ${p.opacity * 0.8})`} />
+              {/* Rabito */}
+              <path
+                d="M10 7C10 7 10.3 4 12 2.5"
+                stroke={`rgba(120, 85, 20, ${p.opacity})`}
+                strokeWidth="1.1"
+                strokeLinecap="round"
+                fill="none"
+              />
+              {/* Hojita */}
+              <ellipse
+                cx="14.2"
+                cy="2.3"
+                rx="2.6"
+                ry="1.2"
+                fill={`rgba(122, 143, 62, ${p.opacity * 0.9})`}
+                transform="rotate(-24 14.2 2.3)"
+              />
+            </svg>
+          </div>
+        );
+      })}
     </div>
   );
 }
