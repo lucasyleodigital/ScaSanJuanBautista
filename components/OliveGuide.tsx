@@ -4,77 +4,79 @@ import { useEffect, useRef } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 /**
- * Una aceituna que acompaña al lector mientras baja por la web,
- * cruzando de un lado a otro (como si flotara entre los títulos) en
- * vez de subir en línea recta por el margen — busca guiar la mirada,
- * no solo marcar el progreso.
+ * Una aceituna que va "saltando" de imagen en imagen y de título en
+ * título a medida que entran en el centro de la pantalla — no se
+ * desliza en continuo, da un salto (con rebote) cada vez que cambia
+ * el elemento que está protagonizando la vista.
  *
- * La posición (JS, ligada al scroll) y el balanceo de flotación en
- * reposo (CSS puro) viven en DOS elementos separados a propósito: si
- * compartieran el mismo transform, se pisarían entre sí. El listener
- * de scroll no usa ningún requestAnimationFrame en bucle de fondo —
- * solo se recalcula cuando hay un evento de scroll real (mismo patrón
- * que ScrollProgress).
+ * Todo funciona por IntersectionObserver (dispara solo cuando cambia
+ * qué elemento está centrado), no por un listener de scroll continuo
+ * ni por ningún requestAnimationFrame en bucle — el salto en sí lo
+ * anima una transición CSS normal.
  */
 export default function OliveGuide() {
-  const ref = useRef<HTMLDivElement>(null);
+  const outerRef = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
 
   useEffect(() => {
     if (reducedMotion) return;
 
-    let lastY = window.scrollY;
-    let ticking = false;
+    const landmarks = Array.from(
+      document.querySelectorAll<HTMLElement>(
+        'main [role="img"], main h1, main h2, main h3'
+      )
+    );
+    if (landmarks.length === 0) return;
 
-    const update = () => {
-      ticking = false;
-      const el = ref.current;
-      if (!el) return;
+    const visible = new Set<HTMLElement>();
 
-      const doc = document.documentElement;
-      const max = doc.scrollHeight - doc.clientHeight;
-      const pct = max > 0 ? window.scrollY / max : 0;
-
-      const viewportH = window.innerHeight;
-      const travelY = viewportH - 64; // deja margen arriba/abajo (tamaño del icono)
-      const y = 32 + pct * travelY;
-
-      // Cruza de un lado a otro de la página según se avanza el scroll
-      // (2 idas y vueltas completas), pero solo si hay hueco de sobra
-      // fuera del contenido central — si no, se queda en el margen
-      // derecho de siempre para no tapar nunca el texto.
-      const vw = window.innerWidth;
+    const moveTo = (el: HTMLElement) => {
+      const outer = outerRef.current;
+      if (!outer) return;
+      const rect = el.getBoundingClientRect();
       const iconSize = 34;
-      const margin = 20;
-      const rightX = vw - margin - iconSize;
-      const hasGutters = vw > 1440;
-      let x = rightX;
-      if (hasGutters) {
-        const leftX = margin;
-        const swing = (Math.sin(pct * Math.PI * 2.4) + 1) / 2; // 0..1
-        x = rightX + (leftX - rightX) * swing;
-      }
+      const margin = 16;
 
-      const deltaY = window.scrollY - lastY;
-      lastY = window.scrollY;
-      const tilt = Math.max(-18, Math.min(18, deltaY * 0.6));
+      // Prioriza el lado con más hueco libre fuera del propio elemento
+      const spaceRight = window.innerWidth - rect.right;
+      const spaceLeft = rect.left;
+      const x =
+        spaceRight > iconSize + margin * 2
+          ? rect.right + margin
+          : spaceLeft > iconSize + margin * 2
+          ? rect.left - iconSize - margin
+          : window.innerWidth - iconSize - margin; // último recurso: margen derecho de la ventana
 
-      el.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${tilt}deg)`;
+      const y = rect.top + rect.height / 2 - iconSize / 2;
+
+      outer.style.transform = `translate3d(${x}px, ${y}px, 0)`;
     };
 
-    const onScroll = () => {
-      if (!ticking) {
-        ticking = true;
-        requestAnimationFrame(update);
-      }
-    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) visible.add(entry.target as HTMLElement);
+          else visible.delete(entry.target as HTMLElement);
+        }
+        // De entre lo que está cruzando el centro ahora mismo, salta al
+        // primero en el orden del documento (arriba del todo visible).
+        const current = landmarks.find((el) => visible.has(el));
+        if (current) moveTo(current);
+      },
+      { rootMargin: "-45% 0px -45% 0px", threshold: 0 }
+    );
 
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
+    landmarks.forEach((el) => observer.observe(el));
+
+    const onResize = () => {
+      const current = landmarks.find((el) => visible.has(el));
+      if (current) moveTo(current);
+    };
+    window.addEventListener("resize", onResize, { passive: true });
+
     return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      observer.disconnect();
+      window.removeEventListener("resize", onResize);
     };
   }, [reducedMotion]);
 
@@ -82,10 +84,10 @@ export default function OliveGuide() {
 
   return (
     <div
-      ref={ref}
+      ref={outerRef}
       aria-hidden="true"
-      className="pointer-events-none fixed top-0 left-0 z-[1999] hidden md:block"
-      style={{ willChange: "transform" }}
+      className="pointer-events-none fixed top-0 left-0 z-[1999] hidden md:block olive-hop"
+      style={{ willChange: "transform", transform: "translate3d(-100px, -100px, 0)" }}
     >
       <div className="olive-float">
         <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
@@ -97,6 +99,9 @@ export default function OliveGuide() {
       </div>
 
       <style>{`
+        .olive-hop {
+          transition: transform 650ms cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
         @keyframes olive-float {
           0%, 100% { transform: translateY(0px); }
           50% { transform: translateY(-7px); }
