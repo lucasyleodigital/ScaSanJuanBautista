@@ -80,7 +80,7 @@ export default function CalculadoraPedidoInteractive() {
   const price2LBox = pricing.precio_caja_6x2l;
 
   const totalLitros5L = qty5L * 15;
-  const totalLitros2L = qty2L * 24;
+  const totalLitros2L = qty2L * 12;
   const totalLitros = totalLitros5L + totalLitros2L;
 
   const rawSubtotal = qty5L * price5LBox + qty2L * price2LBox;
@@ -154,7 +154,7 @@ export default function CalculadoraPedidoInteractive() {
     const text = encodeURIComponent(
       `Hola SCA San Juan Bautista Peñolite 👋\nMe gustaría realizar un pedido:\n\n` +
         `- Cajas 5L (3x5L=15L): ${qty5L} (${qty5L * price5LBox}€)\n` +
-        `- Cajas 2L (12x2L=24L): ${qty2L} (${qty2L * price2LBox}€)\n` +
+        `- Cajas 2L (6x2L=12L): ${qty2L} (${qty2L * price2LBox}€)\n` +
         `- Total Litros: ${totalLitros} L\n` +
         `- Envío a: ${shippingRegion.toUpperCase()}\n` +
         `- Importe Estimado: ${finalTotal.toFixed(2)}€\n\n` +
@@ -354,12 +354,12 @@ export default function CalculadoraPedidoInteractive() {
                 </div>
               </div>
 
-              {/* Product 2: Caja 12x2L */}
+              {/* Product 2: Caja 6x2L */}
               <div className="flex flex-col sm:flex-row items-center justify-between p-4 rounded-xl border border-white/10 bg-white/5 hover:border-dorado/40 transition-all gap-4">
                 <div>
-                  <h4 className="font-semibold text-tx-crema text-base">Caja 12 Garrafas × 2 Litros</h4>
+                  <h4 className="font-semibold text-tx-crema text-base">Caja 6 Garrafas × 2 Litros</h4>
                   <p className="text-xs text-tx-muted mt-1">
-                    Formato manejable (24L Total) · {(price2LBox / 24).toFixed(2).replace(".", ",")} € / litro
+                    Formato manejable (12L Total) · {(price2LBox / 12).toFixed(2).replace(".", ",")} € / litro
                   </p>
                 </div>
                 <div className="flex items-center gap-4">
