@@ -190,7 +190,7 @@ export default function HeroV2() {
       <div
         className="absolute inset-0 z-0"
         style={{
-          background: `linear-gradient(180deg, rgba(6, 13, 3, 0.25) 0%, rgba(6, 13, 3, 0.35) 50%, rgba(6, 13, 3, 0.55) 100%)`,
+          background: `linear-gradient(180deg, rgba(6, 13, 3, 0.4) 0%, rgba(6, 13, 3, 0.5) 50%, rgba(6, 13, 3, 0.7) 100%)`,
         }}
       />
 

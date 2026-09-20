@@ -24,9 +24,15 @@ export default function PanelEvaPage() {
   return session ? <Dashboard /> : <LoginScreen />;
 }
 
+const PANEL_BACKGROUND =
+  "radial-gradient(ellipse 80% 50% at 50% 0%, rgba(45, 74, 43, 0.35) 0%, #060D03 60%)";
+
 function CenteredScreen({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-negro text-tx-crema">
+    <div
+      className="flex min-h-screen items-center justify-center text-tx-crema"
+      style={{ background: PANEL_BACKGROUND }}
+    >
       {children}
     </div>
   );
@@ -96,7 +102,7 @@ function Dashboard() {
   const [tab, setTab] = useState<Tab>("pedidos");
 
   return (
-    <div className="min-h-screen bg-negro text-tx-crema">
+    <div className="min-h-screen text-tx-crema" style={{ background: PANEL_BACKGROUND }}>
       <header className="flex items-center justify-between border-b border-rule px-6 py-4">
         <h1 className="font-serif text-xl">Panel de Eva</h1>
         <button

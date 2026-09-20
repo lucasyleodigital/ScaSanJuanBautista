@@ -118,7 +118,9 @@ export default function ProcesoV2() {
       id="calidad"
       ref={sectionRef}
       className="relative py-32 px-6 overflow-hidden"
-      style={{ background: colors.negro }}
+      style={{
+        background: `linear-gradient(180deg, ${colors.negro} 0%, rgba(36, 61, 15, 0.25) 50%, ${colors.negro} 100%)`,
+      }}
     >
       <FloatingParticles />
       <div className="relative z-10 max-w-6xl mx-auto">

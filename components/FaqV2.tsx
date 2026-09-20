@@ -63,7 +63,9 @@ export default function FaqV2() {
     <section
       id="faq"
       className="relative py-32 px-6 overflow-hidden"
-      style={{ background: colors.negro }}
+      style={{
+        background: `linear-gradient(180deg, ${colors.negro} 0%, rgba(36, 61, 15, 0.2) 100%)`,
+      }}
     >
       <script
         type="application/ld+json"
