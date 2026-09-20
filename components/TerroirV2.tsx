@@ -124,14 +124,14 @@ export default function TerroirV2() {
               style={{
                 width: "100%",
                 height: "260px",
-                backgroundImage: 'url(/images/terroir/terroir-sierra-segura.webp)',
+                backgroundImage: 'url(/images/terroir/sierra-segura-nevada.webp)',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 borderRadius: "6px",
                 marginBottom: spacing.md,
               }}
               role="img"
-              aria-label="Paisaje de olivar en la Sierra de Segura a 840 metros de altitud"
+              aria-label="Sierra de Segura nevada junto al embalse, rodeada de olivares"
             />
             <h3
               style={{
