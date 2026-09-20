@@ -50,3 +50,13 @@ create policy "pricing solo eva escribe" on pricing_config for update using (aut
 create policy "pedidos publico inserta" on pedidos for insert with check (true);
 create policy "pedidos solo eva lee" on pedidos for select using (auth.role() = 'authenticated');
 create policy "pedidos solo eva actualiza" on pedidos for update using (auth.role() = 'authenticated');
+
+-- Permisos base de PostgreSQL (necesarios ADEMÁS de las políticas de
+-- arriba: sin esto, Postgres rechaza el acceso antes de evaluar RLS).
+grant usage on schema public to anon, authenticated;
+
+grant select, insert on public.pedidos to anon;
+grant select, update on public.pedidos to authenticated;
+
+grant select on public.pricing_config to anon;
+grant select, update on public.pricing_config to authenticated;
