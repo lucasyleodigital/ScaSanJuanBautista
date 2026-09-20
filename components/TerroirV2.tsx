@@ -130,6 +130,8 @@ export default function TerroirV2() {
                 borderRadius: "6px",
                 marginBottom: spacing.md,
               }}
+              role="img"
+              aria-label="Paisaje de olivar en la Sierra de Segura a 840 metros de altitud"
             />
             <h3
               style={{
@@ -173,6 +175,8 @@ export default function TerroirV2() {
                 borderRadius: "6px",
                 marginBottom: spacing.md,
               }}
+              role="img"
+              aria-label="Rama de olivo Picual con aceitunas"
             />
             <h3
               style={{
@@ -216,6 +220,8 @@ export default function TerroirV2() {
                 borderRadius: "6px",
                 marginBottom: spacing.md,
               }}
+              role="img"
+              aria-label="Socios de la cooperativa SCA San Juan Bautista de Peñolite"
             />
             <h3
               style={{

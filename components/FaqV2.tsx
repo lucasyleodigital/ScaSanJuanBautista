@@ -43,6 +43,19 @@ const faqs: FaqItem[] = [
   },
 ];
 
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.answer,
+    },
+  })),
+};
+
 export default function FaqV2() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
@@ -52,6 +65,10 @@ export default function FaqV2() {
       className="relative py-32 px-6 overflow-hidden"
       style={{ background: colors.negro }}
     >
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <FloatingParticles />
       <div className="relative z-10 max-w-3xl mx-auto">
         <h2

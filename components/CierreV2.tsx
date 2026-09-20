@@ -59,6 +59,8 @@ export default function CierreV2() {
         backgroundPosition: "center",
         backgroundColor: colors.negro,
       }}
+      role="img"
+      aria-label="Agricultor de la cooperativa recogiendo aceitunas a mano"
     >
       {/* Overlay cinematográfico */}
       <div

@@ -167,6 +167,8 @@ export default function ProductoV2() {
               borderRadius: "12px",
               boxShadow: "0 10px 30px rgba(200,150,30,0.25)",
             }}
+            role="img"
+            aria-label="Garrafa de Aceite de Oliva Virgen Extra Picual SCA San Juan Bautista de Peñolite"
           />
 
           {/* Columna derecha: Especificaciones */}

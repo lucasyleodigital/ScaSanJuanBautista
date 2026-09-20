@@ -42,6 +42,21 @@ const products: ProductCard[] = [
   },
 ];
 
+const productsJsonLd = products.map((product) => ({
+  "@context": "https://schema.org",
+  "@type": "Product",
+  name: `${product.title} — AOVE Picual D.O. Sierra de Segura`,
+  description: product.description,
+  brand: { "@type": "Brand", name: "SCA San Juan Bautista de Peñolite" },
+  offers: {
+    "@type": "Offer",
+    price: product.price.toFixed(2),
+    priceCurrency: "EUR",
+    availability: "https://schema.org/InStock",
+    url: "https://web-cinematic-lucasyleo-projects.vercel.app/#productos",
+  },
+}));
+
 export default function CatalogV2() {
   const cardsRef = useRef<HTMLDivElement>(null);
 
@@ -51,6 +66,13 @@ export default function CatalogV2() {
       className="relative py-32 px-6 overflow-hidden"
       style={{ background: colors.negro }}
     >
+      {productsJsonLd.map((json, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(json) }}
+        />
+      ))}
       <FloatingParticles />
       <div className="relative z-10 max-w-7xl mx-auto">
         {/* Título */}
@@ -135,6 +157,8 @@ export default function CatalogV2() {
                   borderRadius: "8px",
                   marginBottom: spacing.lg,
                 }}
+                role="img"
+                aria-label={product.title}
               />
 
               {/* Contenido */}

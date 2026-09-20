@@ -78,7 +78,7 @@ export default function CalculadoraPedidoInteractive() {
         `- Perfil: ${profile}\n\n` +
         `Quedo a la espera de confirmación y datos para transferencia. Un cordial saludo.`
     );
-    return `mailto:sanjuanbautista.sca@gmail.com?subject=${subject}&body=${body}`;
+    return `mailto:sca.sanjuanbautistaonline@gmail.com?subject=${subject}&body=${body}`;
   };
 
   return (
@@ -181,7 +181,7 @@ export default function CalculadoraPedidoInteractive() {
               <div className="flex flex-col sm:flex-row items-center justify-between p-4 rounded-xl border border-white/10 bg-white/5 hover:border-dorado/40 transition-all gap-4">
                 <div>
                   <h4 className="font-semibold text-tx-crema text-base">Caja 12 Garrafas × 2 Litros</h4>
-                  <p className="text-xs text-tx-muted mt-1">Formato manejable (24L Total) · 2,87.5 € / litro</p>
+                  <p className="text-xs text-tx-muted mt-1">Formato manejable (24L Total) · 2,88 € / litro</p>
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="text-right">
@@ -339,7 +339,7 @@ export default function CalculadoraPedidoInteractive() {
                 data-cursor="EMAIL"
               >
                 <Send className="w-4 h-4 text-dorado" />
-                Solicitar Factura Proforma por Email
+                Pedir por Email
               </a>
             </div>
 

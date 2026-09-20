@@ -175,6 +175,8 @@ export default function HeroV2() {
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
+      role="img"
+      aria-label="Amanecer sobre el olivar de Sierra de Segura, Jaén"
     >
       {/* Dynamic Gold Particles Canvas */}
       <canvas
@@ -271,7 +273,7 @@ export default function HeroV2() {
       <div
         className="absolute bottom-10 left-1/2 -translate-x-1/2 text-[10px] tracking-[0.3em] uppercase text-dorado/60 font-mono flex items-center gap-2 animate-bounce cursor-pointer z-20"
         onClick={() => {
-          document.querySelector("#terroir")?.scrollIntoView({ behavior: "smooth" });
+          document.querySelector("#olivar")?.scrollIntoView({ behavior: "smooth" });
         }}
       >
         <span>Desplaza para descubrir</span>

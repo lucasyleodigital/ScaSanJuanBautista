@@ -183,6 +183,8 @@ export default function ProcesoV2() {
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                 }}
+                role="img"
+                aria-label={img.label}
               />
               <div
                 style={{

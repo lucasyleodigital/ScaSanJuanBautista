@@ -26,19 +26,30 @@ export default function Footer() {
           <FooterCol
             title="Navegación"
             links={[
-              ["Historia", "#historia"],
-              ["El Olivar", "#olivar"],
-              ["Productos", "#productos"],
-              ["Calidad", "#calidad"],
+              ["Historia", "/#historia"],
+              ["El Olivar", "/#olivar"],
+              ["Productos", "/#productos"],
+              ["Calidad", "/#calidad"],
             ]}
           />
           <FooterCol
             title="Cooperativa"
             links={[
-              ["Solicitar pedido", "#formulario-contacto"],
-              ["Contacto", "#cooperativa"],
+              ["Solicitar pedido", "/#formulario-contacto"],
+              ["Contacto", "/#cooperativa"],
             ]}
           />
+        </div>
+        <div className="mb-7 flex flex-wrap gap-x-6 gap-y-2 border-t border-dorado/10 pt-7 text-[11px] text-tx-bajo">
+          <a href="/aviso-legal" className="no-underline transition-colors hover:text-tx-crema">
+            Aviso Legal
+          </a>
+          <a href="/politica-privacidad" className="no-underline transition-colors hover:text-tx-crema">
+            Política de Privacidad
+          </a>
+          <a href="/politica-cookies" className="no-underline transition-colors hover:text-tx-crema">
+            Política de Cookies
+          </a>
         </div>
         <div className="flex flex-wrap items-center justify-between gap-4 border-t border-dorado/10 pt-7">
           <span className="text-[11px] text-tx-bajo">

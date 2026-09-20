@@ -17,11 +17,21 @@ const fraunces = Fraunces({
   axes: ["opsz", "SOFT", "WONK"],
 });
 
+const SITE_URL = "https://web-cinematic-lucasyleo-projects.vercel.app";
+const SITE_DESCRIPTION =
+  "AOVE Picual 100%, D.O. Sierra de Segura, directo de la cooperativa desde 1958. Sin intermediarios: tu dinero llega a los agricultores, no a la distribución.";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://web-cinematic-lucasyleo-projects.vercel.app"),
-  title: "SCA San Juan Bautista de Peñolite — AOVE Picual · Sierra de Segura · Desde 1958",
-  description:
-    "Aceite de Oliva Virgen Extra Picual 100% de la Sierra de Segura, directo de la cooperativa. Fundada en 1958 en Peñolite, Jaén.",
+  metadataBase: new URL(SITE_URL),
+  title: "AOVE Picual Directo del Agricultor, Sin Intermediarios | SCA Peñolite",
+  description: SITE_DESCRIPTION,
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   icons: {
     icon: [
       { url: "/favicon.ico" },
@@ -30,12 +40,37 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   openGraph: {
-    title: "SCA San Juan Bautista de Peñolite",
-    description:
-      "Aceite de Oliva Virgen Extra Picual 100% de la Sierra de Segura, directo de la cooperativa. Fundada en 1958 en Peñolite, Jaén.",
+    title: "AOVE Picual Directo del Agricultor, Sin Intermediarios",
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    siteName: "SCA San Juan Bautista de Peñolite",
     images: [{ url: "/og-image.png", width: 1200, height: 630 }],
     locale: "es_ES",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AOVE Picual Directo del Agricultor, Sin Intermediarios",
+    description: SITE_DESCRIPTION,
+    images: ["/og-image.png"],
+  },
+};
+
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "SCA San Juan Bautista de Peñolite",
+  url: SITE_URL,
+  logo: `${SITE_URL}/images/logo/icon-512.png`,
+  telephone: "+34953435316",
+  email: "sanjuanbautista.sca@gmail.com",
+  foundingDate: "1958",
+  description: SITE_DESCRIPTION,
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Peñolite",
+    addressRegion: "Jaén",
+    addressCountry: "ES",
   },
 };
 
@@ -49,6 +84,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         className="min-h-full flex flex-col bg-negro text-tx-crema font-sans"
         suppressHydrationWarning
       >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `try{var p=new URLSearchParams(location.search).get("motion")==="on";if(p)sessionStorage.setItem("penolite-force-motion","1");if(p||sessionStorage.getItem("penolite-force-motion")==="1")document.documentElement.classList.add("force-motion")}catch(e){}`,
