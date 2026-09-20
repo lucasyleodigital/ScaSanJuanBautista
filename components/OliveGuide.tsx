@@ -4,15 +4,17 @@ import { useEffect, useRef } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 /**
- * Una aceituna que va "saltando" de imagen en imagen y de título en
- * título a medida que entran en el centro de la pantalla — no se
- * desliza en continuo, da un salto (con rebote) cada vez que cambia
- * el elemento que está protagonizando la vista.
+ * Una aceituna que va saltando, en orden estricto de arriba a abajo,
+ * de un titular de sección al siguiente (Hero → Terroir → Proceso →
+ * Producto → Catálogo → Configurador → FAQ → Cierre) — un único punto
+ * de parada por capítulo, nunca varios candidatos a la vez, para que
+ * el recorrido tenga sintonía real con el orden de la página en vez
+ * de parecer aleatorio.
  *
- * Todo funciona por IntersectionObserver (dispara solo cuando cambia
- * qué elemento está centrado), no por un listener de scroll continuo
- * ni por ningún requestAnimationFrame en bucle — el salto en sí lo
- * anima una transición CSS normal.
+ * En cada scroll (limitado a un cálculo por frame) se elige el titular
+ * cuyo centro esté más cerca del centro real de la pantalla — hay
+ * siempre exactamente uno "más cercano", así que la progresión es
+ * monótona según se baja, sin parpadeos entre candidatos empatados.
  */
 export default function OliveGuide() {
   const outerRef = useRef<HTMLDivElement>(null);
@@ -21,14 +23,13 @@ export default function OliveGuide() {
   useEffect(() => {
     if (reducedMotion) return;
 
-    const landmarks = Array.from(
-      document.querySelectorAll<HTMLElement>(
-        'main [role="img"], main h1, main h2, main h3'
-      )
-    );
+    // Un único titular por capítulo — evita ambigüedad entre elementos
+    // que comparten casi la misma altura (p. ej. varias tarjetas en fila).
+    const landmarks = Array.from(document.querySelectorAll<HTMLElement>("main h1, main h2"));
     if (landmarks.length === 0) return;
 
-    const visible = new Set<HTMLElement>();
+    let current: HTMLElement | null = null;
+    let ticking = false;
 
     const moveTo = (el: HTMLElement) => {
       const outer = outerRef.current;
@@ -37,7 +38,6 @@ export default function OliveGuide() {
       const iconSize = 34;
       const margin = 16;
 
-      // Prioriza el lado con más hueco libre fuera del propio elemento
       const spaceRight = window.innerWidth - rect.right;
       const spaceLeft = rect.left;
       const x =
@@ -45,38 +45,47 @@ export default function OliveGuide() {
           ? rect.right + margin
           : spaceLeft > iconSize + margin * 2
           ? rect.left - iconSize - margin
-          : window.innerWidth - iconSize - margin; // último recurso: margen derecho de la ventana
+          : window.innerWidth - iconSize - margin;
 
       const y = rect.top + rect.height / 2 - iconSize / 2;
-
       outer.style.transform = `translate3d(${x}px, ${y}px, 0)`;
     };
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) visible.add(entry.target as HTMLElement);
-          else visible.delete(entry.target as HTMLElement);
+    const update = () => {
+      ticking = false;
+      const viewportCenter = window.innerHeight / 2;
+
+      let closest: HTMLElement | null = null;
+      let closestDist = Infinity;
+      for (const el of landmarks) {
+        const rect = el.getBoundingClientRect();
+        const center = rect.top + rect.height / 2;
+        const dist = Math.abs(center - viewportCenter);
+        if (dist < closestDist) {
+          closestDist = dist;
+          closest = el;
         }
-        // De entre lo que está cruzando el centro ahora mismo, salta al
-        // primero en el orden del documento (arriba del todo visible).
-        const current = landmarks.find((el) => visible.has(el));
-        if (current) moveTo(current);
-      },
-      { rootMargin: "-45% 0px -45% 0px", threshold: 0 }
-    );
+      }
 
-    landmarks.forEach((el) => observer.observe(el));
-
-    const onResize = () => {
-      const current = landmarks.find((el) => visible.has(el));
-      if (current) moveTo(current);
+      if (closest && closest !== current) {
+        current = closest;
+        moveTo(closest);
+      }
     };
-    window.addEventListener("resize", onResize, { passive: true });
 
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
+
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
     return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", onResize);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
     };
   }, [reducedMotion]);
 
@@ -100,7 +109,7 @@ export default function OliveGuide() {
 
       <style>{`
         .olive-hop {
-          transition: transform 650ms cubic-bezier(0.34, 1.56, 0.64, 1);
+          transition: transform 550ms cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         @keyframes olive-float {
           0%, 100% { transform: translateY(0px); }
