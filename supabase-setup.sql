@@ -1,0 +1,52 @@
+-- ============================================================
+-- SCA San Juan Bautista Peñolite — panel de Eva
+-- Ejecutar completo en Supabase → SQL Editor → New query → Run
+-- ============================================================
+
+-- Tarifas: una sola fila que lee la web pública y edita Eva
+create table pricing_config (
+  id int primary key default 1,
+  precio_caja_3x5l numeric not null default 85.00,
+  precio_caja_6x2l numeric not null default 69.00,
+  envio_peninsula numeric not null default 8.50,
+  envio_baleares numeric not null default 18.00,
+  envio_ue numeric not null default 35.00,
+  envio_gratis_desde numeric not null default 150.00,
+  descuento_50l_pct numeric not null default 5,
+  descuento_100l_pct numeric not null default 10,
+  updated_at timestamptz not null default now(),
+  constraint single_row check (id = 1)
+);
+insert into pricing_config (id) values (1);
+
+-- Pedidos que llegan desde el configurador de la web
+create table pedidos (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  nombre text not null,
+  email text not null,
+  telefono text not null,
+  codigo_postal text not null,
+  perfil text not null,
+  cajas_3x5l int not null default 0,
+  cajas_6x2l int not null default 0,
+  total_litros int not null,
+  destino_envio text not null,
+  subtotal numeric not null,
+  descuento numeric not null default 0,
+  portes numeric not null default 0,
+  total_estimado numeric not null,
+  estado text not null default 'pendiente'
+);
+
+alter table pricing_config enable row level security;
+alter table pedidos enable row level security;
+
+-- pricing_config: lectura pública (la necesita el configurador), escritura solo si Eva ha iniciado sesión
+create policy "pricing publico lectura" on pricing_config for select using (true);
+create policy "pricing solo eva escribe" on pricing_config for update using (auth.role() = 'authenticated');
+
+-- pedidos: cualquiera puede crear uno (el formulario público), solo Eva puede verlos/editarlos
+create policy "pedidos publico inserta" on pedidos for insert with check (true);
+create policy "pedidos solo eva lee" on pedidos for select using (auth.role() = 'authenticated');
+create policy "pedidos solo eva actualiza" on pedidos for update using (auth.role() = 'authenticated');

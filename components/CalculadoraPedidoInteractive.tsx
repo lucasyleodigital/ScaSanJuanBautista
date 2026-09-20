@@ -2,6 +2,7 @@
 
 import React, { useEffect, useId, useRef, useState } from "react";
 import { useAudio } from "./AudioEngine";
+import { supabase, DEFAULT_PRICING, type PricingConfig } from "@/lib/supabase";
 import {
   ShoppingBag,
   Send,
@@ -43,6 +44,7 @@ export default function CalculadoraPedidoInteractive() {
   const [sending, setSending] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [sendError, setSendError] = useState(false);
+  const [pricing, setPricing] = useState<PricingConfig>(DEFAULT_PRICING);
   const honeypotRef = useRef<HTMLInputElement>(null);
 
   const { playClick, playGoldDrop, playSuccess } = useAudio();
@@ -59,9 +61,23 @@ export default function CalculadoraPedidoInteractive() {
       window.removeEventListener("penolite:formato-seleccionado", onFormatoSeleccionado);
   }, []);
 
+  // Tarifas en vivo: las lee Eva desde su panel y se reflejan aquí sin
+  // tocar código. Si Supabase no responde, se usan los valores por
+  // defecto para que el configurador nunca se quede roto.
+  useEffect(() => {
+    supabase
+      .from("pricing_config")
+      .select("*")
+      .eq("id", 1)
+      .single()
+      .then(({ data, error }) => {
+        if (!error && data) setPricing(data as PricingConfig);
+      });
+  }, []);
+
   // Price calculations
-  const price5LBox = 85.0; // 3 x 5L = 15L
-  const price2LBox = 69.0; // 12 x 2L = 24L
+  const price5LBox = pricing.precio_caja_3x5l;
+  const price2LBox = pricing.precio_caja_6x2l;
 
   const totalLitros5L = qty5L * 15;
   const totalLitros2L = qty2L * 24;
@@ -70,7 +86,12 @@ export default function CalculadoraPedidoInteractive() {
   const rawSubtotal = qty5L * price5LBox + qty2L * price2LBox;
 
   // Discount for larger volume orders
-  const volumeDiscountPercent = totalLitros >= 100 ? 0.1 : totalLitros >= 50 ? 0.05 : 0;
+  const volumeDiscountPercent =
+    totalLitros >= 100
+      ? pricing.descuento_100l_pct / 100
+      : totalLitros >= 50
+      ? pricing.descuento_50l_pct / 100
+      : 0;
   const discountAmount = rawSubtotal * volumeDiscountPercent;
 
   // Shipping cost
@@ -78,12 +99,12 @@ export default function CalculadoraPedidoInteractive() {
     rawSubtotal === 0
       ? 0
       : shippingRegion === "peninsula"
-      ? rawSubtotal > 150
+      ? rawSubtotal > pricing.envio_gratis_desde
         ? 0
-        : 8.5
+        : pricing.envio_peninsula
       : shippingRegion === "baleares"
-      ? 18.0
-      : 35.0;
+      ? pricing.envio_baleares
+      : pricing.envio_ue;
 
   const finalTotal = rawSubtotal - discountAmount + shippingCost;
   const pricePerLiterAvg = totalLitros > 0 ? (rawSubtotal / totalLitros).toFixed(2) : "0.00";
@@ -163,7 +184,28 @@ export default function CalculadoraPedidoInteractive() {
     setSendError(false);
 
     try {
-      const res = await fetch("https://api.web3forms.com/submit", {
+      // El pedido en la base de datos es la fuente de verdad (lo que ve
+      // Eva en su panel) — si esto falla, se avisa al usuario. El email
+      // es solo un aviso rápido: si falla, no se bloquea el pedido, que
+      // ya ha quedado guardado.
+      const { error: dbError } = await supabase.from("pedidos").insert({
+        nombre: contact.nombre,
+        email: contact.email,
+        telefono: contact.telefono,
+        codigo_postal: contact.codigoPostal,
+        perfil: profile,
+        cajas_3x5l: qty5L,
+        cajas_6x2l: qty2L,
+        total_litros: totalLitros,
+        destino_envio: shippingRegion,
+        subtotal: Number(rawSubtotal.toFixed(2)),
+        descuento: Number(discountAmount.toFixed(2)),
+        portes: Number(shippingCost.toFixed(2)),
+        total_estimado: Number(finalTotal.toFixed(2)),
+      });
+      if (dbError) throw dbError;
+
+      fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
@@ -184,10 +226,10 @@ export default function CalculadoraPedidoInteractive() {
           portes: shippingCost.toFixed(2),
           total_estimado: finalTotal.toFixed(2),
         }),
+      }).catch(() => {
+        // El pedido ya está guardado en la base de datos; si el aviso
+        // por email falla, no pasa nada grave.
       });
-
-      const result = await res.json();
-      if (!result.success) throw new Error(result.message || "Envío rechazado");
 
       playSuccess();
       setSubmitted(true);
@@ -270,11 +312,15 @@ export default function CalculadoraPedidoInteractive() {
               <div className="flex flex-col sm:flex-row items-center justify-between p-4 rounded-xl border border-white/10 bg-white/5 hover:border-dorado/40 transition-all gap-4">
                 <div>
                   <h4 className="font-semibold text-tx-crema text-base">Caja 3 Garrafas × 5 Litros</h4>
-                  <p className="text-xs text-tx-muted mt-1">Formato familiar (15L Total) · 5,66 € / litro</p>
+                  <p className="text-xs text-tx-muted mt-1">
+                    Formato familiar (15L Total) · {(price5LBox / 15).toFixed(2).replace(".", ",")} € / litro
+                  </p>
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="text-right">
-                    <span className="block font-mono text-lg font-bold text-dorado">85,00 €</span>
+                    <span className="block font-mono text-lg font-bold text-dorado">
+                      {price5LBox.toFixed(2).replace(".", ",")} €
+                    </span>
                     <span className="text-[10px] text-tx-muted">IVA inc.</span>
                   </div>
                   <div className="flex items-center border border-white/20 rounded-lg bg-black/50">
@@ -312,11 +358,15 @@ export default function CalculadoraPedidoInteractive() {
               <div className="flex flex-col sm:flex-row items-center justify-between p-4 rounded-xl border border-white/10 bg-white/5 hover:border-dorado/40 transition-all gap-4">
                 <div>
                   <h4 className="font-semibold text-tx-crema text-base">Caja 12 Garrafas × 2 Litros</h4>
-                  <p className="text-xs text-tx-muted mt-1">Formato manejable (24L Total) · 2,88 € / litro</p>
+                  <p className="text-xs text-tx-muted mt-1">
+                    Formato manejable (24L Total) · {(price2LBox / 24).toFixed(2).replace(".", ",")} € / litro
+                  </p>
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="text-right">
-                    <span className="block font-mono text-lg font-bold text-dorado">69,00 €</span>
+                    <span className="block font-mono text-lg font-bold text-dorado">
+                      {price2LBox.toFixed(2).replace(".", ",")} €
+                    </span>
                     <span className="text-[10px] text-tx-muted">IVA inc.</span>
                   </div>
                   <div className="flex items-center border border-white/20 rounded-lg bg-black/50">

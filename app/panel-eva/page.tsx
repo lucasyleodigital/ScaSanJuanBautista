@@ -1,0 +1,369 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import type { Session } from "@supabase/supabase-js";
+import { supabase, DEFAULT_PRICING, type PricingConfig, type Pedido } from "@/lib/supabase";
+
+export default function PanelEvaPage() {
+  const [session, setSession] = useState<Session | null>(null);
+  const [checkingSession, setCheckingSession] = useState(true);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+      setCheckingSession(false);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => setSession(s));
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
+  if (checkingSession) {
+    return <CenteredScreen>Cargando…</CenteredScreen>;
+  }
+
+  return session ? <Dashboard /> : <LoginScreen />;
+}
+
+function CenteredScreen({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-negro text-tx-crema">
+      {children}
+    </div>
+  );
+}
+
+function LoginScreen() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    setLoading(false);
+    if (error) setError("Email o código de acceso incorrectos.");
+  };
+
+  return (
+    <CenteredScreen>
+      <form
+        onSubmit={handleLogin}
+        className="w-full max-w-sm rounded-2xl border border-rule bg-verde-noche/40 p-8"
+      >
+        <h1 className="mb-1 font-serif text-2xl text-tx-crema">Panel de Eva</h1>
+        <p className="mb-6 text-xs text-tx-bajo">
+          SCA San Juan Bautista de Peñolite — acceso privado
+        </p>
+
+        <label className="mb-1 block text-xs uppercase tracking-wide text-dorado">Email</label>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          className="mb-4 w-full rounded-md border border-rule bg-black/40 px-3 py-2 text-sm text-tx-crema focus:outline-none focus:border-dorado"
+        />
+
+        <label className="mb-1 block text-xs uppercase tracking-wide text-dorado">Código de acceso</label>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          className="mb-4 w-full rounded-md border border-rule bg-black/40 px-3 py-2 text-sm text-tx-crema focus:outline-none focus:border-dorado"
+        />
+
+        {error && <p className="mb-4 text-xs text-red-400">{error}</p>}
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full rounded-md bg-dorado py-2.5 text-sm font-semibold uppercase tracking-wide text-negro disabled:opacity-60"
+        >
+          {loading ? "Entrando…" : "Entrar"}
+        </button>
+      </form>
+    </CenteredScreen>
+  );
+}
+
+type Tab = "pedidos" | "clientes" | "tarifas";
+
+function Dashboard() {
+  const [tab, setTab] = useState<Tab>("pedidos");
+
+  return (
+    <div className="min-h-screen bg-negro text-tx-crema">
+      <header className="flex items-center justify-between border-b border-rule px-6 py-4">
+        <h1 className="font-serif text-xl">Panel de Eva</h1>
+        <button
+          onClick={() => supabase.auth.signOut()}
+          className="text-xs uppercase tracking-wide text-tx-bajo hover:text-dorado"
+        >
+          Cerrar sesión
+        </button>
+      </header>
+
+      <nav className="flex gap-1 border-b border-rule px-6">
+        {([
+          ["pedidos", "Pedidos"],
+          ["clientes", "Clientes"],
+          ["tarifas", "Tarifas"],
+        ] as [Tab, string][]).map(([id, label]) => (
+          <button
+            key={id}
+            onClick={() => setTab(id)}
+            className={`px-4 py-3 text-sm font-medium transition-colors ${
+              tab === id
+                ? "border-b-2 border-dorado text-dorado"
+                : "text-tx-bajo hover:text-tx-crema"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </nav>
+
+      <main className="p-6">
+        {tab === "pedidos" && <PedidosTab />}
+        {tab === "clientes" && <ClientesTab />}
+        {tab === "tarifas" && <TarifasTab />}
+      </main>
+    </div>
+  );
+}
+
+const ESTADOS: Pedido["estado"][] = ["pendiente", "confirmado", "enviado", "cancelado"];
+
+function PedidosTab() {
+  const [pedidos, setPedidos] = useState<Pedido[] | null>(null);
+  const [error, setError] = useState("");
+
+  const load = () => {
+    supabase
+      .from("pedidos")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .then(({ data, error }) => {
+        if (error) setError(error.message);
+        else setPedidos(data as Pedido[]);
+      });
+  };
+
+  useEffect(load, []);
+
+  const updateEstado = async (id: string, estado: Pedido["estado"]) => {
+    setPedidos((prev) => prev?.map((p) => (p.id === id ? { ...p, estado } : p)) ?? null);
+    await supabase.from("pedidos").update({ estado }).eq("id", id);
+  };
+
+  if (error) return <p className="text-sm text-red-400">Error: {error}</p>;
+  if (!pedidos) return <p className="text-sm text-tx-bajo">Cargando pedidos…</p>;
+  if (pedidos.length === 0) return <p className="text-sm text-tx-bajo">Todavía no hay pedidos.</p>;
+
+  return (
+    <div className="overflow-x-auto rounded-lg border border-rule">
+      <table className="w-full text-left text-sm">
+        <thead className="bg-verde-noche/60 text-xs uppercase tracking-wide text-dorado">
+          <tr>
+            <th className="p-3">Fecha</th>
+            <th className="p-3">Cliente</th>
+            <th className="p-3">Contacto</th>
+            <th className="p-3">Pedido</th>
+            <th className="p-3">Envío</th>
+            <th className="p-3">Total</th>
+            <th className="p-3">Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          {pedidos.map((p) => (
+            <tr key={p.id} className="border-t border-rule">
+              <td className="p-3 text-xs text-tx-bajo">
+                {new Date(p.created_at).toLocaleString("es-ES")}
+              </td>
+              <td className="p-3">{p.nombre}</td>
+              <td className="p-3 text-xs text-tx-medio">
+                {p.email}
+                <br />
+                {p.telefono} · {p.codigo_postal}
+              </td>
+              <td className="p-3 text-xs">
+                {p.cajas_3x5l > 0 && <div>{p.cajas_3x5l}× Caja 3x5L</div>}
+                {p.cajas_6x2l > 0 && <div>{p.cajas_6x2l}× Caja 6x2L</div>}
+                <div className="text-tx-bajo">{p.total_litros}L total</div>
+              </td>
+              <td className="p-3 text-xs uppercase text-tx-bajo">{p.destino_envio}</td>
+              <td className="p-3 font-mono text-dorado">{p.total_estimado.toFixed(2)} €</td>
+              <td className="p-3">
+                <select
+                  value={p.estado}
+                  onChange={(e) => updateEstado(p.id, e.target.value as Pedido["estado"])}
+                  className="rounded-md border border-rule bg-black/40 px-2 py-1 text-xs text-tx-crema"
+                >
+                  {ESTADOS.map((estado) => (
+                    <option key={estado} value={estado}>
+                      {estado}
+                    </option>
+                  ))}
+                </select>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function ClientesTab() {
+  const [pedidos, setPedidos] = useState<Pedido[] | null>(null);
+
+  useEffect(() => {
+    supabase
+      .from("pedidos")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .then(({ data }) => setPedidos((data as Pedido[]) ?? []));
+  }, []);
+
+  if (!pedidos) return <p className="text-sm text-tx-bajo">Cargando clientes…</p>;
+
+  const clientesMap = new Map<
+    string,
+    { nombre: string; email: string; telefono: string; pedidos: number; totalGastado: number }
+  >();
+  for (const p of pedidos) {
+    const key = p.email.toLowerCase();
+    const existing = clientesMap.get(key);
+    if (existing) {
+      existing.pedidos += 1;
+      existing.totalGastado += p.total_estimado;
+    } else {
+      clientesMap.set(key, {
+        nombre: p.nombre,
+        email: p.email,
+        telefono: p.telefono,
+        pedidos: 1,
+        totalGastado: p.total_estimado,
+      });
+    }
+  }
+  const clientes = [...clientesMap.values()].sort((a, b) => b.totalGastado - a.totalGastado);
+
+  if (clientes.length === 0) return <p className="text-sm text-tx-bajo">Todavía no hay clientes.</p>;
+
+  return (
+    <div className="overflow-x-auto rounded-lg border border-rule">
+      <table className="w-full text-left text-sm">
+        <thead className="bg-verde-noche/60 text-xs uppercase tracking-wide text-dorado">
+          <tr>
+            <th className="p-3">Nombre</th>
+            <th className="p-3">Contacto</th>
+            <th className="p-3">Pedidos</th>
+            <th className="p-3">Total gastado</th>
+          </tr>
+        </thead>
+        <tbody>
+          {clientes.map((c) => (
+            <tr key={c.email} className="border-t border-rule">
+              <td className="p-3">{c.nombre}</td>
+              <td className="p-3 text-xs text-tx-medio">
+                {c.email}
+                <br />
+                {c.telefono}
+              </td>
+              <td className="p-3">{c.pedidos}</td>
+              <td className="p-3 font-mono text-dorado">{c.totalGastado.toFixed(2)} €</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+const PRICING_FIELDS: { key: keyof PricingConfig; label: string; suffix: string }[] = [
+  { key: "precio_caja_3x5l", label: "Precio caja 3×5L", suffix: "€" },
+  { key: "precio_caja_6x2l", label: "Precio caja 6×2L", suffix: "€" },
+  { key: "envio_peninsula", label: "Envío España peninsular", suffix: "€" },
+  { key: "envio_baleares", label: "Envío Baleares/Canarias", suffix: "€" },
+  { key: "envio_ue", label: "Envío Unión Europea", suffix: "€" },
+  { key: "envio_gratis_desde", label: "Envío gratis a partir de", suffix: "€" },
+  { key: "descuento_50l_pct", label: "Descuento a partir de 50L", suffix: "%" },
+  { key: "descuento_100l_pct", label: "Descuento a partir de 100L", suffix: "%" },
+];
+
+function TarifasTab() {
+  const [pricing, setPricing] = useState<PricingConfig>(DEFAULT_PRICING);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    supabase
+      .from("pricing_config")
+      .select("*")
+      .eq("id", 1)
+      .single()
+      .then(({ data }) => {
+        if (data) setPricing(data as PricingConfig);
+        setLoading(false);
+      });
+  }, []);
+
+  const handleChange = (key: keyof PricingConfig, value: string) => {
+    setPricing((prev) => ({ ...prev, [key]: Number(value) }));
+    setSaved(false);
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    const { id, updated_at, ...fields } = pricing;
+    void id;
+    void updated_at;
+    await supabase
+      .from("pricing_config")
+      .update({ ...fields, updated_at: new Date().toISOString() })
+      .eq("id", 1);
+    setSaving(false);
+    setSaved(true);
+  };
+
+  if (loading) return <p className="text-sm text-tx-bajo">Cargando tarifas…</p>;
+
+  return (
+    <div className="max-w-2xl rounded-lg border border-rule p-6">
+      <p className="mb-6 text-xs text-tx-bajo">
+        Estos valores se reflejan al instante en el configurador de pedido de la web pública.
+      </p>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {PRICING_FIELDS.map(({ key, label, suffix }) => (
+          <div key={key}>
+            <label className="mb-1 block text-xs uppercase tracking-wide text-dorado">{label}</label>
+            <div className="flex items-center gap-2">
+              <input
+                type="number"
+                step="0.01"
+                value={pricing[key]}
+                onChange={(e) => handleChange(key, e.target.value)}
+                className="w-full rounded-md border border-rule bg-black/40 px-3 py-2 text-sm text-tx-crema focus:outline-none focus:border-dorado"
+              />
+              <span className="text-xs text-tx-bajo">{suffix}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <button
+        onClick={handleSave}
+        disabled={saving}
+        className="mt-6 rounded-md bg-dorado px-6 py-2.5 text-sm font-semibold uppercase tracking-wide text-negro disabled:opacity-60"
+      >
+        {saving ? "Guardando…" : saved ? "Guardado ✓" : "Guardar cambios"}
+      </button>
+    </div>
+  );
+}
