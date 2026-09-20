@@ -171,12 +171,12 @@ export default function HeroV2() {
       ref={heroRef}
       className="relative min-h-[120vh] flex items-center justify-center overflow-hidden bg-negro"
       style={{
-        backgroundImage: "url(/images/hero/hero-olivares-amanecer.webp)",
+        backgroundImage: "url(/images/hero/penolite-aerea.webp)",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
       role="img"
-      aria-label="Amanecer sobre el olivar de Sierra de Segura, Jaén"
+      aria-label="Vista aérea del pueblo de Peñolite rodeado de olivares, Sierra de Segura, Jaén"
     >
       {/* Dynamic Gold Particles Canvas */}
       <canvas
