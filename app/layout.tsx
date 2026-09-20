@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Fraunces } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import GrainOverlay from "@/components/GrainOverlay";
@@ -104,6 +105,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <GrainOverlay />
           <SmoothScroll>{children}</SmoothScroll>
         </AudioProvider>
+        <Analytics />
       </body>
     </html>
   );

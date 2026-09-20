@@ -124,7 +124,7 @@ export default function TerroirV2() {
               style={{
                 width: "100%",
                 height: "260px",
-                backgroundImage: 'url(/images/terroir/terroir-sierra-segura.png)',
+                backgroundImage: 'url(/images/terroir/terroir-sierra-segura.webp)',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 borderRadius: "6px",
@@ -169,7 +169,7 @@ export default function TerroirV2() {
               style={{
                 width: "100%",
                 height: "160px",
-                backgroundImage: 'url(/images/terroir/rama-aceitunas.png)',
+                backgroundImage: 'url(/images/terroir/rama-aceitunas.webp)',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 borderRadius: "6px",
@@ -214,7 +214,7 @@ export default function TerroirV2() {
               style={{
                 width: "100%",
                 height: "160px",
-                backgroundImage: 'url(/images/terroir/cooperativa-socios.jpg)',
+                backgroundImage: 'url(/images/terroir/cooperativa-socios.webp)',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 borderRadius: "6px",

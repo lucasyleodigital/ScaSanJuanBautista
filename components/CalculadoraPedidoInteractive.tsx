@@ -1,8 +1,31 @@
 "use client";
 
-import React, { useState, useId } from "react";
+import React, { useEffect, useId, useRef, useState } from "react";
 import { useAudio } from "./AudioEngine";
-import { Check, ShoppingBag, Send, PhoneCall, Award, Truck, ShieldCheck, Sparkles } from "lucide-react";
+import {
+  ShoppingBag,
+  Send,
+  PhoneCall,
+  Award,
+  Truck,
+  ShieldCheck,
+  Sparkles,
+  CheckCircle,
+  AlertCircle,
+} from "lucide-react";
+
+// Access key de Web3Forms — mismo destino que el formulario anterior
+// (sca.sanjuanbautistaonline@gmail.com), sin backend propio. Gratis
+// hasta 250 envíos/mes. Al pasar a Resend con dominio propio, solo hay
+// que cambiar el fetch de handleSubmit.
+const WEB3FORMS_ACCESS_KEY = "ce93b6c3-2a1b-4f9d-b8c9-6a8dc15e8c66";
+
+interface ContactData {
+  nombre: string;
+  email: string;
+  telefono: string;
+  codigoPostal: string;
+}
 
 export default function CalculadoraPedidoInteractive() {
   const [profile, setProfile] = useState<"particular" | "horeca" | "distribuidor">("particular");
@@ -10,7 +33,31 @@ export default function CalculadoraPedidoInteractive() {
   const [qty2L, setQty2L] = useState<number>(0);
   const [shippingRegion, setShippingRegion] = useState<"peninsula" | "baleares" | "ue">("peninsula");
 
+  const [contact, setContact] = useState<ContactData>({
+    nombre: "",
+    email: "",
+    telefono: "",
+    codigoPostal: "",
+  });
+  const [validation, setValidation] = useState<Record<string, boolean>>({});
+  const [sending, setSending] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [sendError, setSendError] = useState(false);
+  const honeypotRef = useRef<HTMLInputElement>(null);
+
   const { playClick, playGoldDrop, playSuccess } = useAudio();
+
+  // Recibe el formato elegido al pulsar "Solicitar Presupuesto" en el catálogo
+  useEffect(() => {
+    const onFormatoSeleccionado = (e: Event) => {
+      const formato = (e as CustomEvent<"3x5l" | "6x2l">).detail;
+      if (formato === "3x5l") setQty5L((prev) => Math.max(1, prev));
+      if (formato === "6x2l") setQty2L((prev) => Math.max(1, prev));
+    };
+    window.addEventListener("penolite:formato-seleccionado", onFormatoSeleccionado);
+    return () =>
+      window.removeEventListener("penolite:formato-seleccionado", onFormatoSeleccionado);
+  }, []);
 
   // Price calculations
   const price5LBox = 85.0; // 3 x 5L = 15L
@@ -53,6 +100,34 @@ export default function CalculadoraPedidoInteractive() {
   const select5LId = useId();
   const select2LId = useId();
 
+  const validateField = (name: string, value: string) => {
+    let isValid = true;
+    switch (name) {
+      case "email":
+        isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+        break;
+      case "telefono":
+        isValid = /^\d{9,}$/.test(value);
+        break;
+      case "nombre":
+        isValid = value.trim().length > 2;
+        break;
+      case "codigoPostal":
+        isValid = /^\d{5}$/.test(value);
+        break;
+      default:
+        isValid = true;
+    }
+    setValidation((prev) => ({ ...prev, [name]: isValid }));
+    return isValid;
+  };
+
+  const handleContactChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setContact((prev) => ({ ...prev, [name]: value }));
+    validateField(name, value);
+  };
+
   const generateWhatsAppLink = () => {
     playSuccess();
     const text = encodeURIComponent(
@@ -67,22 +142,70 @@ export default function CalculadoraPedidoInteractive() {
     return `https://wa.me/34953435316?text=${text}`;
   };
 
-  const generateEmailLink = () => {
-    playSuccess();
-    const subject = encodeURIComponent(`Solicitud de Pedido AOVE Peñolite - ${totalLitros}L`);
-    const body = encodeURIComponent(
-      `Estimada Cooperativa San Juan Bautista,\n\nQuisiera solicitar información sobre el siguiente pedido:\n` +
-        `- Cajas 3x5L: ${qty5L}\n` +
-        `- Cajas 12x2L: ${qty2L}\n` +
-        `- Total litros: ${totalLitros} Litros\n` +
-        `- Perfil: ${profile}\n\n` +
-        `Quedo a la espera de confirmación y datos para transferencia. Un cordial saludo.`
-    );
-    return `mailto:sca.sanjuanbautistaonline@gmail.com?subject=${subject}&body=${body}`;
+  const allContactValid =
+    contact.nombre.length > 2 &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email) &&
+    /^\d{9,}$/.test(contact.telefono) &&
+    /^\d{5}$/.test(contact.codigoPostal) &&
+    totalLitros > 0;
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!allContactValid || sending) return;
+
+    // Honeypot: si un bot rellenó este campo oculto, se descarta en silencio
+    if (honeypotRef.current?.value) {
+      setSubmitted(true);
+      return;
+    }
+
+    setSending(true);
+    setSendError(false);
+
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_ACCESS_KEY,
+          subject: `Pedido configurador — ${contact.nombre} (${totalLitros}L)`,
+          from_name: "Web SCA San Juan Bautista de Peñolite",
+          nombre: contact.nombre,
+          email: contact.email,
+          telefono: contact.telefono,
+          codigo_postal: contact.codigoPostal,
+          perfil_comprador: profile,
+          cajas_3x5l: qty5L,
+          cajas_6x2l: qty2L,
+          total_litros: totalLitros,
+          destino_envio: shippingRegion,
+          subtotal: rawSubtotal.toFixed(2),
+          descuento: discountAmount.toFixed(2),
+          portes: shippingCost.toFixed(2),
+          total_estimado: finalTotal.toFixed(2),
+        }),
+      });
+
+      const result = await res.json();
+      if (!result.success) throw new Error(result.message || "Envío rechazado");
+
+      playSuccess();
+      setSubmitted(true);
+      setSending(false);
+
+      setTimeout(() => {
+        setSubmitted(false);
+        setContact({ nombre: "", email: "", telefono: "", codigoPostal: "" });
+        setValidation({});
+      }, 4000);
+    } catch {
+      setSending(false);
+      setSendError(true);
+    }
   };
 
   return (
-    <section className="relative py-24 px-4 sm:px-6 lg:px-8 bg-negro text-tx-crema overflow-hidden">
+    <section id="formulario-contacto" className="relative py-24 px-4 sm:px-6 lg:px-8 bg-negro text-tx-crema overflow-hidden">
       {/* Background radial glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-dorado/5 rounded-full blur-[140px] pointer-events-none" />
 
@@ -101,7 +224,10 @@ export default function CalculadoraPedidoInteractive() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"
+        >
           {/* Left Column: Selector & Options */}
           <div className="lg:col-span-7 space-y-8 bg-black/40 backdrop-blur-xl border border-dorado/20 p-6 sm:p-8 rounded-2xl shadow-2xl">
             {/* Step 1: Profile Selection */}
@@ -117,6 +243,7 @@ export default function CalculadoraPedidoInteractive() {
                 ].map((item) => (
                   <button
                     key={item.id}
+                    type="button"
                     onClick={() => {
                       playClick();
                       setProfile(item.id as "particular" | "horeca" | "distribuidor");
@@ -152,6 +279,7 @@ export default function CalculadoraPedidoInteractive() {
                   </div>
                   <div className="flex items-center border border-white/20 rounded-lg bg-black/50">
                     <button
+                      type="button"
                       onClick={() => handleQtyChange("5L", -1)}
                       className="px-3 py-1 text-tx-muted hover:text-white transition-colors"
                       aria-label="Restar caja 5L"
@@ -168,6 +296,7 @@ export default function CalculadoraPedidoInteractive() {
                       className="w-10 text-center font-mono font-bold bg-transparent text-sm text-tx-crema focus:outline-none"
                     />
                     <button
+                      type="button"
                       onClick={() => handleQtyChange("5L", 1)}
                       className="px-3 py-1 text-tx-muted hover:text-white transition-colors"
                       aria-label="Sumar caja 5L"
@@ -192,6 +321,7 @@ export default function CalculadoraPedidoInteractive() {
                   </div>
                   <div className="flex items-center border border-white/20 rounded-lg bg-black/50">
                     <button
+                      type="button"
                       onClick={() => handleQtyChange("2L", -1)}
                       className="px-3 py-1 text-tx-muted hover:text-white transition-colors"
                       aria-label="Restar caja 2L"
@@ -208,6 +338,7 @@ export default function CalculadoraPedidoInteractive() {
                       className="w-10 text-center font-mono font-bold bg-transparent text-sm text-tx-crema focus:outline-none"
                     />
                     <button
+                      type="button"
                       onClick={() => handleQtyChange("2L", 1)}
                       className="px-3 py-1 text-tx-muted hover:text-white transition-colors"
                       aria-label="Sumar caja 2L"
@@ -233,6 +364,7 @@ export default function CalculadoraPedidoInteractive() {
                 ].map((item) => (
                   <button
                     key={item.id}
+                    type="button"
                     onClick={() => {
                       playClick();
                       setShippingRegion(item.id as "peninsula" | "baleares" | "ue");
@@ -246,6 +378,67 @@ export default function CalculadoraPedidoInteractive() {
                     {item.label}
                   </button>
                 ))}
+              </div>
+            </div>
+
+            {/* Step 4: Contact data */}
+            <div className="space-y-4">
+              <label className="block text-xs font-mono uppercase tracking-widest text-dorado">
+                4. Tus Datos de Contacto y Envío
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <input
+                  type="text"
+                  name="nombre"
+                  value={contact.nombre}
+                  onChange={handleContactChange}
+                  placeholder="Nombre completo"
+                  aria-label="Nombre completo"
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 text-sm text-tx-crema placeholder:text-tx-muted focus:outline-none"
+                  style={{
+                    border: `1px solid ${validation.nombre === false ? "#ff4444" : "rgba(255,255,255,0.1)"}`,
+                  }}
+                  required
+                />
+                <input
+                  type="email"
+                  name="email"
+                  value={contact.email}
+                  onChange={handleContactChange}
+                  placeholder="tu@email.com"
+                  aria-label="Email"
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 text-sm text-tx-crema placeholder:text-tx-muted focus:outline-none"
+                  style={{
+                    border: `1px solid ${validation.email === false ? "#ff4444" : "rgba(255,255,255,0.1)"}`,
+                  }}
+                  required
+                />
+                <input
+                  type="tel"
+                  name="telefono"
+                  value={contact.telefono}
+                  onChange={handleContactChange}
+                  placeholder="Teléfono"
+                  aria-label="Teléfono"
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 text-sm text-tx-crema placeholder:text-tx-muted focus:outline-none"
+                  style={{
+                    border: `1px solid ${validation.telefono === false ? "#ff4444" : "rgba(255,255,255,0.1)"}`,
+                  }}
+                  required
+                />
+                <input
+                  type="text"
+                  name="codigoPostal"
+                  value={contact.codigoPostal}
+                  onChange={handleContactChange}
+                  placeholder="Código postal"
+                  aria-label="Código postal"
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 text-sm text-tx-crema placeholder:text-tx-muted focus:outline-none"
+                  style={{
+                    border: `1px solid ${validation.codigoPostal === false ? "#ff4444" : "rgba(255,255,255,0.1)"}`,
+                  }}
+                  required
+                />
               </div>
             </div>
 
@@ -266,8 +459,19 @@ export default function CalculadoraPedidoInteractive() {
             </div>
           </div>
 
-          {/* Right Column: Dynamic Price Invoice Card */}
+          {/* Right Column: Dynamic Price Invoice Card + Submit */}
           <div className="lg:col-span-5 bg-gradient-to-b from-dorado/15 to-black border border-dorado/40 p-6 sm:p-8 rounded-2xl shadow-2xl relative">
+            {/* Honeypot antispam: invisible para personas, tentador para bots */}
+            <input
+              ref={honeypotRef}
+              type="text"
+              name="website"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px", opacity: 0 }}
+            />
+
             <div className="flex items-center justify-between border-b border-dorado/30 pb-4 mb-6">
               <div className="flex items-center gap-2">
                 <ShoppingBag className="w-5 h-5 text-dorado" />
@@ -278,80 +482,106 @@ export default function CalculadoraPedidoInteractive() {
               </span>
             </div>
 
-            {/* Breakdown List */}
-            <div className="space-y-3 font-mono text-sm mb-6">
-              <div className="flex justify-between text-tx-muted">
-                <span>Litros Totales:</span>
-                <span className="text-tx-crema font-bold">{totalLitros} Litros</span>
+            {submitted ? (
+              <div className="text-center py-10">
+                <CheckCircle size={48} className="text-dorado mx-auto mb-4" />
+                <h4 className="font-serif text-2xl text-tx-crema mb-2">¡Pedido enviado!</h4>
+                <p className="text-sm text-tx-muted">
+                  Gracias, {contact.nombre || "gracias por tu pedido"}. Nos pondremos en
+                  contacto en 24 horas para confirmar el presupuesto y el envío.
+                </p>
               </div>
-              <div className="flex justify-between text-tx-muted">
-                <span>Precio Medio / Litro:</span>
-                <span className="text-dorado">{pricePerLiterAvg} €/L</span>
-              </div>
-              <div className="flex justify-between text-tx-muted">
-                <span>Subtotal Productos:</span>
-                <span className="text-tx-crema">{rawSubtotal.toFixed(2)} €</span>
-              </div>
+            ) : (
+              <>
+                {/* Breakdown List */}
+                <div className="space-y-3 font-mono text-sm mb-6">
+                  <div className="flex justify-between text-tx-muted">
+                    <span>Litros Totales:</span>
+                    <span className="text-tx-crema font-bold">{totalLitros} Litros</span>
+                  </div>
+                  <div className="flex justify-between text-tx-muted">
+                    <span>Precio Medio / Litro:</span>
+                    <span className="text-dorado">{pricePerLiterAvg} €/L</span>
+                  </div>
+                  <div className="flex justify-between text-tx-muted">
+                    <span>Subtotal Productos:</span>
+                    <span className="text-tx-crema">{rawSubtotal.toFixed(2)} €</span>
+                  </div>
 
-              {discountAmount > 0 && (
-                <div className="flex justify-between text-emerald-400">
-                  <span>Descuento por Volumen ({(volumeDiscountPercent * 100).toFixed(0)}%):</span>
-                  <span>-{discountAmount.toFixed(2)} €</span>
-                </div>
-              )}
-
-              <div className="flex justify-between text-tx-muted">
-                <span>Portes de Envío:</span>
-                <span className="text-tx-crema">
-                  {shippingCost === 0 ? (
-                    <span className="text-emerald-400 uppercase text-xs">GRATIS</span>
-                  ) : (
-                    `${shippingCost.toFixed(2)} €`
+                  {discountAmount > 0 && (
+                    <div className="flex justify-between text-emerald-400">
+                      <span>Descuento por Volumen ({(volumeDiscountPercent * 100).toFixed(0)}%):</span>
+                      <span>-{discountAmount.toFixed(2)} €</span>
+                    </div>
                   )}
-                </span>
-              </div>
 
-              <div className="border-t border-dorado/20 pt-4 flex justify-between items-baseline">
-                <span className="font-serif text-lg text-tx-crema">Total Estimado:</span>
-                <div className="text-right">
-                  <span className="font-mono text-3xl font-extrabold text-dorado drop-shadow-[0_0_10px_rgba(200,150,30,0.5)]">
-                    {finalTotal.toFixed(2)} €
-                  </span>
-                  <span className="block text-[10px] text-tx-muted">IVA del Aceite Incluido</span>
+                  <div className="flex justify-between text-tx-muted">
+                    <span>Portes de Envío:</span>
+                    <span className="text-tx-crema">
+                      {shippingCost === 0 ? (
+                        <span className="text-emerald-400 uppercase text-xs">GRATIS</span>
+                      ) : (
+                        `${shippingCost.toFixed(2)} €`
+                      )}
+                    </span>
+                  </div>
+
+                  <div className="border-t border-dorado/20 pt-4 flex justify-between items-baseline">
+                    <span className="font-serif text-lg text-tx-crema">Total Estimado:</span>
+                    <div className="text-right">
+                      <span className="font-mono text-3xl font-extrabold text-dorado drop-shadow-[0_0_10px_rgba(200,150,30,0.5)]">
+                        {finalTotal.toFixed(2)} €
+                      </span>
+                      <span className="block text-[10px] text-tx-muted">IVA del Aceite Incluido</span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            {/* Action Buttons */}
-            <div className="space-y-3">
-              <a
-                href={generateWhatsAppLink()}
-                target="_blank"
-                rel="noopener noreferrer"
-                onMouseEnter={playGoldDrop}
-                className="w-full py-4 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-emerald-500/20 text-sm tracking-wide"
-                data-cursor="WHATSAPP"
-              >
-                <PhoneCall className="w-4 h-4" />
-                Pedir por WhatsApp (+34 953 435 316)
-              </a>
+                {/* Action Buttons */}
+                <div className="space-y-3">
+                  <button
+                    type="submit"
+                    disabled={!allContactValid || sending}
+                    className="w-full py-4 px-4 bg-dorado hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-negro font-semibold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg text-sm tracking-wide"
+                    data-cursor="ENVIAR"
+                  >
+                    <Send className="w-4 h-4" />
+                    {sending ? "Enviando..." : "Enviar Pedido"}
+                  </button>
 
-              <a
-                href={generateEmailLink()}
-                onMouseEnter={playGoldDrop}
-                className="w-full py-3.5 px-4 bg-white/10 hover:bg-white/20 border border-white/20 text-tx-crema font-medium rounded-xl flex items-center justify-center gap-2 transition-all text-xs sm:text-sm"
-                data-cursor="EMAIL"
-              >
-                <Send className="w-4 h-4 text-dorado" />
-                Pedir por Email
-              </a>
-            </div>
+                  <a
+                    href={generateWhatsAppLink()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onMouseEnter={playGoldDrop}
+                    className="w-full py-3.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-xl flex items-center justify-center gap-2 transition-all text-xs sm:text-sm"
+                    data-cursor="WHATSAPP"
+                  >
+                    <PhoneCall className="w-4 h-4" />
+                    O pedir por WhatsApp (+34 953 435 316)
+                  </a>
+                </div>
 
-            <p className="text-center text-[11px] text-tx-muted mt-4">
-              Atención directa de la cooperativa en Peñolite, Jaén. Envío protegido en caja térmica anti-roturas.
-            </p>
+                {sendError && (
+                  <div className="mt-4 flex items-start gap-2 p-3 rounded-lg border border-red-500/40 bg-red-500/10">
+                    <AlertCircle size={18} className="text-red-400 shrink-0 mt-0.5" />
+                    <p className="text-xs text-tx-muted leading-relaxed">
+                      No se ha podido enviar. Escríbenos a{" "}
+                      <a href="mailto:sca.sanjuanbautistaonline@gmail.com" className="text-dorado">
+                        sca.sanjuanbautistaonline@gmail.com
+                      </a>{" "}
+                      o usa el botón de WhatsApp.
+                    </p>
+                  </div>
+                )}
+
+                <p className="text-center text-[11px] text-tx-muted mt-4">
+                  Atención directa de la cooperativa en Peñolite, Jaén. Envío protegido en caja térmica anti-roturas.
+                </p>
+              </>
+            )}
           </div>
-        </div>
+        </form>
       </div>
     </section>
   );

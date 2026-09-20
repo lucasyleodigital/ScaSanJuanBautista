@@ -148,8 +148,8 @@ export default function CatalogV2() {
                   width: "100%",
                   height: "280px",
                   backgroundImage: product.id === "caja-3x5l"
-                    ? 'url(/images/productos/caja-3x5l.png)'
-                    : 'url(/images/productos/caja-6x2l.png)',
+                    ? 'url(/images/productos/caja-3x5l.webp)'
+                    : 'url(/images/productos/caja-6x2l.webp)',
                   backgroundSize: '180%',
                   backgroundPosition: product.id === "caja-3x5l" ? 'left center' : 'right center',
                   backgroundRepeat: 'no-repeat',

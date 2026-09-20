@@ -171,7 +171,7 @@ export default function HeroV2() {
       ref={heroRef}
       className="relative min-h-[120vh] flex items-center justify-center overflow-hidden bg-negro"
       style={{
-        backgroundImage: "url(/images/hero/hero-olivares-amanecer.png)",
+        backgroundImage: "url(/images/hero/hero-olivares-amanecer.webp)",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}

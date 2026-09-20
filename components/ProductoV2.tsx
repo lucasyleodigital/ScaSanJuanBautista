@@ -160,7 +160,7 @@ export default function ProductoV2() {
             style={{
               perspective: "1000px",
               minHeight: "440px",
-              backgroundImage: "url(/images/producto/aove-garrafa-luxury.png)",
+              backgroundImage: "url(/images/producto/aove-garrafa-luxury.webp)",
               backgroundSize: "cover",
               backgroundPosition: "center",
               border: `1px solid ${colors.rule}`,
