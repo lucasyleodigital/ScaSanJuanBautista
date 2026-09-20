@@ -1,12 +1,27 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { isReducedMotion } from "@/hooks/useReducedMotion";
 
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
   const lenisRef = useRef<Lenis | null>(null);
+  const pathname = usePathname();
+
+  // Lenis mide la altura scrolleable de la página UNA vez, al crearse —
+  // vive en el layout raíz, que no se remonta al navegar entre rutas
+  // (ej. ir a "Aviso Legal", mucho más corta, y volver a la home). Sin
+  // esto, se queda con la medida de la página anterior y no deja bajar
+  // más allá de esa altura hasta recargar a mano.
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => {
+      lenisRef.current?.resize();
+      ScrollTrigger.refresh();
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [pathname]);
 
   useEffect(() => {
     // Lenis's eased inertia is itself a motion effect — respect the OS
