@@ -3,8 +3,10 @@
 import { useEffect, useRef } from "react";
 
 /**
- * Partículas doradas en suspensión — polvo de luz / gotas de aceite
- * ascendiendo lentamente. Decoración pura, sin significado narrativo.
+ * Aceitunas doradas en suspensión — pequeños óvalos ascendiendo
+ * lentamente. Decoración pura, sin significado narrativo. La forma de
+ * aceituna es solo un óvalo (ancho algo menor que el alto con
+ * border-radius:50%), no un SVG — mismo coste que el círculo anterior.
  *
  * Movidas con requestAnimationFrame + estilo inline, NO con
  * animation-duration de CSS: Chrome/Edge, cuando el sistema tiene
@@ -39,7 +41,7 @@ interface Particle {
 function buildParticles(count: number): Particle[] {
   return Array.from({ length: count }, (_, i) => ({
     left: Math.round(seeded(i * 7.31) * 100 * 100) / 100,
-    size: Math.round((2 + seeded(i * 3.17) * 4.5) * 100) / 100,
+    size: Math.round((8 + seeded(i * 3.17) * 6) * 100) / 100,
     duration: Math.round((13 + seeded(i * 5.73) * 14) * 100) / 100,
     phase: Math.round(seeded(i * 9.29) * 100) / 100,
     opacity: Math.round((0.22 + seeded(i * 2.11) * 0.4) * 100) / 100,
@@ -47,7 +49,7 @@ function buildParticles(count: number): Particle[] {
   }));
 }
 
-export default function FloatingParticles({ count = 22 }: { count?: number }) {
+export default function FloatingParticles({ count = 14 }: { count?: number }) {
   const particlesRef = useRef<Particle[]>(buildParticles(count));
   const spanRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -125,11 +127,11 @@ export default function FloatingParticles({ count = 22 }: { count?: number }) {
             position: "absolute",
             bottom: 0,
             left: `${p.left}%`,
-            width: `${p.size}px`,
+            width: `${p.size * 0.68}px`,
             height: `${p.size}px`,
             borderRadius: "50%",
             background: `rgba(200, 150, 30, ${p.opacity})`,
-            boxShadow: `0 0 ${p.size * 3}px rgba(200, 150, 30, ${p.opacity * 0.7})`,
+            boxShadow: `0 0 ${p.size * 2}px rgba(200, 150, 30, ${p.opacity * 0.7})`,
             opacity: 0,
             willChange: "transform, opacity",
           }}
