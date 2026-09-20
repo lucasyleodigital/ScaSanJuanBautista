@@ -25,12 +25,14 @@ export default function CustomCursor() {
     let raf = 0;
     let lastHoveredElem: Element | null = null;
 
-    const applyActive = (active: boolean, text?: string) => {
+    const applyActive = (active: boolean, text?: string, compact?: boolean) => {
       if (dotInnerRef.current) {
-        dotInnerRef.current.style.transform = `scale(${active ? (text ? 0 : 2.5) : 1})`;
+        const scale = !active ? 1 : text ? 0 : compact ? 1.3 : 2.5;
+        dotInnerRef.current.style.transform = `scale(${scale})`;
       }
       if (ringInnerRef.current) {
-        ringInnerRef.current.style.transform = `scale(${active ? (text ? 2.8 : 1.8) : 1})`;
+        const scale = !active ? 1 : text ? 2.8 : compact ? 1.15 : 1.8;
+        ringInnerRef.current.style.transform = `scale(${scale})`;
       }
     };
 
@@ -55,10 +57,11 @@ export default function CustomCursor() {
 
       isActive = Boolean(active);
       const text = active?.getAttribute("data-cursor") || "";
+      const compact = active?.hasAttribute("data-cursor-compact") ?? false;
       setCursorText(text);
 
       document.body.classList.toggle("cur-active", isActive);
-      applyActive(isActive, text);
+      applyActive(isActive, text, compact);
     };
 
     const loop = () => {

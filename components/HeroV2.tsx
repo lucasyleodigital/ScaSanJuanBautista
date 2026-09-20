@@ -232,7 +232,7 @@ export default function HeroV2() {
             textShadow: "0 2px 16px rgba(0, 0, 0, 0.9)",
           }}
         >
-          Aceite Picual 100% de montaña, directo de la almazara de Peñolite a tu mesa. Con la frescura, el aroma a tomillo silvestre y la acidez más baja (&lt;0.5°).
+          Aceite Picual 100% de montaña, directo de la almazara de Peñolite a tu mesa. Con la frescura y el aroma a tomillo silvestre de recién prensado.
         </p>
 
         {/* CTAs */}

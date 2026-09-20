@@ -155,6 +155,7 @@ export default function CalculadoraPedidoInteractive() {
                       onClick={() => handleQtyChange("5L", -1)}
                       className="px-3 py-1 text-tx-muted hover:text-white transition-colors"
                       aria-label="Restar caja 5L"
+                      data-cursor-compact
                     >
                       -
                     </button>
@@ -170,6 +171,7 @@ export default function CalculadoraPedidoInteractive() {
                       onClick={() => handleQtyChange("5L", 1)}
                       className="px-3 py-1 text-tx-muted hover:text-white transition-colors"
                       aria-label="Sumar caja 5L"
+                      data-cursor-compact
                     >
                       +
                     </button>
@@ -193,6 +195,7 @@ export default function CalculadoraPedidoInteractive() {
                       onClick={() => handleQtyChange("2L", -1)}
                       className="px-3 py-1 text-tx-muted hover:text-white transition-colors"
                       aria-label="Restar caja 2L"
+                      data-cursor-compact
                     >
                       -
                     </button>
@@ -208,6 +211,7 @@ export default function CalculadoraPedidoInteractive() {
                       onClick={() => handleQtyChange("2L", 1)}
                       className="px-3 py-1 text-tx-muted hover:text-white transition-colors"
                       aria-label="Sumar caja 2L"
+                      data-cursor-compact
                     >
                       +
                     </button>
