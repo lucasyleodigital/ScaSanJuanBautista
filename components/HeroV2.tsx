@@ -6,6 +6,7 @@ import ScrollTrigger from "gsap/dist/ScrollTrigger";
 import SplitText from "gsap/dist/SplitText";
 import { colors, motion, typography } from "@/lib/design-tokens";
 import { useAudio } from "./AudioEngine";
+import FloatingParticles from "./FloatingParticles";
 import { Sparkles, Award, ArrowDownRight } from "lucide-react";
 
 if (typeof window !== "undefined") {
@@ -16,104 +17,7 @@ export default function HeroV2() {
   const heroRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const { playGoldDrop, playClick } = useAudio();
-
-  // Interactive Particle Field Canvas
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let animationFrameId: number;
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
-
-    const handleResize = () => {
-      if (!canvas) return;
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    const particles: Array<{
-      x: number;
-      y: number;
-      radius: number;
-      vx: number;
-      vy: number;
-      alpha: number;
-    }> = [];
-
-    const numParticles = Math.min(60, Math.floor(width / 25));
-    for (let i = 0; i < numParticles; i++) {
-      particles.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        radius: Math.random() * 2.5 + 1,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: -Math.random() * 0.5 - 0.2, // Upward float
-        alpha: Math.random() * 0.6 + 0.2,
-      });
-    }
-
-    let mouseX = width / 2;
-    let mouseY = height / 2;
-
-    const onPointerMove = (e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      mouseX = e.clientX - rect.left;
-      mouseY = e.clientY - rect.top;
-    };
-
-    window.addEventListener("mousemove", onPointerMove);
-
-    const render = () => {
-      ctx.clearRect(0, 0, width, height);
-
-      particles.forEach((p) => {
-        // Subtle attraction to mouse
-        const dx = mouseX - p.x;
-        const dy = mouseY - p.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 180) {
-          p.x += (dx / dist) * 0.5;
-          p.y += (dy / dist) * 0.5;
-        }
-
-        p.x += p.vx;
-        p.y += p.vy;
-
-        if (p.y < 0) {
-          p.y = height;
-          p.x = Math.random() * width;
-        }
-        if (p.x < 0) p.x = width;
-        if (p.x > width) p.x = 0;
-
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(200, 150, 30, ${p.alpha})`;
-        ctx.shadowBlur = 12;
-        ctx.shadowColor = "#C8961E";
-        ctx.fill();
-        ctx.restore();
-      });
-
-      animationFrameId = requestAnimationFrame(render);
-    };
-
-    render();
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("mousemove", onPointerMove);
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, []);
 
   // GSAP Animations
   useEffect(() => {
@@ -178,12 +82,6 @@ export default function HeroV2() {
       role="img"
       aria-label="Vista aérea del pueblo de Peñolite rodeado de olivares, Sierra de Segura, Jaén"
     >
-      {/* Dynamic Gold Particles Canvas */}
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 z-10 pointer-events-none w-full h-full"
-      />
-
       {/* Overlay cinematográfico: solo lo justo para que el texto se lea,
           sin tapar la foto real de Peñolite debajo (antes llegaba a 95%
           de opacidad + un desenfoque encima — se veía como niebla) */}
@@ -193,6 +91,10 @@ export default function HeroV2() {
           background: `linear-gradient(180deg, rgba(6, 13, 3, 0.4) 0%, rgba(6, 13, 3, 0.5) 50%, rgba(6, 13, 3, 0.7) 100%)`,
         }}
       />
+
+      {/* Va DESPUÉS del overlay en el DOM (mismo z-0) para pintarse
+          encima y que las aceitunas se vean, no debajo de la capa oscura */}
+      <FloatingParticles count={18} />
 
       <div className="relative z-20 text-center px-6 max-w-5xl mx-auto pt-16">
         {/* Eyebrow Badges */}

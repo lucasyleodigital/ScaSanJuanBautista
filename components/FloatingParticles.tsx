@@ -69,7 +69,7 @@ export default function FloatingParticles({ count = 14 }: { count?: number }) {
         const cycle = p.duration;
         const t = ((elapsed / cycle + p.phase) % 1 + 1) % 1; // 0..1, con fase inicial propia
 
-        const yPercent = -t * 115; // sube hasta -115% de su propia altura de referencia (usamos px vía contenedor)
+        const yPercent = -15 + t * 130; // cae desde -15% (justo encima) hasta +115% (justo debajo) de la sección
         const containerHeight = containerRef.current?.clientHeight || 800;
         const y = (yPercent / 100) * containerHeight;
         const x = t * p.drift;
@@ -128,7 +128,7 @@ export default function FloatingParticles({ count = 14 }: { count?: number }) {
             }}
             style={{
               position: "absolute",
-              bottom: 0,
+              top: 0,
               left: `${p.left}%`,
               width: `${w}px`,
               height: `${h}px`,
