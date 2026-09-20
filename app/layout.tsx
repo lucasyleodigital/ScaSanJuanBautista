@@ -5,6 +5,7 @@ import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import GrainOverlay from "@/components/GrainOverlay";
 import CustomCursor from "@/components/CustomCursor";
+import CookieConsent from "@/components/CookieConsent";
 import { AudioProvider } from "@/components/AudioEngine";
 
 const inter = Inter({
@@ -67,9 +68,11 @@ const organizationJsonLd = {
   email: "sanjuanbautista.sca@gmail.com",
   foundingDate: "1958",
   description: SITE_DESCRIPTION,
+  taxID: "F23006992",
   address: {
     "@type": "PostalAddress",
-    addressLocality: "Peñolite",
+    streetAddress: "Calle Peñolite, 1",
+    addressLocality: "Peñolite (Puente de Génave)",
     addressRegion: "Jaén",
     addressCountry: "ES",
   },
@@ -105,6 +108,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <GrainOverlay />
           <SmoothScroll>{children}</SmoothScroll>
         </AudioProvider>
+        <CookieConsent />
         <Analytics />
       </body>
     </html>

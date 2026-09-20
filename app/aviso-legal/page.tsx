@@ -22,12 +22,11 @@ export default function AvisoLegalPage() {
           <strong>Razón social:</strong> SCA San Juan Bautista de Peñolite
         </li>
         <li>
-          <strong>CIF:</strong> <span className="placeholder">[pendiente de completar]</span>
+          <strong>CIF:</strong> F23006992
         </li>
         <li>
-          <strong>Domicilio social:</strong>{" "}
-          <span className="placeholder">[pendiente de completar]</span>,
-          Peñolite, Jaén
+          <strong>Domicilio social:</strong> Calle Peñolite, 1, Peñolite
+          (Puente de Génave), Jaén
         </li>
         <li>
           <strong>Inscripción registral:</strong> Registro de Sociedades

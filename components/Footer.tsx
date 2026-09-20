@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 
 export default function Footer() {
@@ -50,6 +52,15 @@ export default function Footer() {
           <a href="/politica-cookies" className="no-underline transition-colors hover:text-tx-crema">
             Política de Cookies
           </a>
+          <button
+            type="button"
+            onClick={() =>
+              window.dispatchEvent(new CustomEvent("penolite:abrir-preferencias-cookies"))
+            }
+            className="no-underline transition-colors hover:text-tx-crema"
+          >
+            Preferencias de Cookies
+          </button>
         </div>
         <div className="flex flex-wrap items-center justify-between gap-4 border-t border-dorado/10 pt-7">
           <span className="text-[11px] text-tx-bajo">
