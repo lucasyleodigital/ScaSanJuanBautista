@@ -184,11 +184,13 @@ export default function HeroV2() {
         className="absolute inset-0 z-10 pointer-events-none w-full h-full"
       />
 
-      {/* Cinematic Dark Glass Overlay */}
+      {/* Overlay cinematográfico: solo lo justo para que el texto se lea,
+          sin tapar la foto real de Peñolite debajo (antes llegaba a 95%
+          de opacidad + un desenfoque encima — se veía como niebla) */}
       <div
-        className="absolute inset-0 z-0 backdrop-blur-[1px]"
+        className="absolute inset-0 z-0"
         style={{
-          background: `linear-gradient(180deg, rgba(6, 13, 3, 0.70) 0%, rgba(6, 13, 3, 0.82) 50%, rgba(6, 13, 3, 0.95) 100%)`,
+          background: `linear-gradient(180deg, rgba(6, 13, 3, 0.25) 0%, rgba(6, 13, 3, 0.35) 50%, rgba(6, 13, 3, 0.55) 100%)`,
         }}
       />
 
