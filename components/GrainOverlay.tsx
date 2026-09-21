@@ -36,7 +36,7 @@ export default function GrainOverlay() {
         imageData.data[i] = v;
         imageData.data[i + 1] = v;
         imageData.data[i + 2] = v;
-        imageData.data[i + 3] = 22;
+        imageData.data[i + 3] = 48;
       }
       frames.push(imageData);
     }
@@ -65,7 +65,7 @@ export default function GrainOverlay() {
       id="grain-overlay"
       ref={canvasRef}
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-[9998] h-full w-full opacity-[0.06]"
+      className="pointer-events-none fixed inset-0 z-[9998] h-full w-full opacity-[0.1]"
       style={{ imageRendering: "pixelated" }}
     />
   );

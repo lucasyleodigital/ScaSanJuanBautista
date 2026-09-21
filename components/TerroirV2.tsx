@@ -57,7 +57,7 @@ export default function TerroirV2() {
       ref={sectionRef}
       className="relative py-32 px-6 overflow-hidden"
       style={{
-        background: `radial-gradient(ellipse 80% 50% at 50% 0%, rgba(45, 74, 43, 0.35) 0%, ${colors.negro} 70%)`,
+        background: `radial-gradient(ellipse 80% 50% at 50% 0%, rgba(45, 74, 43, 0.22) 0%, rgba(20, 33, 12, 0.5) 40%, ${colors.negro} 75%)`,
       }}
     >
       <FloatingParticles />

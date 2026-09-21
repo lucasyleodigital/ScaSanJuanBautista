@@ -64,7 +64,7 @@ export default function FaqV2() {
       id="faq"
       className="relative py-32 px-6 overflow-hidden"
       style={{
-        background: `linear-gradient(180deg, ${colors.negro} 0%, rgba(36, 61, 15, 0.2) 100%)`,
+        background: `linear-gradient(180deg, ${colors.negro} 0%, rgba(36, 61, 15, 0.12) 100%)`,
       }}
     >
       <script

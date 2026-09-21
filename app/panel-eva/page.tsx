@@ -25,7 +25,7 @@ export default function PanelEvaPage() {
 }
 
 const PANEL_BACKGROUND =
-  "radial-gradient(ellipse 80% 50% at 50% 0%, rgba(45, 74, 43, 0.35) 0%, #060D03 60%)";
+  "radial-gradient(ellipse 80% 50% at 50% 0%, rgba(45, 74, 43, 0.22) 0%, rgba(20, 33, 12, 0.45) 40%, #060D03 70%)";
 
 function CenteredScreen({ children }: { children: React.ReactNode }) {
   return (

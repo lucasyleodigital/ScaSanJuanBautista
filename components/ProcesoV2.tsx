@@ -119,7 +119,7 @@ export default function ProcesoV2() {
       ref={sectionRef}
       className="relative py-32 px-6 overflow-hidden"
       style={{
-        background: `linear-gradient(180deg, ${colors.negro} 0%, rgba(36, 61, 15, 0.25) 50%, ${colors.negro} 100%)`,
+        background: `linear-gradient(180deg, ${colors.negro} 0%, rgba(36, 61, 15, 0.15) 50%, ${colors.negro} 100%)`,
       }}
     >
       <FloatingParticles />

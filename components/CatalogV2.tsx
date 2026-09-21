@@ -65,7 +65,7 @@ export default function CatalogV2() {
       id="productos"
       className="relative py-32 px-6 overflow-hidden"
       style={{
-        background: `radial-gradient(ellipse 80% 60% at 50% 100%, rgba(45, 74, 43, 0.3) 0%, ${colors.negro} 70%)`,
+        background: `radial-gradient(ellipse 80% 60% at 50% 100%, rgba(45, 74, 43, 0.2) 0%, rgba(20, 33, 12, 0.4) 40%, ${colors.negro} 75%)`,
       }}
     >
       {productsJsonLd.map((json, i) => (
