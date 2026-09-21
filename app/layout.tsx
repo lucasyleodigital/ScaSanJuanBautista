@@ -76,6 +76,15 @@ const organizationJsonLd = {
     addressRegion: "Jaén",
     addressCountry: "ES",
   },
+  award: [
+    "Medalla de Oro de Andalucía 2022 — Economía y Empresa (Jaencoop Grupo)",
+    "Premio Ardilla D.O. Sierra de Segura — Mejor Aceite de Oliva Virgen Extra, Campaña 2017/18",
+    "Premio Ardilla D.O. Sierra de Segura — Mejor Aceite de Oliva Virgen Extra, Campaña 2007/08",
+    "Premio Ardilla D.O. Sierra de Segura — Mayor Proporción de Aceite de Oliva Virgen Extra, Campaña 2018/19",
+    "Premio Ardilla D.O. Sierra de Segura — Mayor Proporción de Aceite Calificado, Campaña 2004/05",
+    "Premio Ardilla D.O. Sierra de Segura — 1er Accésit Mejor Depósito de Aceite Virgen Extra, Campaña 2007/08",
+    "Premio Ardilla D.O. Sierra de Segura — Accésit Mayor Proporción de Aceite de Oliva Virgen Extra, Campaña 2015/16",
+  ],
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

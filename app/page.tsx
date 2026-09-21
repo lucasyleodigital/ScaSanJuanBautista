@@ -5,6 +5,7 @@ import HeroV2 from "@/components/HeroV2";
 import TerroirV2 from "@/components/TerroirV2";
 import ProcesoV2 from "@/components/ProcesoV2";
 import ProductoV2 from "@/components/ProductoV2";
+import PremiosV2 from "@/components/PremiosV2";
 import CatalogV2 from "@/components/CatalogV2";
 import FaqV2 from "@/components/FaqV2";
 import CalculadoraPedidoInteractive from "@/components/CalculadoraPedidoInteractive";
@@ -29,6 +30,9 @@ export default function Home() {
 
         {/* CAP 4: Producto 3D y especificaciones */}
         <ProductoV2 />
+
+        {/* Premios y reconocimientos */}
+        <PremiosV2 />
 
         {/* CAP 5: Catálogo con precios y CTAs */}
         <CatalogV2 />
