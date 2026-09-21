@@ -160,7 +160,7 @@ export default function ProductoV2() {
             style={{
               perspective: "1000px",
               minHeight: "440px",
-              backgroundImage: "url(/images/productos/caja-3x5l.webp)",
+              backgroundImage: "url(/images/producto/expositor-dehesa-penolite.webp)",
               backgroundSize: "cover",
               backgroundPosition: "center",
               border: `1px solid ${colors.rule}`,
@@ -168,7 +168,7 @@ export default function ProductoV2() {
               boxShadow: "0 10px 30px rgba(200,150,30,0.25)",
             }}
             role="img"
-            aria-label="Garrafa de Aceite de Oliva Virgen Extra Picual SCA San Juan Bautista de Peñolite"
+            aria-label="Garrafas de 5L y 2L de Aceite de Oliva Virgen Extra Dehesa de Peñolite, D.O. Sierra de Segura"
           />
 
           {/* Columna derecha: Especificaciones */}
