@@ -67,7 +67,7 @@ export default function TerroirV2() {
           position: "relative",
           zIndex: 1,
           background: `linear-gradient(135deg, rgba(45, 74, 43, 0.1) 0%, transparent 100%)`,
-          padding: spacing.xxxl,
+          padding: "clamp(24px, 6vw, 80px)",
           borderRadius: "12px",
           border: `1px solid ${colors.rule}`,
         }}
