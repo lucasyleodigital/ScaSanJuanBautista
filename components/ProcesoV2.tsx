@@ -163,9 +163,9 @@ export default function ProcesoV2() {
           }}
         >
           {[
-            { src: "/images/proceso/proceso-almazara-artesanal.webp", label: "Extracción en Frío" },
-            { src: "/images/terroir/terroir-sierra-segura.webp", label: "Sierra de Segura" },
-            { src: "/images/productos/caja-6x2l.webp", label: "Envasado Garantizado" },
+            { src: "/images/proceso/recoleccion-aceituna.webp", label: "Recolección" },
+            { src: "/images/proceso/extraccion-en-frio.webp", label: "Extracción" },
+            { src: "/images/proceso/envasado-garrafas.webp", label: "Envasado" },
           ].map((img) => (
             <div
               key={img.src}
