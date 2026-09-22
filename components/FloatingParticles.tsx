@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * Aceitunas doradas en suspensión — cada una es un SVG diminuto
@@ -41,10 +41,10 @@ interface Particle {
 function buildParticles(count: number): Particle[] {
   return Array.from({ length: count }, (_, i) => ({
     left: Math.round(seeded(i * 7.31) * 100 * 100) / 100,
-    size: Math.round((8 + seeded(i * 3.17) * 6) * 100) / 100,
-    duration: Math.round((13 + seeded(i * 5.73) * 14) * 100) / 100,
+    size: Math.round((9 + seeded(i * 3.17) * 7) * 100) / 100,
+    duration: Math.round((28 + seeded(i * 5.73) * 26) * 100) / 100,
     phase: Math.round(seeded(i * 9.29) * 100) / 100,
-    opacity: Math.round((0.22 + seeded(i * 2.11) * 0.4) * 100) / 100,
+    opacity: Math.round((0.28 + seeded(i * 2.11) * 0.42) * 100) / 100,
     drift: Math.round((-30 + seeded(i * 4.47) * 60) * 100) / 100,
   }));
 }
@@ -53,6 +53,15 @@ export default function FloatingParticles({ count = 14 }: { count?: number }) {
   const particlesRef = useRef<Particle[]>(buildParticles(count));
   const spanRefs = useRef<(HTMLDivElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
   useEffect(() => {
     const particles = particlesRef.current;
@@ -76,7 +85,11 @@ export default function FloatingParticles({ count = 14 }: { count?: number }) {
 
         const fadeIn = Math.min(t / 0.08, 1);
         const fadeOut = Math.min((1 - t) / 0.08, 1);
-        const opacity = p.opacity * Math.min(fadeIn, fadeOut);
+        // Solo el envolvente de aparición/desaparición va aquí: la opacidad
+        // "de base" de cada aceituna ya está fijada en el relleno del SVG
+        // (p.opacity). Multiplicar los dos aquí daba opacidad al cuadrado
+        // (0.3 de base se quedaba en 0.09 real) — por eso apenas se veían.
+        const opacity = Math.min(fadeIn, fadeOut);
 
         el.style.transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px)`;
         el.style.opacity = opacity.toFixed(3);
@@ -118,8 +131,10 @@ export default function FloatingParticles({ count = 14 }: { count?: number }) {
       aria-hidden="true"
     >
       {particlesRef.current.map((p, i) => {
-        const w = p.size * 0.72;
-        const h = p.size * 1.35; // deja hueco arriba para el rabito/hoja
+        const effectiveSize = isMobile ? p.size * 1.55 : p.size;
+        const effectiveOpacity = isMobile ? Math.min(p.opacity * 1.35, 0.85) : p.opacity;
+        const w = effectiveSize * 0.72;
+        const h = effectiveSize * 1.35; // deja hueco arriba para el rabito/hoja
         return (
           <div
             key={i}
@@ -142,17 +157,17 @@ export default function FloatingParticles({ count = 14 }: { count?: number }) {
               viewBox="0 0 20 27"
               fill="none"
               style={{
-                filter: `drop-shadow(0 0 ${p.size * 0.6}px rgba(200, 150, 30, ${p.opacity * 0.7}))`,
+                filter: `drop-shadow(0 0 ${effectiveSize * 0.6}px rgba(200, 150, 30, ${effectiveOpacity * 0.7}))`,
               }}
             >
               {/* Cuerpo */}
-              <ellipse cx="10" cy="16" rx="6.3" ry="9" fill={`rgba(200, 150, 30, ${p.opacity})`} />
+              <ellipse cx="10" cy="16" rx="6.3" ry="9" fill={`rgba(200, 150, 30, ${effectiveOpacity})`} />
               {/* Brillo */}
-              <ellipse cx="7.8" cy="11.5" rx="1.9" ry="2.6" fill={`rgba(240, 210, 150, ${p.opacity * 0.8})`} />
+              <ellipse cx="7.8" cy="11.5" rx="1.9" ry="2.6" fill={`rgba(240, 210, 150, ${effectiveOpacity * 0.8})`} />
               {/* Rabito */}
               <path
                 d="M10 7C10 7 10.3 4 12 2.5"
-                stroke={`rgba(120, 85, 20, ${p.opacity})`}
+                stroke={`rgba(120, 85, 20, ${effectiveOpacity})`}
                 strokeWidth="1.1"
                 strokeLinecap="round"
                 fill="none"
@@ -163,7 +178,7 @@ export default function FloatingParticles({ count = 14 }: { count?: number }) {
                 cy="2.3"
                 rx="2.6"
                 ry="1.2"
-                fill={`rgba(122, 143, 62, ${p.opacity * 0.9})`}
+                fill={`rgba(122, 143, 62, ${effectiveOpacity * 0.9})`}
                 transform="rotate(-24 14.2 2.3)"
               />
             </svg>
