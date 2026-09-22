@@ -2,6 +2,8 @@ import ScrollProgress from "@/components/ScrollProgress";
 import OliveGuide from "@/components/OliveGuide";
 import Nav from "@/components/Nav";
 import HeroV2 from "@/components/HeroV2";
+import AuthorityBar from "@/components/AuthorityBar";
+import AgitacionV2 from "@/components/AgitacionV2";
 import TerroirV2 from "@/components/TerroirV2";
 import ProcesoV2 from "@/components/ProcesoV2";
 import ProductoV2 from "@/components/ProductoV2";
@@ -21,6 +23,12 @@ export default function Home() {
       <main id="contenido">
         {/* CAP 1: Hero cinematográfico */}
         <HeroV2 />
+
+        {/* Barra de autoridad: prueba social inmediata, antes de scroll profundo */}
+        <AuthorityBar />
+
+        {/* Agitación del problema: por qué importa comprar directo */}
+        <AgitacionV2 />
 
         {/* CAP 2: Terroir con 3D y bento grid */}
         <TerroirV2 />

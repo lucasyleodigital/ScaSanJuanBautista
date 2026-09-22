@@ -20,10 +20,18 @@ export default function Footer() {
                 San Juan Bautista de Peñolite
               </div>
             </div>
-            <p className="max-w-xs text-[11px] leading-relaxed text-tx-bajo">
+            <p className="mb-5 max-w-xs text-[11px] leading-relaxed text-tx-bajo">
               Cooperativa de aceite de oliva virgen extra fundada en 1958 en
               Peñolite, Sierra de Segura, Jaén.
             </p>
+            <a
+              href="/#formulario-contacto"
+              data-cursor-active
+              className="group relative inline-block overflow-hidden border border-dorado px-5 py-2.5 font-sans text-[10.5px] tracking-[0.16em] text-dorado uppercase no-underline transition-colors duration-350 hover:text-negro"
+            >
+              <span className="absolute inset-0 origin-bottom scale-y-0 bg-dorado transition-transform duration-350 ease-[cubic-bezier(.83,0,.17,1)] group-hover:scale-y-100" />
+              <span className="relative">Solicitar Pedido</span>
+            </a>
           </div>
           <FooterCol
             title="Navegación"
@@ -36,10 +44,7 @@ export default function Footer() {
           />
           <FooterCol
             title="Cooperativa"
-            links={[
-              ["Solicitar pedido", "/#formulario-contacto"],
-              ["Contacto", "/#cooperativa"],
-            ]}
+            links={[["Contacto", "/#cooperativa"]]}
           />
         </div>
         <div className="mb-7 flex flex-wrap gap-x-6 gap-y-2 border-t border-dorado/10 pt-7 text-[11px] text-tx-bajo">
