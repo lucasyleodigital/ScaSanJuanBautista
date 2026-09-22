@@ -73,15 +73,27 @@ export default function HeroV2() {
     <section
       id="inicio"
       ref={heroRef}
-      className="relative min-h-[120vh] flex items-center justify-center overflow-hidden bg-negro"
+      className="hero-bg relative min-h-[120vh] flex items-center justify-center overflow-hidden bg-negro"
       style={{
         backgroundImage: "url(/images/hero/penolite-aerea.webp)",
         backgroundSize: "cover",
-        backgroundPosition: "center",
+        backgroundPosition: "62% 46%",
       }}
       role="img"
       aria-label="Vista aérea del pueblo de Peñolite rodeado de olivares, Sierra de Segura, Jaén"
     >
+      {/* En móvil, "cover" sobre una foto panorámica dentro de un contenedor
+          tan alto (120vh) solo deja ver ~22% del ancho real de la foto —
+          se veía como un zoom exagerado sobre los tejados. Bajar la altura
+          mínima en móvil reduce cuánto hay que recortar para llenar el
+          alto, así se aprecia mucho más pueblo y valle alrededor. */}
+      <style>{`
+        @media (max-width: 767px) {
+          .hero-bg {
+            min-height: 78vh !important;
+          }
+        }
+      `}</style>
       {/* Overlay cinematográfico: solo lo justo para que el texto se lea,
           sin tapar la foto real de Peñolite debajo (antes llegaba a 95%
           de opacidad + un desenfoque encima — se veía como niebla) */}

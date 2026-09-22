@@ -52,16 +52,29 @@ export default function CierreV2() {
     <section
       id="cooperativa"
       ref={sectionRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden py-32 px-6"
+      className="cierre-bg relative min-h-screen flex items-center justify-center overflow-hidden py-32 px-6"
       style={{
         backgroundImage: "url(/images/cierre/cosecha-manos-olivas.webp)",
         backgroundSize: "cover",
-        backgroundPosition: "center",
+        backgroundPosition: "70% 55%",
         backgroundColor: colors.negro,
       }}
       role="img"
       aria-label="Agricultor de la cooperativa recogiendo aceitunas a mano"
     >
+      {/* El sujeto (manos + aceitunas) está a la derecha de la foto, no
+          centrado. Con background-position:center, en móvil "cover" solo
+          deja ver la franja central de la imagen — el olivar vacío del
+          fondo, sin las manos. Se desplaza el encuadre hacia donde está
+          el sujeto real. */}
+      <style>{`
+        @media (max-width: 767px) {
+          .cierre-bg {
+            min-height: 82vh !important;
+            background-position: 74% 58% !important;
+          }
+        }
+      `}</style>
       {/* Overlay cinematográfico */}
       <div
         style={{
