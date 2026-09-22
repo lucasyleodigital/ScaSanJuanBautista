@@ -49,7 +49,16 @@ function buildParticles(count: number): Particle[] {
   }));
 }
 
-export default function FloatingParticles({ count = 14 }: { count?: number }) {
+export default function FloatingParticles({
+  count = 14,
+  mobileCount,
+}: {
+  count?: number;
+  /** Si se indica, en móvil (<768px) se renderizan solo estas — el
+   * tamaño/opacidad se aumentan para verse bien en pantalla estrecha,
+   * así que menos cantidad evita que se amontonen visualmente. */
+  mobileCount?: number;
+}) {
   const particlesRef = useRef<Particle[]>(buildParticles(count));
   const spanRefs = useRef<(HTMLDivElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -130,7 +139,7 @@ export default function FloatingParticles({ count = 14 }: { count?: number }) {
       style={{ zIndex: 0 }}
       aria-hidden="true"
     >
-      {particlesRef.current.map((p, i) => {
+      {particlesRef.current.slice(0, isMobile && mobileCount != null ? Math.min(mobileCount, count) : count).map((p, i) => {
         const effectiveSize = isMobile ? p.size * 1.55 : p.size;
         const effectiveOpacity = isMobile ? Math.min(p.opacity * 1.35, 0.85) : p.opacity;
         const w = effectiveSize * 0.72;

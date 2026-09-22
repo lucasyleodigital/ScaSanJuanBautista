@@ -5,6 +5,7 @@ import gsap from "gsap";
 import ScrollTrigger from "gsap/dist/ScrollTrigger";
 import { CircleOff, Clock, Layers, HandCoins } from "lucide-react";
 import { colors, motion, typography, spacing } from "@/lib/design-tokens";
+import FloatingParticles from "./FloatingParticles";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -77,6 +78,7 @@ export default function AgitacionV2() {
       className="relative py-32 px-6 overflow-hidden"
       style={{ backgroundColor: colors.negro }}
     >
+      <FloatingParticles />
       <div className="relative z-10 max-w-5xl mx-auto">
         <h2
           ref={titleRef}

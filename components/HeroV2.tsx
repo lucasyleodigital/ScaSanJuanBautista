@@ -94,7 +94,7 @@ export default function HeroV2() {
 
       {/* Va DESPUÉS del overlay en el DOM (mismo z-0) para pintarse
           encima y que las aceitunas se vean, no debajo de la capa oscura */}
-      <FloatingParticles count={18} />
+      <FloatingParticles count={18} mobileCount={7} />
 
       <div className="relative z-20 text-center px-6 max-w-5xl mx-auto pt-16">
         {/* Eyebrow Badges */}
