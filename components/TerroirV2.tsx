@@ -293,7 +293,7 @@ export default function TerroirV2() {
       <style>{`
         @media (min-width: 768px) {
           .terroir-grid {
-            grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)) !important;
+            grid-template-columns: repeat(2, 1fr) !important;
           }
           .terroir-card-large {
             grid-column: span 2;
