@@ -65,7 +65,7 @@ const organizationJsonLd = {
   url: SITE_URL,
   logo: `${SITE_URL}/images/logo/icon-512.png`,
   telephone: "+34953435316",
-  email: "sanjuanbautista.sca@gmail.com",
+  email: "sca.sanjuanbautistaonline@gmail.com",
   foundingDate: "1958",
   description: SITE_DESCRIPTION,
   taxID: "F23006992",

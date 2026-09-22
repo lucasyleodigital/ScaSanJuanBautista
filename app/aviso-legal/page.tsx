@@ -34,7 +34,7 @@ export default function AvisoLegalPage() {
           <span className="placeholder">[número de inscripción pendiente]</span>
         </li>
         <li>
-          <strong>Correo electrónico:</strong> sanjuanbautista.sca@gmail.com
+          <strong>Correo electrónico:</strong> sca.sanjuanbautistaonline@gmail.com
         </li>
         <li>
           <strong>Teléfono:</strong> +34 953 435 316

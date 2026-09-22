@@ -172,7 +172,7 @@ export default function CierreV2() {
           </button>
 
           <a
-            href="mailto:sanjuanbautista.sca@gmail.com"
+            href="mailto:sca.sanjuanbautistaonline@gmail.com"
             style={{
               padding: "14px 32px",
               backgroundColor: "transparent",
@@ -244,7 +244,7 @@ export default function CierreV2() {
               Email
             </div>
             <a
-              href="mailto:sanjuanbautista.sca@gmail.com"
+              href="mailto:sca.sanjuanbautistaonline@gmail.com"
               style={{
                 color: colors.txMedio,
                 textDecoration: "none",
@@ -268,7 +268,7 @@ export default function CierreV2() {
                 });
               }}
             >
-              sanjuanbautista.sca@gmail.com
+              sca.sanjuanbautistaonline@gmail.com
             </a>
           </div>
 
