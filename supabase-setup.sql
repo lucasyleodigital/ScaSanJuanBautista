@@ -65,6 +65,12 @@ grant select, update on public.pricing_config to authenticated;
 create policy "pedidos solo eva borra" on pedidos for delete using (auth.role() = 'authenticated');
 grant delete on public.pedidos to authenticated;
 
+-- Si Eva tiene su sesion del panel abierta en el mismo navegador donde
+-- prueba el formulario público, esa peticion se hace como "authenticated",
+-- no "anon" -- sin este grant, Postgres la rechaza con "permission denied
+-- for table pedidos" aunque la política de insert ya permita cualquier rol.
+grant insert on public.pedidos to authenticated;
+
 -- ============================================================
 -- Promociones/ofertas: popups que Eva activa/desactiva desde el panel
 -- (descuentos, portes gratis, o lo que quiera anunciar)
