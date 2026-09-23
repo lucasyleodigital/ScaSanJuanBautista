@@ -13,6 +13,7 @@ import FaqV2 from "@/components/FaqV2";
 import CalculadoraPedidoInteractive from "@/components/CalculadoraPedidoInteractive";
 import CierreV2 from "@/components/CierreV2";
 import Footer from "@/components/Footer";
+import PromoPopup from "@/components/PromoPopup";
 
 export default function Home() {
   return (
@@ -55,6 +56,7 @@ export default function Home() {
         <CierreV2 />
       </main>
       <Footer />
+      <PromoPopup />
     </>
   );
 }

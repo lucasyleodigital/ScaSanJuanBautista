@@ -35,6 +35,17 @@ export const DEFAULT_PRICING: PricingConfig = {
   updated_at: "",
 };
 
+export interface Promocion {
+  id: string;
+  activo: boolean;
+  titulo: string;
+  texto: string;
+  codigo: string | null;
+  fecha_fin: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Pedido {
   id: string;
   created_at: string;

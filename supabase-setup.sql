@@ -64,3 +64,30 @@ grant select, update on public.pricing_config to authenticated;
 -- Permite a Eva borrar pedidos (p. ej. si el cliente se echa atrás)
 create policy "pedidos solo eva borra" on pedidos for delete using (auth.role() = 'authenticated');
 grant delete on public.pedidos to authenticated;
+
+-- ============================================================
+-- Promociones/ofertas: popups que Eva activa/desactiva desde el panel
+-- (descuentos, portes gratis, o lo que quiera anunciar)
+-- ============================================================
+create table promociones (
+  id uuid primary key default gen_random_uuid(),
+  activo boolean not null default false,
+  titulo text not null,
+  texto text not null,
+  codigo text,
+  fecha_fin date,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table promociones enable row level security;
+
+-- El público solo ve la que esté marcada como activa; Eva ve y gestiona todas
+create policy "promociones publico lee activas" on promociones for select using (activo = true);
+create policy "promociones eva lee todo" on promociones for select using (auth.role() = 'authenticated');
+create policy "promociones eva inserta" on promociones for insert with check (auth.role() = 'authenticated');
+create policy "promociones eva actualiza" on promociones for update using (auth.role() = 'authenticated');
+create policy "promociones eva borra" on promociones for delete using (auth.role() = 'authenticated');
+
+grant select on public.promociones to anon;
+grant select, insert, update, delete on public.promociones to authenticated;

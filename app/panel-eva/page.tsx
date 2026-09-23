@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { supabase, DEFAULT_PRICING, type PricingConfig, type Pedido } from "@/lib/supabase";
+import { supabase, DEFAULT_PRICING, type PricingConfig, type Pedido, type Promocion } from "@/lib/supabase";
 
 export default function PanelEvaPage() {
   const [session, setSession] = useState<Session | null>(null);
@@ -96,7 +96,7 @@ function LoginScreen() {
   );
 }
 
-type Tab = "pedidos" | "clientes" | "tarifas";
+type Tab = "pedidos" | "clientes" | "tarifas" | "ofertas";
 
 function Dashboard() {
   const [tab, setTab] = useState<Tab>("pedidos");
@@ -118,6 +118,7 @@ function Dashboard() {
           ["pedidos", "Pedidos"],
           ["clientes", "Clientes"],
           ["tarifas", "Tarifas"],
+          ["ofertas", "Ofertas"],
         ] as [Tab, string][]).map(([id, label]) => (
           <button
             key={id}
@@ -137,6 +138,7 @@ function Dashboard() {
         {tab === "pedidos" && <PedidosTab />}
         {tab === "clientes" && <ClientesTab />}
         {tab === "tarifas" && <TarifasTab />}
+        {tab === "ofertas" && <OfertasTab />}
       </main>
     </div>
   );
@@ -388,6 +390,180 @@ function TarifasTab() {
       >
         {saving ? "Guardando…" : saved ? "Guardado ✓" : "Guardar cambios"}
       </button>
+    </div>
+  );
+}
+
+const OFERTA_VACIA = { titulo: "", texto: "", codigo: "", fecha_fin: "" };
+
+function OfertasTab() {
+  const [ofertas, setOfertas] = useState<Promocion[] | null>(null);
+  const [error, setError] = useState("");
+  const [nueva, setNueva] = useState(OFERTA_VACIA);
+  const [creando, setCreando] = useState(false);
+
+  const load = () => {
+    supabase
+      .from("promociones")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .then(({ data, error }) => {
+        if (error) setError(error.message);
+        else setOfertas(data as Promocion[]);
+      });
+  };
+
+  useEffect(load, []);
+
+  const crearOferta = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!nueva.titulo.trim() || !nueva.texto.trim()) return;
+    setCreando(true);
+    await supabase.from("promociones").insert({
+      titulo: nueva.titulo.trim(),
+      texto: nueva.texto.trim(),
+      codigo: nueva.codigo.trim() || null,
+      fecha_fin: nueva.fecha_fin || null,
+      activo: false,
+    });
+    setNueva(OFERTA_VACIA);
+    setCreando(false);
+    load();
+  };
+
+  // Solo una oferta a la vez tiene sentido como popup en la web pública:
+  // al activar una, se desactivan automáticamente las demás.
+  const toggleActivo = async (id: string, activo: boolean) => {
+    setOfertas(
+      (prev) => prev?.map((o) => ({ ...o, activo: o.id === id ? activo : activo ? false : o.activo })) ?? null
+    );
+    if (activo) {
+      await supabase.from("promociones").update({ activo: false }).neq("id", id);
+    }
+    await supabase.from("promociones").update({ activo }).eq("id", id);
+  };
+
+  const borrarOferta = async (id: string, titulo: string) => {
+    if (!window.confirm(`¿Borrar la oferta "${titulo}"? Esta acción no se puede deshacer.`)) return;
+    setOfertas((prev) => prev?.filter((o) => o.id !== id) ?? null);
+    await supabase.from("promociones").delete().eq("id", id);
+  };
+
+  if (error) return <p className="text-sm text-red-400">Error: {error}</p>;
+
+  return (
+    <div className="flex flex-col gap-6">
+      <form
+        onSubmit={crearOferta}
+        className="flex flex-col gap-4 rounded-lg border border-rule p-6 max-w-2xl"
+      >
+        <p className="text-xs text-tx-bajo">
+          Crea la oferta y luego actívala desde la lista de abajo — solo se muestra en la web la que
+          esté marcada como activa.
+        </p>
+        <div>
+          <label className="mb-1 block text-xs uppercase tracking-wide text-dorado">Título</label>
+          <input
+            type="text"
+            value={nueva.titulo}
+            onChange={(e) => setNueva((prev) => ({ ...prev, titulo: e.target.value }))}
+            placeholder="Ej: Portes gratis esta semana"
+            className="w-full rounded-md border border-rule bg-black/40 px-3 py-2 text-sm text-tx-crema focus:outline-none focus:border-dorado"
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs uppercase tracking-wide text-dorado">Texto</label>
+          <textarea
+            value={nueva.texto}
+            onChange={(e) => setNueva((prev) => ({ ...prev, texto: e.target.value }))}
+            placeholder="Ej: Envío gratis en pedidos superiores a 50L hasta el domingo."
+            rows={2}
+            className="w-full rounded-md border border-rule bg-black/40 px-3 py-2 text-sm text-tx-crema focus:outline-none focus:border-dorado"
+          />
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div>
+            <label className="mb-1 block text-xs uppercase tracking-wide text-dorado">
+              Código (opcional)
+            </label>
+            <input
+              type="text"
+              value={nueva.codigo}
+              onChange={(e) => setNueva((prev) => ({ ...prev, codigo: e.target.value }))}
+              placeholder="Ej: PENOLITE10"
+              className="w-full rounded-md border border-rule bg-black/40 px-3 py-2 text-sm text-tx-crema focus:outline-none focus:border-dorado"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs uppercase tracking-wide text-dorado">
+              Caduca el (opcional)
+            </label>
+            <input
+              type="date"
+              value={nueva.fecha_fin}
+              onChange={(e) => setNueva((prev) => ({ ...prev, fecha_fin: e.target.value }))}
+              className="w-full rounded-md border border-rule bg-black/40 px-3 py-2 text-sm text-tx-crema focus:outline-none focus:border-dorado"
+            />
+          </div>
+        </div>
+        <button
+          type="submit"
+          disabled={creando}
+          className="self-start rounded-md bg-dorado px-6 py-2.5 text-sm font-semibold uppercase tracking-wide text-negro disabled:opacity-60"
+        >
+          {creando ? "Creando…" : "Crear oferta"}
+        </button>
+      </form>
+
+      {!ofertas ? (
+        <p className="text-sm text-tx-bajo">Cargando ofertas…</p>
+      ) : ofertas.length === 0 ? (
+        <p className="text-sm text-tx-bajo">Todavía no hay ninguna oferta creada.</p>
+      ) : (
+        <div className="overflow-x-auto rounded-lg border border-rule">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-verde-noche/60 text-xs uppercase tracking-wide text-dorado">
+              <tr>
+                <th className="p-3">Activa</th>
+                <th className="p-3">Título</th>
+                <th className="p-3">Texto</th>
+                <th className="p-3">Código</th>
+                <th className="p-3">Caduca</th>
+                <th className="p-3"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {ofertas.map((o) => (
+                <tr key={o.id} className="border-t border-rule">
+                  <td className="p-3">
+                    <input
+                      type="checkbox"
+                      checked={o.activo}
+                      onChange={(e) => toggleActivo(o.id, e.target.checked)}
+                      aria-label={`Activar oferta "${o.titulo}"`}
+                    />
+                  </td>
+                  <td className="p-3">{o.titulo}</td>
+                  <td className="p-3 max-w-xs text-xs text-tx-medio">{o.texto}</td>
+                  <td className="p-3 font-mono text-xs text-dorado">{o.codigo || "—"}</td>
+                  <td className="p-3 text-xs text-tx-bajo">
+                    {o.fecha_fin ? new Date(o.fecha_fin).toLocaleDateString("es-ES") : "—"}
+                  </td>
+                  <td className="p-3">
+                    <button
+                      onClick={() => borrarOferta(o.id, o.titulo)}
+                      className="text-xs text-red-400 hover:text-red-300"
+                      title="Borrar oferta"
+                    >
+                      Borrar
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
