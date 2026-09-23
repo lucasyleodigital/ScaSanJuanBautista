@@ -108,7 +108,7 @@ export default function HeroV2() {
           encima y que las aceitunas se vean, no debajo de la capa oscura */}
       <FloatingParticles count={18} mobileCount={7} />
 
-      <div className="relative z-20 text-center px-6 max-w-5xl mx-auto pt-16">
+      <div className="relative z-20 text-center px-6 max-w-5xl mx-auto pt-36 md:pt-16">
         {/* Eyebrow Badges */}
         <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full border border-dorado/40 bg-black/60 backdrop-blur-md mb-8">
           <Award className="w-4 h-4 text-dorado animate-pulse" />
