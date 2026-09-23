@@ -41,9 +41,9 @@ export default function Nav() {
         <Image
           src="/images/logo/logo-nav.png"
           alt="SCA San Juan Bautista de Peñolite"
-          width={44}
-          height={44}
-          className="h-9 w-9 shrink-0 md:h-11 md:w-11"
+          width={128}
+          height={128}
+          className="h-20 w-20 shrink-0 md:h-28 md:w-28"
           priority
         />
         <span className="flex flex-col gap-0.5">

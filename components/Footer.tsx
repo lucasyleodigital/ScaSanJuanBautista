@@ -8,17 +8,15 @@ export default function Footer() {
       <div className="mx-auto max-w-[1100px]">
         <div className="mb-12 grid grid-cols-1 gap-10 md:grid-cols-[2fr_1fr_1fr]">
           <div>
-            <div className="mb-3 flex items-center gap-3">
-              <Image
-                src="/images/logo/logo-footer.png"
-                alt="SCA San Juan Bautista de Peñolite"
-                width={40}
-                height={40}
-                className="h-10 w-10 shrink-0"
-              />
-              <div className="font-serif text-base text-tx-crema">
-                San Juan Bautista de Peñolite
-              </div>
+            <Image
+              src="/images/logo/logo-footer.png"
+              alt="SCA San Juan Bautista de Peñolite"
+              width={400}
+              height={400}
+              className="mb-4 h-28 w-28 shrink-0 md:h-36 md:w-36"
+            />
+            <div className="mb-3 font-serif text-base text-tx-crema">
+              San Juan Bautista de Peñolite
             </div>
             <p className="mb-5 max-w-xs text-[11px] leading-relaxed text-tx-bajo">
               Cooperativa de aceite de oliva virgen extra fundada en 1958 en
