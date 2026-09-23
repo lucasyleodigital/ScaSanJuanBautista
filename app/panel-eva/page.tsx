@@ -211,6 +211,9 @@ function PedidosTab() {
                 {p.cajas_3x5l > 0 && <div>{p.cajas_3x5l}× Caja 3x5L</div>}
                 {p.cajas_6x2l > 0 && <div>{p.cajas_6x2l}× Caja 6x2L</div>}
                 <div className="text-tx-bajo">{p.total_litros}L total</div>
+                {p.codigo_promo && (
+                  <div className="text-dorado">Código: {p.codigo_promo}</div>
+                )}
               </td>
               <td className="p-3 text-xs uppercase text-tx-bajo">{p.destino_envio}</td>
               <td className="p-3 font-mono text-dorado">{p.total_estimado.toFixed(2)} €</td>
@@ -394,13 +397,143 @@ function TarifasTab() {
   );
 }
 
-const OFERTA_VACIA = { titulo: "", texto: "", codigo: "", fecha_fin: "" };
+interface OfertaForm {
+  titulo: string;
+  texto: string;
+  codigo: string;
+  descuento_pct: string;
+  envio_gratis: boolean;
+  fecha_fin: string;
+}
+
+const OFERTA_VACIA: OfertaForm = {
+  titulo: "",
+  texto: "",
+  codigo: "",
+  descuento_pct: "",
+  envio_gratis: false,
+  fecha_fin: "",
+};
+
+function ofertaAForm(o: Promocion): OfertaForm {
+  return {
+    titulo: o.titulo,
+    texto: o.texto,
+    codigo: o.codigo ?? "",
+    descuento_pct: o.descuento_pct != null ? String(o.descuento_pct) : "",
+    envio_gratis: o.envio_gratis,
+    fecha_fin: o.fecha_fin ?? "",
+  };
+}
+
+function formACampos(f: OfertaForm) {
+  return {
+    titulo: f.titulo.trim(),
+    texto: f.texto.trim(),
+    codigo: f.codigo.trim() || null,
+    descuento_pct: f.descuento_pct.trim() ? Number(f.descuento_pct) : null,
+    envio_gratis: f.envio_gratis,
+    fecha_fin: f.fecha_fin || null,
+  };
+}
+
+function OfertaCampos({
+  value,
+  onChange,
+}: {
+  value: OfertaForm;
+  onChange: (next: OfertaForm) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-4">
+      <div>
+        <label className="mb-1 block text-xs uppercase tracking-wide text-dorado">Título</label>
+        <input
+          type="text"
+          value={value.titulo}
+          onChange={(e) => onChange({ ...value, titulo: e.target.value })}
+          placeholder="Ej: Portes gratis esta semana"
+          className="w-full rounded-md border border-rule bg-black/40 px-3 py-2 text-sm text-tx-crema focus:outline-none focus:border-dorado"
+        />
+      </div>
+      <div>
+        <label className="mb-1 block text-xs uppercase tracking-wide text-dorado">Texto</label>
+        <textarea
+          value={value.texto}
+          onChange={(e) => onChange({ ...value, texto: e.target.value })}
+          placeholder="Ej: Envío gratis en pedidos superiores a 50L hasta el domingo."
+          rows={2}
+          className="w-full rounded-md border border-rule bg-black/40 px-3 py-2 text-sm text-tx-crema focus:outline-none focus:border-dorado"
+        />
+      </div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label className="mb-1 block text-xs uppercase tracking-wide text-dorado">
+            Código para el cliente (opcional)
+          </label>
+          <input
+            type="text"
+            value={value.codigo}
+            onChange={(e) => onChange({ ...value, codigo: e.target.value })}
+            placeholder="Ej: PENOLITE10"
+            className="w-full rounded-md border border-rule bg-black/40 px-3 py-2 text-sm text-tx-crema focus:outline-none focus:border-dorado"
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs uppercase tracking-wide text-dorado">
+            Caduca el (opcional)
+          </label>
+          <input
+            type="date"
+            value={value.fecha_fin}
+            onChange={(e) => onChange({ ...value, fecha_fin: e.target.value })}
+            className="w-full rounded-md border border-rule bg-black/40 px-3 py-2 text-sm text-tx-crema focus:outline-none focus:border-dorado"
+          />
+        </div>
+      </div>
+      <p className="text-xs text-tx-bajo">
+        Si el código va con descuento o envío gratis, el configurador de pedido lo aplica
+        automáticamente cuando un cliente lo escriba — sin esto solo es un aviso informativo.
+      </p>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label className="mb-1 block text-xs uppercase tracking-wide text-dorado">
+            Descuento al aplicar el código (%, opcional)
+          </label>
+          <input
+            type="number"
+            min={0}
+            max={100}
+            step="0.1"
+            value={value.descuento_pct}
+            onChange={(e) => onChange({ ...value, descuento_pct: e.target.value })}
+            placeholder="Ej: 10"
+            className="w-full rounded-md border border-rule bg-black/40 px-3 py-2 text-sm text-tx-crema focus:outline-none focus:border-dorado"
+          />
+        </div>
+        <div className="flex items-end pb-2">
+          <label className="flex items-center gap-2 text-sm text-tx-crema">
+            <input
+              type="checkbox"
+              checked={value.envio_gratis}
+              onChange={(e) => onChange({ ...value, envio_gratis: e.target.checked })}
+            />
+            El código también da envío gratis
+          </label>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function OfertasTab() {
   const [ofertas, setOfertas] = useState<Promocion[] | null>(null);
   const [error, setError] = useState("");
-  const [nueva, setNueva] = useState(OFERTA_VACIA);
+  const [nueva, setNueva] = useState<OfertaForm>(OFERTA_VACIA);
   const [creando, setCreando] = useState(false);
+  const [editandoId, setEditandoId] = useState<string | null>(null);
+  const [editDraft, setEditDraft] = useState<OfertaForm>(OFERTA_VACIA);
+  const [guardando, setGuardando] = useState(false);
 
   const load = () => {
     supabase
@@ -419,15 +552,22 @@ function OfertasTab() {
     e.preventDefault();
     if (!nueva.titulo.trim() || !nueva.texto.trim()) return;
     setCreando(true);
-    await supabase.from("promociones").insert({
-      titulo: nueva.titulo.trim(),
-      texto: nueva.texto.trim(),
-      codigo: nueva.codigo.trim() || null,
-      fecha_fin: nueva.fecha_fin || null,
-      activo: false,
-    });
+    await supabase.from("promociones").insert({ ...formACampos(nueva), activo: false });
     setNueva(OFERTA_VACIA);
     setCreando(false);
+    load();
+  };
+
+  const empezarEdicion = (o: Promocion) => {
+    setEditandoId(o.id);
+    setEditDraft(ofertaAForm(o));
+  };
+
+  const guardarEdicion = async (id: string) => {
+    setGuardando(true);
+    await supabase.from("promociones").update(formACampos(editDraft)).eq("id", id);
+    setGuardando(false);
+    setEditandoId(null);
     load();
   };
 
@@ -461,51 +601,7 @@ function OfertasTab() {
           Crea la oferta y luego actívala desde la lista de abajo — solo se muestra en la web la que
           esté marcada como activa.
         </p>
-        <div>
-          <label className="mb-1 block text-xs uppercase tracking-wide text-dorado">Título</label>
-          <input
-            type="text"
-            value={nueva.titulo}
-            onChange={(e) => setNueva((prev) => ({ ...prev, titulo: e.target.value }))}
-            placeholder="Ej: Portes gratis esta semana"
-            className="w-full rounded-md border border-rule bg-black/40 px-3 py-2 text-sm text-tx-crema focus:outline-none focus:border-dorado"
-          />
-        </div>
-        <div>
-          <label className="mb-1 block text-xs uppercase tracking-wide text-dorado">Texto</label>
-          <textarea
-            value={nueva.texto}
-            onChange={(e) => setNueva((prev) => ({ ...prev, texto: e.target.value }))}
-            placeholder="Ej: Envío gratis en pedidos superiores a 50L hasta el domingo."
-            rows={2}
-            className="w-full rounded-md border border-rule bg-black/40 px-3 py-2 text-sm text-tx-crema focus:outline-none focus:border-dorado"
-          />
-        </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div>
-            <label className="mb-1 block text-xs uppercase tracking-wide text-dorado">
-              Código (opcional)
-            </label>
-            <input
-              type="text"
-              value={nueva.codigo}
-              onChange={(e) => setNueva((prev) => ({ ...prev, codigo: e.target.value }))}
-              placeholder="Ej: PENOLITE10"
-              className="w-full rounded-md border border-rule bg-black/40 px-3 py-2 text-sm text-tx-crema focus:outline-none focus:border-dorado"
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-xs uppercase tracking-wide text-dorado">
-              Caduca el (opcional)
-            </label>
-            <input
-              type="date"
-              value={nueva.fecha_fin}
-              onChange={(e) => setNueva((prev) => ({ ...prev, fecha_fin: e.target.value }))}
-              className="w-full rounded-md border border-rule bg-black/40 px-3 py-2 text-sm text-tx-crema focus:outline-none focus:border-dorado"
-            />
-          </div>
-        </div>
+        <OfertaCampos value={nueva} onChange={setNueva} />
         <button
           type="submit"
           disabled={creando}
@@ -520,48 +616,75 @@ function OfertasTab() {
       ) : ofertas.length === 0 ? (
         <p className="text-sm text-tx-bajo">Todavía no hay ninguna oferta creada.</p>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-rule">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-verde-noche/60 text-xs uppercase tracking-wide text-dorado">
-              <tr>
-                <th className="p-3">Activa</th>
-                <th className="p-3">Título</th>
-                <th className="p-3">Texto</th>
-                <th className="p-3">Código</th>
-                <th className="p-3">Caduca</th>
-                <th className="p-3"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {ofertas.map((o) => (
-                <tr key={o.id} className="border-t border-rule">
-                  <td className="p-3">
+        <div className="flex flex-col gap-4">
+          {ofertas.map((o) =>
+            editandoId === o.id ? (
+              <div key={o.id} className="rounded-lg border border-dorado/60 p-6 max-w-2xl">
+                <OfertaCampos value={editDraft} onChange={setEditDraft} />
+                <div className="mt-4 flex gap-3">
+                  <button
+                    onClick={() => guardarEdicion(o.id)}
+                    disabled={guardando}
+                    className="rounded-md bg-dorado px-5 py-2 text-xs font-semibold uppercase tracking-wide text-negro disabled:opacity-60"
+                  >
+                    {guardando ? "Guardando…" : "Guardar cambios"}
+                  </button>
+                  <button
+                    onClick={() => setEditandoId(null)}
+                    className="rounded-md border border-rule px-5 py-2 text-xs uppercase tracking-wide text-tx-bajo hover:text-tx-crema"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div
+                key={o.id}
+                className={`rounded-lg border p-4 flex flex-col gap-2 ${
+                  o.activo ? "border-dorado bg-dorado/5" : "border-rule"
+                }`}
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <label className="flex items-center gap-2 text-sm">
                     <input
                       type="checkbox"
                       checked={o.activo}
                       onChange={(e) => toggleActivo(o.id, e.target.checked)}
                       aria-label={`Activar oferta "${o.titulo}"`}
                     />
-                  </td>
-                  <td className="p-3">{o.titulo}</td>
-                  <td className="p-3 max-w-xs text-xs text-tx-medio">{o.texto}</td>
-                  <td className="p-3 font-mono text-xs text-dorado">{o.codigo || "—"}</td>
-                  <td className="p-3 text-xs text-tx-bajo">
-                    {o.fecha_fin ? new Date(o.fecha_fin).toLocaleDateString("es-ES") : "—"}
-                  </td>
-                  <td className="p-3">
+                    <span className="font-semibold text-tx-crema">{o.titulo}</span>
+                    {o.activo && (
+                      <span className="rounded-full bg-dorado/20 px-2 py-0.5 text-[10px] uppercase tracking-wide text-dorado">
+                        Activa en la web
+                      </span>
+                    )}
+                  </label>
+                  <div className="flex shrink-0 gap-3 text-xs">
+                    <button onClick={() => empezarEdicion(o)} className="text-dorado hover:text-amber-300">
+                      Editar
+                    </button>
                     <button
                       onClick={() => borrarOferta(o.id, o.titulo)}
-                      className="text-xs text-red-400 hover:text-red-300"
-                      title="Borrar oferta"
+                      className="text-red-400 hover:text-red-300"
                     >
                       Borrar
                     </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+                </div>
+                <p className="text-xs text-tx-medio">{o.texto}</p>
+                <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-tx-bajo">
+                  {o.codigo && (
+                    <span>
+                      Código: <span className="font-mono text-dorado">{o.codigo}</span>
+                    </span>
+                  )}
+                  {o.descuento_pct != null && <span>Descuento: {o.descuento_pct}%</span>}
+                  {o.envio_gratis && <span>Envío gratis</span>}
+                  {o.fecha_fin && <span>Caduca: {new Date(o.fecha_fin).toLocaleDateString("es-ES")}</span>}
+                </div>
+              </div>
+            )
+          )}
         </div>
       )}
     </div>

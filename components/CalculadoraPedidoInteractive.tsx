@@ -2,7 +2,7 @@
 
 import React, { useEffect, useId, useRef, useState } from "react";
 import { useAudio } from "./AudioEngine";
-import { supabase, DEFAULT_PRICING, type PricingConfig } from "@/lib/supabase";
+import { supabase, DEFAULT_PRICING, type PricingConfig, type Promocion } from "@/lib/supabase";
 import {
   ShoppingBag,
   Send,
@@ -13,6 +13,7 @@ import {
   Sparkles,
   CheckCircle,
   AlertCircle,
+  Tag,
 } from "lucide-react";
 
 // Access key de Web3Forms — mismo destino que el formulario anterior
@@ -45,6 +46,9 @@ export default function CalculadoraPedidoInteractive() {
   const [submitted, setSubmitted] = useState(false);
   const [sendError, setSendError] = useState(false);
   const [pricing, setPricing] = useState<PricingConfig>(DEFAULT_PRICING);
+  const [promoInput, setPromoInput] = useState("");
+  const [appliedPromo, setAppliedPromo] = useState<Promocion | null>(null);
+  const [promoStatus, setPromoStatus] = useState<"idle" | "checking" | "invalid">("idle");
   const honeypotRef = useRef<HTMLInputElement>(null);
 
   const { playClick, playGoldDrop, playSuccess } = useAudio();
@@ -94,8 +98,13 @@ export default function CalculadoraPedidoInteractive() {
       : 0;
   const discountAmount = rawSubtotal * volumeDiscountPercent;
 
+  // Descuento del código promocional (independiente del descuento por volumen)
+  const promoDiscountAmount = appliedPromo?.descuento_pct
+    ? rawSubtotal * (appliedPromo.descuento_pct / 100)
+    : 0;
+
   // Shipping cost
-  const shippingCost =
+  const baseShippingCost =
     rawSubtotal === 0
       ? 0
       : shippingRegion === "peninsula"
@@ -105,9 +114,41 @@ export default function CalculadoraPedidoInteractive() {
       : shippingRegion === "baleares"
       ? pricing.envio_baleares
       : pricing.envio_ue;
+  const shippingCost = appliedPromo?.envio_gratis ? 0 : baseShippingCost;
 
-  const finalTotal = rawSubtotal - discountAmount + shippingCost;
+  const finalTotal = rawSubtotal - discountAmount - promoDiscountAmount + shippingCost;
   const pricePerLiterAvg = totalLitros > 0 ? (rawSubtotal / totalLitros).toFixed(2) : "0.00";
+
+  const handleApplyPromo = async () => {
+    const codigo = promoInput.trim();
+    if (!codigo) return;
+    playClick();
+    setPromoStatus("checking");
+    const { data } = await supabase
+      .from("promociones")
+      .select("*")
+      .eq("activo", true)
+      .ilike("codigo", codigo)
+      .maybeSingle();
+
+    const promo = data as Promocion | null;
+    const caducado = promo?.fecha_fin ? new Date(promo.fecha_fin) < new Date() : false;
+
+    if (promo && !caducado) {
+      setAppliedPromo(promo);
+      setPromoStatus("idle");
+      playSuccess();
+    } else {
+      setAppliedPromo(null);
+      setPromoStatus("invalid");
+    }
+  };
+
+  const quitarPromo = () => {
+    setAppliedPromo(null);
+    setPromoInput("");
+    setPromoStatus("idle");
+  };
 
   const handleQtyChange = (type: "5L" | "2L", delta: number) => {
     playClick();
@@ -157,6 +198,7 @@ export default function CalculadoraPedidoInteractive() {
         `- Cajas 2L (6x2L=12L): ${qty2L} (${qty2L * price2LBox}€)\n` +
         `- Total Litros: ${totalLitros} L\n` +
         `- Envío a: ${shippingRegion.toUpperCase()}\n` +
+        (appliedPromo ? `- Código de descuento: ${appliedPromo.codigo}\n` : "") +
         `- Importe Estimado: ${finalTotal.toFixed(2)}€\n\n` +
         `Por favor indicadme disponibilidad y forma de pago. Gracias.`
     );
@@ -199,9 +241,10 @@ export default function CalculadoraPedidoInteractive() {
         total_litros: totalLitros,
         destino_envio: shippingRegion,
         subtotal: Number(rawSubtotal.toFixed(2)),
-        descuento: Number(discountAmount.toFixed(2)),
+        descuento: Number((discountAmount + promoDiscountAmount).toFixed(2)),
         portes: Number(shippingCost.toFixed(2)),
         total_estimado: Number(finalTotal.toFixed(2)),
+        codigo_promo: appliedPromo?.codigo ?? null,
       });
       if (dbError) throw dbError;
 
@@ -222,7 +265,8 @@ export default function CalculadoraPedidoInteractive() {
           total_litros: totalLitros,
           destino_envio: shippingRegion,
           subtotal: rawSubtotal.toFixed(2),
-          descuento: discountAmount.toFixed(2),
+          descuento: (discountAmount + promoDiscountAmount).toFixed(2),
+          codigo_promo: appliedPromo?.codigo ?? "ninguno",
           portes: shippingCost.toFixed(2),
           total_estimado: finalTotal.toFixed(2),
         }),
@@ -239,6 +283,7 @@ export default function CalculadoraPedidoInteractive() {
         setSubmitted(false);
         setContact({ nombre: "", email: "", telefono: "", codigoPostal: "" });
         setValidation({});
+        quitarPromo();
       }, 4000);
     } catch {
       setSending(false);
@@ -543,6 +588,63 @@ export default function CalculadoraPedidoInteractive() {
               </div>
             ) : (
               <>
+                {/* Código de descuento */}
+                <div className="mb-6">
+                  {appliedPromo ? (
+                    <div className="flex items-center justify-between gap-3 p-3 rounded-xl border border-emerald-500/40 bg-emerald-500/10">
+                      <div className="flex items-center gap-2 text-xs text-emerald-300">
+                        <Tag className="w-4 h-4 shrink-0" />
+                        <span>
+                          Código <span className="font-mono font-bold">{appliedPromo.codigo}</span> aplicado
+                          {appliedPromo.descuento_pct ? ` · -${appliedPromo.descuento_pct}%` : ""}
+                          {appliedPromo.envio_gratis ? " · envío gratis" : ""}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={quitarPromo}
+                        className="text-xs text-tx-muted hover:text-white shrink-0"
+                        data-cursor-compact
+                      >
+                        Quitar
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <label className="block text-xs font-mono uppercase tracking-widest text-dorado mb-2">
+                        ¿Tienes un código de descuento?
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={promoInput}
+                          onChange={(e) => {
+                            setPromoInput(e.target.value);
+                            if (promoStatus === "invalid") setPromoStatus("idle");
+                          }}
+                          placeholder="Ej: PENOLITE10"
+                          className="flex-1 min-w-0 px-4 py-2.5 rounded-xl bg-white/5 text-sm text-tx-crema placeholder:text-tx-muted focus:outline-none"
+                          style={{
+                            border: `1px solid ${promoStatus === "invalid" ? "#ff4444" : "rgba(255,255,255,0.1)"}`,
+                          }}
+                        />
+                        <button
+                          type="button"
+                          onClick={handleApplyPromo}
+                          disabled={!promoInput.trim() || promoStatus === "checking"}
+                          className="px-4 py-2.5 rounded-xl border border-dorado/50 text-dorado text-xs font-semibold uppercase tracking-wide hover:bg-dorado/10 disabled:opacity-50 shrink-0"
+                          data-cursor-compact
+                        >
+                          {promoStatus === "checking" ? "..." : "Aplicar"}
+                        </button>
+                      </div>
+                      {promoStatus === "invalid" && (
+                        <p className="mt-1.5 text-xs text-red-400">Código no válido o caducado.</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+
                 {/* Breakdown List */}
                 <div className="space-y-3 font-mono text-sm mb-6">
                   <div className="flex justify-between text-tx-muted">
@@ -562,6 +664,13 @@ export default function CalculadoraPedidoInteractive() {
                     <div className="flex justify-between text-emerald-400">
                       <span>Descuento por Volumen ({(volumeDiscountPercent * 100).toFixed(0)}%):</span>
                       <span>-{discountAmount.toFixed(2)} €</span>
+                    </div>
+                  )}
+
+                  {promoDiscountAmount > 0 && (
+                    <div className="flex justify-between text-emerald-400">
+                      <span>Código {appliedPromo?.codigo} ({appliedPromo?.descuento_pct}%):</span>
+                      <span>-{promoDiscountAmount.toFixed(2)} €</span>
                     </div>
                   )}
 

@@ -91,3 +91,14 @@ create policy "promociones eva borra" on promociones for delete using (auth.role
 
 grant select on public.promociones to anon;
 grant select, insert, update, delete on public.promociones to authenticated;
+
+-- ============================================================
+-- Ampliación: que un código de oferta aplique un descuento real o
+-- envío gratis en el configurador, y quede registrado en el pedido
+-- ============================================================
+alter table promociones
+  add column if not exists descuento_pct numeric,
+  add column if not exists envio_gratis boolean not null default false;
+
+alter table pedidos
+  add column if not exists codigo_promo text;

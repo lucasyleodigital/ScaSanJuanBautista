@@ -41,6 +41,8 @@ export interface Promocion {
   titulo: string;
   texto: string;
   codigo: string | null;
+  descuento_pct: number | null;
+  envio_gratis: boolean;
   fecha_fin: string | null;
   created_at: string;
   updated_at: string;
@@ -63,4 +65,5 @@ export interface Pedido {
   portes: number;
   total_estimado: number;
   estado: "pendiente" | "confirmado" | "enviado" | "cancelado";
+  codigo_promo: string | null;
 }
