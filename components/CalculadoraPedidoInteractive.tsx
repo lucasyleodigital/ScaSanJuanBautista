@@ -193,7 +193,7 @@ export default function CalculadoraPedidoInteractive() {
   const generateWhatsAppLink = () => {
     playSuccess();
     const text = encodeURIComponent(
-      `Hola SCA San Juan Bautista Peñolite 👋\nMe gustaría realizar un pedido:\n\n` +
+      `Hola SCA San Juan Bautista Peñolite,\nMe gustaría realizar un pedido:\n\n` +
         `- Cajas 5L (3x5L=15L): ${qty5L} (${qty5L * price5LBox}€)\n` +
         `- Cajas 2L (6x2L=12L): ${qty2L} (${qty2L * price2LBox}€)\n` +
         `- Total Litros: ${totalLitros} L\n` +
@@ -202,7 +202,7 @@ export default function CalculadoraPedidoInteractive() {
         `- Importe Estimado: ${finalTotal.toFixed(2)}€\n\n` +
         `Por favor indicadme disponibilidad y forma de pago. Gracias.`
     );
-    return `https://wa.me/34953435316?text=${text}`;
+    return `https://wa.me/34620022801?text=${text}`;
   };
 
   const allContactValid =
@@ -717,7 +717,7 @@ export default function CalculadoraPedidoInteractive() {
                     data-cursor="WHATSAPP"
                   >
                     <PhoneCall className="w-4 h-4" />
-                    O pedir por WhatsApp (+34 953 435 316)
+                    O pedir por WhatsApp (+34 620 022 801)
                   </a>
                 </div>
 

@@ -136,7 +136,7 @@ export default function ProcesoV2() {
             fontVariationSettings: '"wght" 500',
           }}
         >
-          De Oliva a Gota: Cuidado Obsesivo
+          De Oliva a Gota: Cuidado Artesanal
         </h2>
 
         <p
