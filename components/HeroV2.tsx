@@ -148,7 +148,7 @@ export default function HeroV2() {
             textShadow: "0 2px 16px rgba(0, 0, 0, 0.9)",
           }}
         >
-          Aceite Picual 100% de montaña, directo de la almazara de Peñolite a tu mesa. Con la frescura y el aroma a tomillo silvestre de recién prensado.
+          Aceite de Oliva Virgen Extra Dehesa de Peñolite. Picual 100% de montaña, D.O. Sierra de Segura, Jaén — con el aroma a tomillo silvestre de recién prensado.
         </p>
 
         {/* CTAs */}

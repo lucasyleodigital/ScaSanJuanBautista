@@ -20,13 +20,25 @@ const fraunces = Fraunces({
 });
 
 const SITE_URL = "https://web-cinematic-lucasyleo-projects.vercel.app";
-const SITE_DESCRIPTION =
+
+// Título y descripción indexados por buscadores: priorizan las búsquedas
+// exactas de marca/zona (Peñolite, Dehesa de Peñolite, Sierra de Segura,
+// Jaén) porque es literalmente lo que la gente teclea en Google/Bing.
+const SEO_TITLE =
+  "Dehesa de Peñolite — Aceite de Oliva Virgen Extra D.O. Sierra de Segura, Jaén";
+const SEO_DESCRIPTION =
+  "Aceite de oliva virgen extra Picual, Dehesa de Peñolite, D.O. Sierra de Segura, Jaén. Directo de la cooperativa desde 1958, sin intermediarios.";
+
+// Título y descripción para compartir en redes (Facebook/X/WhatsApp): aquí
+// el mensaje que más hace clicar es el diferenciador, no las palabras clave.
+const SOCIAL_TITLE = "AOVE Picual Directo del Agricultor, Sin Intermediarios";
+const SOCIAL_DESCRIPTION =
   "AOVE Picual 100%, D.O. Sierra de Segura, directo de la cooperativa desde 1958. Sin intermediarios: tu dinero llega a los agricultores, no a la distribución.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "AOVE Picual Directo del Agricultor, Sin Intermediarios | SCA Peñolite",
-  description: SITE_DESCRIPTION,
+  title: SEO_TITLE,
+  description: SEO_DESCRIPTION,
   alternates: {
     canonical: "/",
   },
@@ -42,8 +54,8 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   openGraph: {
-    title: "AOVE Picual Directo del Agricultor, Sin Intermediarios",
-    description: SITE_DESCRIPTION,
+    title: SOCIAL_TITLE,
+    description: SOCIAL_DESCRIPTION,
     url: SITE_URL,
     siteName: "SCA San Juan Bautista de Peñolite",
     images: [{ url: "/og-image.png", width: 1200, height: 630 }],
@@ -52,8 +64,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "AOVE Picual Directo del Agricultor, Sin Intermediarios",
-    description: SITE_DESCRIPTION,
+    title: SOCIAL_TITLE,
+    description: SOCIAL_DESCRIPTION,
     images: ["/og-image.png"],
   },
 };
@@ -62,12 +74,13 @@ const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "SCA San Juan Bautista de Peñolite",
+  alternateName: "Dehesa de Peñolite",
   url: SITE_URL,
   logo: `${SITE_URL}/images/logo/icon-512.png`,
   telephone: "+34953435316",
   email: "sca.sanjuanbautistaonline@gmail.com",
   foundingDate: "1958",
-  description: SITE_DESCRIPTION,
+  description: SEO_DESCRIPTION,
   taxID: "F23006992",
   address: {
     "@type": "PostalAddress",

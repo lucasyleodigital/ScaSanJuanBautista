@@ -1,9 +1,10 @@
 # SCA San Juan Bautista de Peñolite
 
-> Cooperativa oleícola fundada en 1958 en Peñolite (Puente de Génave), Sierra de Segura, Jaén, España. 500 familias socias venden aceite de oliva virgen extra Picual 100%, D.O. Sierra de Segura, directamente al consumidor y a hostelería, sin intermediarios ni distribuidoras.
+> Cooperativa oleícola fundada en 1958 en Peñolite (Puente de Génave), Sierra de Segura, Jaén, España. 500 familias socias venden aceite de oliva virgen extra Picual 100%, D.O. Sierra de Segura, directamente al consumidor y a hostelería, sin intermediarios ni distribuidoras. El aceite se comercializa bajo el nombre de marca "Dehesa de Peñolite", impreso en las garrafas.
 
 ## Datos clave
 
+- Marca comercial: Dehesa de Peñolite
 - Variedad: Picual 100%
 - Denominación de Origen: D.O. Sierra de Segura
 - Altitud del olivar: 840 metros
