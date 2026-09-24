@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useAudio } from "./AudioEngine";
 
 export default function CustomCursor() {
@@ -11,6 +12,10 @@ export default function CustomCursor() {
   const labelRef = useRef<HTMLSpanElement>(null);
   const [cursorText, setCursorText] = useState<string>("");
   const { playHover } = useAudio();
+  // El anillo exterior no encaja en un panel de administración: se queda
+  // solo el punto, que es un cursor normal y no distrae.
+  const pathname = usePathname();
+  const showRing = !pathname?.startsWith("/panel-eva");
 
   useEffect(() => {
     if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
@@ -102,26 +107,28 @@ export default function CustomCursor() {
         />
       </div>
 
-      <div
-        id="custom-cursor-ring"
-        ref={ringOuterRef}
-        aria-hidden="true"
-        className="pointer-events-none fixed top-0 left-0 z-[9998] hidden h-10 w-10 pointer-fine:block"
-      >
+      {showRing && (
         <div
-          ref={ringInnerRef}
-          className="relative flex h-full w-full items-center justify-center rounded-full border border-dorado/60 bg-dorado/5 backdrop-blur-[2px] transition-[transform,border-color,background-color] duration-300 [.cur-active_&]:border-dorado [.cur-active_&]:bg-dorado/20"
+          id="custom-cursor-ring"
+          ref={ringOuterRef}
+          aria-hidden="true"
+          className="pointer-events-none fixed top-0 left-0 z-[9998] hidden h-10 w-10 pointer-fine:block"
         >
-          {cursorText && (
-            <span
-              ref={labelRef}
-              className="px-1 text-[9px] font-bold tracking-widest text-tx-crema uppercase animate-fade-in"
-            >
-              {cursorText}
-            </span>
-          )}
+          <div
+            ref={ringInnerRef}
+            className="relative flex h-full w-full items-center justify-center rounded-full border border-dorado/60 bg-dorado/5 backdrop-blur-[2px] transition-[transform,border-color,background-color] duration-300 [.cur-active_&]:border-dorado [.cur-active_&]:bg-dorado/20"
+          >
+            {cursorText && (
+              <span
+                ref={labelRef}
+                className="px-1 text-[9px] font-bold tracking-widest text-tx-crema uppercase animate-fade-in"
+              >
+                {cursorText}
+              </span>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 }
