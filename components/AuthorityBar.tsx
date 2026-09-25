@@ -5,7 +5,7 @@ import { colors, typography, spacing } from "@/lib/design-tokens";
 
 const items = [
   { icon: Medal, label: "Medalla de Oro Andalucía 2022" },
-  { icon: Award, label: "7 Premios Ardilla D.O. Sierra de Segura" },
+  { icon: Award, label: "6 Premios Ardilla D.O. Sierra de Segura" },
   { icon: CalendarDays, label: "Cooperativa desde 1958" },
   { icon: Users, label: "500 Familias Socias" },
 ];
