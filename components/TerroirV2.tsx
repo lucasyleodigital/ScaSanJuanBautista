@@ -98,7 +98,7 @@ export default function TerroirV2() {
             lineHeight: "1.7",
           }}
         >
-          Sierra de Segura, 840 metros donde la montaña respira. Inviernos que bajan de 0°C y veranos que superan los 40°C: esa oscilación extrema es lo que hace que el Picual de Peñolite sea inigualable. Suelo volcánico, agua mineral perfecta, clima salvaje. La naturaleza hizo su obra maestra. Nosotros solo la cultivamos con respeto.
+          Sierra de Segura, 840 metros donde la montaña respira. Inviernos que bajan de 0°C y veranos que superan los 40°C: esa oscilación extrema es lo que hace que el Picual de Peñolite sea inigualable. Suelo calizo de sierra kárstica, agua de montaña, clima salvaje. La naturaleza hizo su obra maestra. Nosotros solo la cultivamos con respeto.
         </p>
 
         {/* Bento Grid */}
