@@ -114,25 +114,28 @@ export default function CalculadoraPedidoInteractive() {
     : 0;
 
   // Provincia detectada por el código postal (solo para envíos a España) y
-  // su precio real, editable por Eva desde el panel. Mientras el código
-  // postal no tenga 2 dígitos válidos, se usa la tarifa por defecto.
+  // su precio real, editable por Eva desde el panel. Hasta que el código
+  // postal no resuelve una provincia real, el envío se considera
+  // "desconocido" — no se muestra ni se suma un precio adivinado.
   const provinciaDetectada = destino === "espana" ? getProvinciaFromCP(contact.codigoPostal) : null;
   const precioEnvioEspana = provinciaDetectada
     ? provincias?.find((p) => p.provincia === provinciaDetectada)?.precio ?? pricing.envio_peninsula
-    : pricing.envio_peninsula;
+    : null;
   const destinoEnvioLabel =
     destino === "espana" ? provinciaDetectada ?? "España" : "Internacional (UE)";
+  const envioConocido = destino === "internacional" || precioEnvioEspana !== null;
 
   // Shipping cost
   const baseShippingCost =
-    rawSubtotal === 0
+    rawSubtotal === 0 || !envioConocido
       ? 0
       : destino === "espana"
       ? rawSubtotal > pricing.envio_gratis_desde
         ? 0
-        : precioEnvioEspana
+        : (precioEnvioEspana as number)
       : pricing.envio_ue;
   const shippingCost = appliedPromo?.envio_gratis ? 0 : baseShippingCost;
+  const portesPendientes = rawSubtotal > 0 && !envioConocido;
 
   const finalTotal = rawSubtotal - discountAmount - promoDiscountAmount + shippingCost;
   const pricePerLiterAvg = totalLitros > 0 ? (rawSubtotal / totalLitros).toFixed(2) : "0.00";
@@ -493,7 +496,7 @@ export default function CalculadoraPedidoInteractive() {
               </div>
               {destino === "espana" && (
                 <p className="mt-2 text-[11px] text-tx-muted">
-                  {provinciaDetectada
+                  {provinciaDetectada && precioEnvioEspana !== null
                     ? `Envío a ${provinciaDetectada}: ${precioEnvioEspana.toFixed(2)} €`
                     : "Escribe tu código postal más abajo para calcular el envío exacto de tu provincia."}
                 </p>
@@ -701,7 +704,9 @@ export default function CalculadoraPedidoInteractive() {
                   <div className="flex justify-between text-tx-muted">
                     <span>Portes de Envío:</span>
                     <span className="text-tx-crema">
-                      {shippingCost === 0 ? (
+                      {portesPendientes ? (
+                        <span className="text-tx-muted text-xs normal-case">Según código postal</span>
+                      ) : shippingCost === 0 ? (
                         <span className="text-emerald-400 uppercase text-xs">GRATIS</span>
                       ) : (
                         `${shippingCost.toFixed(2)} €`
@@ -715,7 +720,9 @@ export default function CalculadoraPedidoInteractive() {
                       <span className="font-mono text-3xl font-extrabold text-dorado drop-shadow-[0_0_10px_rgba(200,150,30,0.5)]">
                         {finalTotal.toFixed(2)} €
                       </span>
-                      <span className="block text-[10px] text-tx-muted">IVA del Aceite Incluido</span>
+                      <span className="block text-[10px] text-tx-muted">
+                        {portesPendientes ? "IVA incluido · portes aparte" : "IVA del Aceite Incluido"}
+                      </span>
                     </div>
                   </div>
                 </div>
