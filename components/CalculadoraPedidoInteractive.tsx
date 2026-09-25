@@ -14,6 +14,7 @@ import {
   CheckCircle,
   AlertCircle,
   Tag,
+  Smartphone,
 } from "lucide-react";
 
 // Access key de Web3Forms — mismo destino que el formulario anterior
@@ -720,6 +721,13 @@ export default function CalculadoraPedidoInteractive() {
                     O pedir por WhatsApp (+34 620 022 801)
                   </a>
                 </div>
+
+                <p className="text-center text-[11px] text-tx-muted mt-3">
+                  <Smartphone className="w-3 h-3 inline-block mr-1 -mt-0.5 text-dorado" />
+                  ¿Prefieres Bizum? Envía el importe al{" "}
+                  <span className="text-dorado font-medium">620 022 801</span> y avísanos por
+                  WhatsApp para confirmar tu pedido.
+                </p>
 
                 {sendError && (
                   <div className="mt-4 flex items-start gap-2 p-3 rounded-lg border border-red-500/40 bg-red-500/10">
