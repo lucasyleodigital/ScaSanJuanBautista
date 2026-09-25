@@ -756,7 +756,7 @@ export default function CalculadoraPedidoInteractive() {
                   <Smartphone className="w-3 h-3 inline-block mr-1 -mt-0.5 text-dorado" />
                   ¿Prefieres Bizum? Envía el importe al{" "}
                   <span className="text-dorado font-medium">620 022 801</span> y avísanos por
-                  WhatsApp para confirmar tu pedido.
+                  WhatsApp indicando tu nombre y apellido para confirmar tu pedido.
                 </p>
 
                 {sendError && (
