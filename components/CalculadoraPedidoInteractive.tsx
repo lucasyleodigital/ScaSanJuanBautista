@@ -26,6 +26,7 @@ const WEB3FORMS_ACCESS_KEY = "ce93b6c3-2a1b-4f9d-b8c9-6a8dc15e8c66";
 
 interface ContactData {
   nombre: string;
+  apellidos: string;
   email: string;
   telefono: string;
   codigoPostal: string;
@@ -40,6 +41,7 @@ export default function CalculadoraPedidoInteractive() {
 
   const [contact, setContact] = useState<ContactData>({
     nombre: "",
+    apellidos: "",
     email: "",
     telefono: "",
     codigoPostal: "",
@@ -193,7 +195,10 @@ export default function CalculadoraPedidoInteractive() {
         isValid = /^\d{9,}$/.test(value);
         break;
       case "nombre":
-        isValid = value.trim().length > 2;
+        isValid = value.trim().length > 1;
+        break;
+      case "apellidos":
+        isValid = value.trim().length > 1;
         break;
       case "codigoPostal":
         isValid = /^\d{5}$/.test(value);
@@ -226,8 +231,11 @@ export default function CalculadoraPedidoInteractive() {
     return `https://wa.me/34620022801?text=${text}`;
   };
 
+  const nombreCompleto = `${contact.nombre.trim()} ${contact.apellidos.trim()}`.trim();
+
   const allContactValid =
-    contact.nombre.length > 2 &&
+    contact.nombre.trim().length > 1 &&
+    contact.apellidos.trim().length > 1 &&
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email) &&
     /^\d{9,}$/.test(contact.telefono) &&
     /^\d{5}$/.test(contact.codigoPostal) &&
@@ -252,7 +260,7 @@ export default function CalculadoraPedidoInteractive() {
       // es solo un aviso rápido: si falla, no se bloquea el pedido, que
       // ya ha quedado guardado.
       const { error: dbError } = await supabase.from("pedidos").insert({
-        nombre: contact.nombre,
+        nombre: nombreCompleto,
         email: contact.email,
         telefono: contact.telefono,
         codigo_postal: contact.codigoPostal,
@@ -274,9 +282,9 @@ export default function CalculadoraPedidoInteractive() {
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
           access_key: WEB3FORMS_ACCESS_KEY,
-          subject: `Pedido configurador — ${contact.nombre} (${totalLitros}L)`,
+          subject: `Pedido configurador — ${nombreCompleto} (${totalLitros}L)`,
           from_name: "Web SCA San Juan Bautista de Peñolite",
-          nombre: contact.nombre,
+          nombre: nombreCompleto,
           email: contact.email,
           telefono: contact.telefono,
           codigo_postal: contact.codigoPostal,
@@ -302,7 +310,7 @@ export default function CalculadoraPedidoInteractive() {
 
       setTimeout(() => {
         setSubmitted(false);
-        setContact({ nombre: "", email: "", telefono: "", codigoPostal: "" });
+        setContact({ nombre: "", apellidos: "", email: "", telefono: "", codigoPostal: "" });
         setValidation({});
         quitarPromo();
       }, 4000);
@@ -514,11 +522,24 @@ export default function CalculadoraPedidoInteractive() {
                   name="nombre"
                   value={contact.nombre}
                   onChange={handleContactChange}
-                  placeholder="Nombre completo"
-                  aria-label="Nombre completo"
+                  placeholder="Nombre"
+                  aria-label="Nombre"
                   className="w-full px-4 py-3 rounded-xl bg-white/5 text-sm text-tx-crema placeholder:text-tx-muted focus:outline-none"
                   style={{
                     border: `1px solid ${validation.nombre === false ? "#ff4444" : "rgba(255,255,255,0.1)"}`,
+                  }}
+                  required
+                />
+                <input
+                  type="text"
+                  name="apellidos"
+                  value={contact.apellidos}
+                  onChange={handleContactChange}
+                  placeholder="Apellidos"
+                  aria-label="Apellidos"
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 text-sm text-tx-crema placeholder:text-tx-muted focus:outline-none"
+                  style={{
+                    border: `1px solid ${validation.apellidos === false ? "#ff4444" : "rgba(255,255,255,0.1)"}`,
                   }}
                   required
                 />
