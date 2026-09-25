@@ -48,6 +48,13 @@ export interface Promocion {
   updated_at: string;
 }
 
+export interface Provincia {
+  id: number;
+  provincia: string;
+  precio: number;
+  updated_at: string;
+}
+
 export interface Pedido {
   id: string;
   created_at: string;

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { supabase, DEFAULT_PRICING, type PricingConfig, type Pedido, type Promocion } from "@/lib/supabase";
+import { supabase, DEFAULT_PRICING, type PricingConfig, type Pedido, type Promocion, type Provincia } from "@/lib/supabase";
 
 export default function PanelEvaPage() {
   const [session, setSession] = useState<Session | null>(null);
@@ -96,7 +96,7 @@ function LoginScreen() {
   );
 }
 
-type Tab = "pedidos" | "clientes" | "tarifas" | "ofertas";
+type Tab = "pedidos" | "clientes" | "tarifas" | "envios" | "ofertas";
 
 function Dashboard() {
   const [tab, setTab] = useState<Tab>("pedidos");
@@ -118,6 +118,7 @@ function Dashboard() {
           ["pedidos", "Pedidos"],
           ["clientes", "Clientes"],
           ["tarifas", "Tarifas"],
+          ["envios", "Envíos"],
           ["ofertas", "Ofertas"],
         ] as [Tab, string][]).map(([id, label]) => (
           <button
@@ -138,6 +139,7 @@ function Dashboard() {
         {tab === "pedidos" && <PedidosTab />}
         {tab === "clientes" && <ClientesTab />}
         {tab === "tarifas" && <TarifasTab />}
+        {tab === "envios" && <EnviosTab />}
         {tab === "ofertas" && <OfertasTab />}
       </main>
     </div>
@@ -317,9 +319,7 @@ function ClientesTab() {
 const PRICING_FIELDS: { key: keyof PricingConfig; label: string; suffix: string }[] = [
   { key: "precio_caja_3x5l", label: "Precio caja 3×5L", suffix: "€" },
   { key: "precio_caja_6x2l", label: "Precio caja 6×2L", suffix: "€" },
-  { key: "envio_peninsula", label: "Envío España peninsular", suffix: "€" },
-  { key: "envio_baleares", label: "Envío Baleares/Canarias", suffix: "€" },
-  { key: "envio_ue", label: "Envío Unión Europea", suffix: "€" },
+  { key: "envio_ue", label: "Envío fuera de España (UE)", suffix: "€" },
   { key: "envio_gratis_desde", label: "Envío gratis a partir de", suffix: "€" },
   { key: "descuento_50l_pct", label: "Descuento a partir de 50L", suffix: "%" },
   { key: "descuento_100l_pct", label: "Descuento a partir de 100L", suffix: "%" },
@@ -366,7 +366,8 @@ function TarifasTab() {
   return (
     <div className="max-w-2xl rounded-lg border border-rule p-6">
       <p className="mb-6 text-xs text-tx-bajo">
-        Estos valores se reflejan al instante en el configurador de pedido de la web pública.
+        Estos valores se reflejan al instante en el configurador de pedido de la web pública. Los
+        portes dentro de España se gestionan por provincia en la pestaña "Envíos".
       </p>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {PRICING_FIELDS.map(({ key, label, suffix }) => (
@@ -384,6 +385,122 @@ function TarifasTab() {
             </div>
           </div>
         ))}
+      </div>
+
+      <button
+        onClick={handleSave}
+        disabled={saving}
+        className="mt-6 rounded-md bg-dorado px-6 py-2.5 text-sm font-semibold uppercase tracking-wide text-negro disabled:opacity-60"
+      >
+        {saving ? "Guardando…" : saved ? "Guardado ✓" : "Guardar cambios"}
+      </button>
+    </div>
+  );
+}
+
+function EnviosTab() {
+  const [provincias, setProvincias] = useState<Provincia[] | null>(null);
+  const [precios, setPrecios] = useState<Record<number, string>>({});
+  const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [filtro, setFiltro] = useState("");
+
+  useEffect(() => {
+    supabase
+      .from("envio_provincias")
+      .select("*")
+      .order("provincia", { ascending: true })
+      .then(({ data, error }) => {
+        if (error) {
+          setError(error.message);
+          return;
+        }
+        const rows = data as Provincia[];
+        setProvincias(rows);
+        setPrecios(Object.fromEntries(rows.map((p) => [p.id, String(p.precio)])));
+      });
+  }, []);
+
+  const handleChange = (id: number, value: string) => {
+    setPrecios((prev) => ({ ...prev, [id]: value }));
+    setSaved(false);
+  };
+
+  const handleSave = async () => {
+    if (!provincias) return;
+    setSaving(true);
+    const updates = provincias
+      .filter((p) => Number(precios[p.id]) !== p.precio)
+      .map((p) =>
+        supabase
+          .from("envio_provincias")
+          .update({ precio: Number(precios[p.id]), updated_at: new Date().toISOString() })
+          .eq("id", p.id)
+      );
+    await Promise.all(updates);
+    setSaving(false);
+    setSaved(true);
+  };
+
+  if (error) return <p className="text-sm text-red-400">Error: {error}</p>;
+  if (!provincias) return <p className="text-sm text-tx-bajo">Cargando envíos…</p>;
+
+  const visibles = provincias.filter((p) =>
+    p.provincia.toLowerCase().includes(filtro.toLowerCase())
+  );
+
+  return (
+    <div className="max-w-2xl rounded-lg border border-rule p-6">
+      <p className="mb-4 text-xs text-tx-bajo">
+        Precio de envío para cada provincia española. El configurador de la web detecta la
+        provincia automáticamente a partir del código postal que escribe el cliente. Envío fuera
+        de España (Unión Europea) se gestiona en la pestaña "Tarifas".
+      </p>
+
+      <input
+        type="text"
+        value={filtro}
+        onChange={(e) => setFiltro(e.target.value)}
+        placeholder="Buscar provincia…"
+        className="mb-4 w-full rounded-md border border-rule bg-black/40 px-3 py-2 text-sm text-tx-crema focus:outline-none focus:border-dorado"
+      />
+
+      <div className="max-h-[420px] overflow-y-auto rounded-md border border-rule">
+        <table className="w-full text-left text-sm">
+          <thead className="sticky top-0 bg-verde-noche/90 text-xs uppercase tracking-wide text-dorado">
+            <tr>
+              <th className="p-3">Provincia</th>
+              <th className="p-3">Precio</th>
+            </tr>
+          </thead>
+          <tbody>
+            {visibles.map((p) => (
+              <tr key={p.id} className="border-t border-rule">
+                <td className="p-3">{p.provincia}</td>
+                <td className="p-3">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={precios[p.id] ?? ""}
+                      onChange={(e) => handleChange(p.id, e.target.value)}
+                      className="w-24 rounded-md border border-rule bg-black/40 px-2 py-1 text-sm text-tx-crema focus:outline-none focus:border-dorado"
+                    />
+                    <span className="text-xs text-tx-bajo">€</span>
+                  </div>
+                </td>
+              </tr>
+            ))}
+            {visibles.length === 0 && (
+              <tr>
+                <td colSpan={2} className="p-3 text-xs text-tx-bajo">
+                  No se encuentra ninguna provincia con ese nombre.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
 
       <button

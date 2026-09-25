@@ -2,7 +2,8 @@
 
 import React, { useEffect, useId, useRef, useState } from "react";
 import { useAudio } from "./AudioEngine";
-import { supabase, DEFAULT_PRICING, type PricingConfig, type Promocion } from "@/lib/supabase";
+import { supabase, DEFAULT_PRICING, type PricingConfig, type Promocion, type Provincia } from "@/lib/supabase";
+import { getProvinciaFromCP } from "@/lib/provincias";
 import {
   ShoppingBag,
   Send,
@@ -34,7 +35,8 @@ export default function CalculadoraPedidoInteractive() {
   const [profile, setProfile] = useState<"particular" | "horeca" | "distribuidor">("particular");
   const [qty5L, setQty5L] = useState<number>(1);
   const [qty2L, setQty2L] = useState<number>(0);
-  const [shippingRegion, setShippingRegion] = useState<"peninsula" | "baleares" | "ue">("peninsula");
+  const [destino, setDestino] = useState<"espana" | "internacional">("espana");
+  const [provincias, setProvincias] = useState<Provincia[] | null>(null);
 
   const [contact, setContact] = useState<ContactData>({
     nombre: "",
@@ -78,6 +80,13 @@ export default function CalculadoraPedidoInteractive() {
       .then(({ data, error }) => {
         if (!error && data) setPricing(data as PricingConfig);
       });
+
+    supabase
+      .from("envio_provincias")
+      .select("*")
+      .then(({ data, error }) => {
+        if (!error && data) setProvincias(data as Provincia[]);
+      });
   }, []);
 
   // Price calculations
@@ -104,16 +113,24 @@ export default function CalculadoraPedidoInteractive() {
     ? rawSubtotal * (appliedPromo.descuento_pct / 100)
     : 0;
 
+  // Provincia detectada por el código postal (solo para envíos a España) y
+  // su precio real, editable por Eva desde el panel. Mientras el código
+  // postal no tenga 2 dígitos válidos, se usa la tarifa por defecto.
+  const provinciaDetectada = destino === "espana" ? getProvinciaFromCP(contact.codigoPostal) : null;
+  const precioEnvioEspana = provinciaDetectada
+    ? provincias?.find((p) => p.provincia === provinciaDetectada)?.precio ?? pricing.envio_peninsula
+    : pricing.envio_peninsula;
+  const destinoEnvioLabel =
+    destino === "espana" ? provinciaDetectada ?? "España" : "Internacional (UE)";
+
   // Shipping cost
   const baseShippingCost =
     rawSubtotal === 0
       ? 0
-      : shippingRegion === "peninsula"
+      : destino === "espana"
       ? rawSubtotal > pricing.envio_gratis_desde
         ? 0
-        : pricing.envio_peninsula
-      : shippingRegion === "baleares"
-      ? pricing.envio_baleares
+        : precioEnvioEspana
       : pricing.envio_ue;
   const shippingCost = appliedPromo?.envio_gratis ? 0 : baseShippingCost;
 
@@ -198,7 +215,7 @@ export default function CalculadoraPedidoInteractive() {
         `- Cajas 5L (3x5L=15L): ${qty5L} (${qty5L * price5LBox}€)\n` +
         `- Cajas 2L (6x2L=12L): ${qty2L} (${qty2L * price2LBox}€)\n` +
         `- Total Litros: ${totalLitros} L\n` +
-        `- Envío a: ${shippingRegion.toUpperCase()}\n` +
+        `- Envío a: ${destinoEnvioLabel}\n` +
         (appliedPromo ? `- Código de descuento: ${appliedPromo.codigo}\n` : "") +
         `- Importe Estimado: ${finalTotal.toFixed(2)}€\n\n` +
         `Por favor indicadme disponibilidad y forma de pago. Gracias.`
@@ -240,7 +257,7 @@ export default function CalculadoraPedidoInteractive() {
         cajas_3x5l: qty5L,
         cajas_6x2l: qty2L,
         total_litros: totalLitros,
-        destino_envio: shippingRegion,
+        destino_envio: destinoEnvioLabel,
         subtotal: Number(rawSubtotal.toFixed(2)),
         descuento: Number((discountAmount + promoDiscountAmount).toFixed(2)),
         portes: Number(shippingCost.toFixed(2)),
@@ -264,7 +281,7 @@ export default function CalculadoraPedidoInteractive() {
           cajas_3x5l: qty5L,
           cajas_6x2l: qty2L,
           total_litros: totalLitros,
-          destino_envio: shippingRegion,
+          destino_envio: destinoEnvioLabel,
           subtotal: rawSubtotal.toFixed(2),
           descuento: (discountAmount + promoDiscountAmount).toFixed(2),
           codigo_promo: appliedPromo?.codigo ?? "ninguno",
@@ -452,21 +469,20 @@ export default function CalculadoraPedidoInteractive() {
               <label className="block text-xs font-mono uppercase tracking-widest text-dorado mb-3">
                 3. Destino de Envío
               </label>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 {[
-                  { id: "peninsula", label: "España Peninsular" },
-                  { id: "baleares", label: "Baleares / Canarias" },
-                  { id: "ue", label: "Unión Europea" },
+                  { id: "espana", label: "España" },
+                  { id: "internacional", label: "Fuera de España (UE)" },
                 ].map((item) => (
                   <button
                     key={item.id}
                     type="button"
                     onClick={() => {
                       playClick();
-                      setShippingRegion(item.id as "peninsula" | "baleares" | "ue");
+                      setDestino(item.id as "espana" | "internacional");
                     }}
                     className={`py-2.5 px-2 rounded-xl border text-xs font-medium transition-all text-center ${
-                      shippingRegion === item.id
+                      destino === item.id
                         ? "border-dorado bg-dorado/20 text-white"
                         : "border-white/10 bg-white/5 text-tx-muted hover:border-dorado/40"
                     }`}
@@ -475,6 +491,13 @@ export default function CalculadoraPedidoInteractive() {
                   </button>
                 ))}
               </div>
+              {destino === "espana" && (
+                <p className="mt-2 text-[11px] text-tx-muted">
+                  {provinciaDetectada
+                    ? `Envío a ${provinciaDetectada}: ${precioEnvioEspana.toFixed(2)} €`
+                    : "Escribe tu código postal más abajo para calcular el envío exacto de tu provincia."}
+                </p>
+              )}
             </div>
 
             {/* Step 4: Contact data */}

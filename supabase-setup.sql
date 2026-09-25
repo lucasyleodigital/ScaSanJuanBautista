@@ -108,3 +108,38 @@ alter table promociones
 
 alter table pedidos
   add column if not exists codigo_promo text;
+
+-- ============================================================
+-- Envío por provincia: cada una de las 52 provincias españolas tiene su
+-- propio precio de portes, editable por Eva. El configurador deriva la
+-- provincia automáticamente del código postal que escribe el cliente.
+-- ============================================================
+create table envio_provincias (
+  id serial primary key,
+  provincia text not null unique,
+  precio numeric not null default 8.50,
+  updated_at timestamptz not null default now()
+);
+
+insert into envio_provincias (provincia, precio) values
+  ('Álava', 8.50), ('Albacete', 8.50), ('Alicante', 8.50), ('Almería', 8.50),
+  ('Ávila', 8.50), ('Badajoz', 8.50), ('Baleares', 18.00), ('Barcelona', 8.50),
+  ('Burgos', 8.50), ('Cáceres', 8.50), ('Cádiz', 8.50), ('Castellón', 8.50),
+  ('Ciudad Real', 8.50), ('Córdoba', 8.50), ('A Coruña', 8.50), ('Cuenca', 8.50),
+  ('Girona', 8.50), ('Granada', 8.50), ('Guadalajara', 8.50), ('Guipúzcoa', 8.50),
+  ('Huelva', 8.50), ('Huesca', 8.50), ('Jaén', 8.50), ('León', 8.50),
+  ('Lleida', 8.50), ('La Rioja', 8.50), ('Lugo', 8.50), ('Madrid', 8.50),
+  ('Málaga', 8.50), ('Murcia', 8.50), ('Navarra', 8.50), ('Ourense', 8.50),
+  ('Asturias', 8.50), ('Palencia', 8.50), ('Las Palmas', 18.00), ('Pontevedra', 8.50),
+  ('Salamanca', 8.50), ('Santa Cruz de Tenerife', 18.00), ('Cantabria', 8.50), ('Segovia', 8.50),
+  ('Sevilla', 8.50), ('Soria', 8.50), ('Tarragona', 8.50), ('Teruel', 8.50),
+  ('Toledo', 8.50), ('Valencia', 8.50), ('Valladolid', 8.50), ('Vizcaya', 8.50),
+  ('Zamora', 8.50), ('Zaragoza', 8.50), ('Ceuta', 18.00), ('Melilla', 18.00);
+
+alter table envio_provincias enable row level security;
+
+create policy "envio publico lee" on envio_provincias for select using (true);
+create policy "envio eva actualiza" on envio_provincias for update using (auth.role() = 'authenticated');
+
+grant select on public.envio_provincias to anon;
+grant select, update on public.envio_provincias to authenticated;

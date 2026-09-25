@@ -68,11 +68,12 @@ export default function PoliticaPrivacidadPage() {
       <h2>5. ¿A quién cedemos tus datos?</h2>
       <p>
         No cedemos tus datos a terceros, salvo obligación legal. Para el
-        envío técnico de los correos generados por el formulario podemos
-        apoyarnos en un proveedor de mensajería transaccional (por ejemplo,
-        Resend), que actúa como encargado del tratamiento y solo procesa los
-        datos estrictamente necesarios para hacer llegar el correo a su
-        destino.
+        envío técnico de los correos generados por el formulario nos
+        apoyamos en un proveedor de mensajería transaccional (Web3Forms),
+        que actúa como encargado del tratamiento y solo procesa los datos
+        estrictamente necesarios para hacer llegar el correo a su destino.
+        Los pedidos y sus datos de contacto también se guardan en una base
+        de datos (Supabase) para que la cooperativa pueda gestionarlos.
       </p>
 
       <h2>6. ¿Cuánto tiempo conservamos tus datos?</h2>
