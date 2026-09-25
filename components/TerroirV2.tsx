@@ -153,7 +153,7 @@ export default function TerroirV2() {
                 lineHeight: "1.6",
               }}
             >
-              840 metros de altura. Noches frías, días ardientes. El estrés térmico extremo fuerza al Picual a producir polifenoles antioxidantes poderosos. Por eso nuestro aceite es intenso, vivo, con sabor que perdura.
+              840 metros de altura. Noches frías, días ardientes. El contraste térmico de nuestra sierra favorece que el Picual concentre polifenoles: compuestos naturales antioxidantes propios del olivo. Por eso nuestro aceite es intenso, vivo y con un sabor que perdura.
             </p>
           </div>
 
