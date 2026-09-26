@@ -29,6 +29,8 @@ interface ContactData {
   apellidos: string;
   email: string;
   telefono: string;
+  direccion: string;
+  localidad: string;
   codigoPostal: string;
 }
 
@@ -44,6 +46,8 @@ export default function CalculadoraPedidoInteractive() {
     apellidos: "",
     email: "",
     telefono: "",
+    direccion: "",
+    localidad: "",
     codigoPostal: "",
   });
   const [validation, setValidation] = useState<Record<string, boolean>>({});
@@ -54,6 +58,7 @@ export default function CalculadoraPedidoInteractive() {
   const [promoInput, setPromoInput] = useState("");
   const [appliedPromo, setAppliedPromo] = useState<Promocion | null>(null);
   const [promoStatus, setPromoStatus] = useState<"idle" | "checking" | "invalid">("idle");
+  const [bizumCopiado, setBizumCopiado] = useState(false);
   const honeypotRef = useRef<HTMLInputElement>(null);
 
   const { playClick, playGoldDrop, playSuccess } = useAudio();
@@ -200,6 +205,12 @@ export default function CalculadoraPedidoInteractive() {
       case "apellidos":
         isValid = value.trim().length > 1;
         break;
+      case "direccion":
+        isValid = value.trim().length > 4;
+        break;
+      case "localidad":
+        isValid = value.trim().length > 1;
+        break;
       case "codigoPostal":
         isValid = /^\d{5}$/.test(value);
         break;
@@ -231,6 +242,18 @@ export default function CalculadoraPedidoInteractive() {
     return `https://wa.me/34620022801?text=${text}`;
   };
 
+  const handleCopyBizum = async () => {
+    playClick();
+    try {
+      await navigator.clipboard.writeText("620022801");
+      setBizumCopiado(true);
+      setTimeout(() => setBizumCopiado(false), 2500);
+    } catch {
+      // Si el navegador bloquea el portapapeles, el número ya está visible
+      // en el propio botón — no hace falta más.
+    }
+  };
+
   const nombreCompleto = `${contact.nombre.trim()} ${contact.apellidos.trim()}`.trim();
 
   const allContactValid =
@@ -238,6 +261,8 @@ export default function CalculadoraPedidoInteractive() {
     contact.apellidos.trim().length > 1 &&
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact.email) &&
     /^\d{9,}$/.test(contact.telefono) &&
+    contact.direccion.trim().length > 4 &&
+    contact.localidad.trim().length > 1 &&
     /^\d{5}$/.test(contact.codigoPostal) &&
     totalLitros > 0;
 
@@ -263,6 +288,8 @@ export default function CalculadoraPedidoInteractive() {
         nombre: nombreCompleto,
         email: contact.email,
         telefono: contact.telefono,
+        direccion: contact.direccion,
+        localidad: contact.localidad,
         codigo_postal: contact.codigoPostal,
         perfil: profile,
         cajas_3x5l: qty5L,
@@ -287,6 +314,8 @@ export default function CalculadoraPedidoInteractive() {
           nombre: nombreCompleto,
           email: contact.email,
           telefono: contact.telefono,
+          direccion: contact.direccion,
+          localidad: contact.localidad,
           codigo_postal: contact.codigoPostal,
           perfil_comprador: profile,
           cajas_3x5l: qty5L,
@@ -310,7 +339,15 @@ export default function CalculadoraPedidoInteractive() {
 
       setTimeout(() => {
         setSubmitted(false);
-        setContact({ nombre: "", apellidos: "", email: "", telefono: "", codigoPostal: "" });
+        setContact({
+          nombre: "",
+          apellidos: "",
+          email: "",
+          telefono: "",
+          direccion: "",
+          localidad: "",
+          codigoPostal: "",
+        });
         setValidation({});
         quitarPromo();
       }, 4000);
@@ -571,6 +608,32 @@ export default function CalculadoraPedidoInteractive() {
                 />
                 <input
                   type="text"
+                  name="direccion"
+                  value={contact.direccion}
+                  onChange={handleContactChange}
+                  placeholder="Dirección (calle y número)"
+                  aria-label="Dirección de envío"
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 text-sm text-tx-crema placeholder:text-tx-muted focus:outline-none sm:col-span-2"
+                  style={{
+                    border: `1px solid ${validation.direccion === false ? "#ff4444" : "rgba(255,255,255,0.1)"}`,
+                  }}
+                  required
+                />
+                <input
+                  type="text"
+                  name="localidad"
+                  value={contact.localidad}
+                  onChange={handleContactChange}
+                  placeholder="Localidad"
+                  aria-label="Localidad"
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 text-sm text-tx-crema placeholder:text-tx-muted focus:outline-none"
+                  style={{
+                    border: `1px solid ${validation.localidad === false ? "#ff4444" : "rgba(255,255,255,0.1)"}`,
+                  }}
+                  required
+                />
+                <input
+                  type="text"
                   name="codigoPostal"
                   value={contact.codigoPostal}
                   onChange={handleContactChange}
@@ -773,11 +836,25 @@ export default function CalculadoraPedidoInteractive() {
                   </a>
                 </div>
 
-                <p className="text-center text-[11px] text-tx-muted mt-3">
-                  <Smartphone className="w-3 h-3 inline-block mr-1 -mt-0.5 text-dorado" />
-                  ¿Prefieres Bizum? Envía el importe al{" "}
-                  <span className="text-dorado font-medium">620 022 801</span> y avísanos por
-                  WhatsApp indicando tu nombre y apellido para confirmar tu pedido.
+                <button
+                  type="button"
+                  onClick={handleCopyBizum}
+                  className="w-full mt-3 py-3 px-4 border border-dorado/50 hover:bg-dorado/10 text-dorado rounded-xl flex items-center justify-center gap-2 transition-all text-xs sm:text-sm font-medium"
+                  data-cursor="BIZUM"
+                >
+                  <Smartphone className="w-4 h-4 shrink-0" />
+                  {bizumCopiado ? (
+                    "Número copiado — pégalo en tu app de Bizum"
+                  ) : (
+                    <>
+                      ¿Prefieres Bizum? Paga al&nbsp;
+                      <span className="font-semibold">620 022 801</span>
+                    </>
+                  )}
+                </button>
+                <p className="text-center text-[11px] text-tx-muted mt-2">
+                  Toca para copiar el número. Después avísanos por WhatsApp indicando tu nombre y
+                  apellido para confirmar tu pedido.
                 </p>
 
                 {sendError && (
@@ -794,7 +871,7 @@ export default function CalculadoraPedidoInteractive() {
                 )}
 
                 <p className="text-center text-[11px] text-tx-muted mt-4">
-                  Atención directa de la cooperativa en Peñolite, Jaén. Envío protegido en caja térmica anti-roturas.
+                  Atención directa de la cooperativa en Peñolite, Jaén. Envío embalado para evitar roturas en el transporte.
                 </p>
               </>
             )}

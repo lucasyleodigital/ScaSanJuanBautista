@@ -61,6 +61,8 @@ export interface Pedido {
   nombre: string;
   email: string;
   telefono: string;
+  direccion: string | null;
+  localidad: string | null;
   codigo_postal: string;
   perfil: string;
   cajas_3x5l: number;

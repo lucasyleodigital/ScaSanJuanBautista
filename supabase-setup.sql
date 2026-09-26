@@ -143,3 +143,11 @@ create policy "envio eva actualiza" on envio_provincias for update using (auth.r
 
 grant select on public.envio_provincias to anon;
 grant select, update on public.envio_provincias to authenticated;
+
+-- ============================================================
+-- Direccion de envio en el pedido, para que Eva no tenga que pedirla
+-- aparte por telefono/email
+-- ============================================================
+alter table pedidos
+  add column if not exists direccion text,
+  add column if not exists localidad text;

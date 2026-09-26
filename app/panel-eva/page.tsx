@@ -207,7 +207,14 @@ function PedidosTab() {
               <td className="p-3 text-xs text-tx-medio">
                 {p.email}
                 <br />
-                {p.telefono} · {p.codigo_postal}
+                {p.telefono}
+                {p.direccion && (
+                  <>
+                    <br />
+                    {p.direccion}
+                    {p.localidad && `, ${p.localidad}`} ({p.codigo_postal})
+                  </>
+                )}
               </td>
               <td className="p-3 text-xs">
                 {p.cajas_3x5l > 0 && <div>{p.cajas_3x5l}× Caja 3x5L</div>}
