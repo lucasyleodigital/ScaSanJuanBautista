@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase, DEFAULT_PRICING, type PricingConfig, type Pedido, type Promocion, type Provincia } from "@/lib/supabase";
 
@@ -256,8 +256,22 @@ function PedidosTab() {
   );
 }
 
+interface ClienteAgregado {
+  email: string;
+  nombre: string;
+  telefono: string;
+  direccion: string | null;
+  localidad: string | null;
+  codigoPostal: string;
+  destinoEnvio: string;
+  totalGastado: number;
+  pedidos: Pedido[];
+}
+
 function ClientesTab() {
   const [pedidos, setPedidos] = useState<Pedido[] | null>(null);
+  const [filtro, setFiltro] = useState("");
+  const [expandido, setExpandido] = useState<string | null>(null);
 
   useEffect(() => {
     supabase
@@ -269,56 +283,148 @@ function ClientesTab() {
 
   if (!pedidos) return <p className="text-sm text-tx-bajo">Cargando clientes…</p>;
 
-  const clientesMap = new Map<
-    string,
-    { nombre: string; email: string; telefono: string; pedidos: number; totalGastado: number }
-  >();
+  // pedidos ya viene ordenado del más reciente al más antiguo, así que la
+  // primera vez que aparece un email es su pedido más reciente — de ahí
+  // sacamos su direccion/telefono actuales, no de un pedido antiguo.
+  const clientesMap = new Map<string, ClienteAgregado>();
   for (const p of pedidos) {
     const key = p.email.toLowerCase();
     const existing = clientesMap.get(key);
     if (existing) {
-      existing.pedidos += 1;
       existing.totalGastado += p.total_estimado;
+      existing.pedidos.push(p);
     } else {
       clientesMap.set(key, {
-        nombre: p.nombre,
         email: p.email,
+        nombre: p.nombre,
         telefono: p.telefono,
-        pedidos: 1,
+        direccion: p.direccion,
+        localidad: p.localidad,
+        codigoPostal: p.codigo_postal,
+        destinoEnvio: p.destino_envio,
         totalGastado: p.total_estimado,
+        pedidos: [p],
       });
     }
   }
-  const clientes = [...clientesMap.values()].sort((a, b) => b.totalGastado - a.totalGastado);
+  const clientesTodos = [...clientesMap.values()].sort((a, b) => b.totalGastado - a.totalGastado);
 
-  if (clientes.length === 0) return <p className="text-sm text-tx-bajo">Todavía no hay clientes.</p>;
+  const q = filtro.trim().toLowerCase();
+  const clientes = q
+    ? clientesTodos.filter(
+        (c) =>
+          c.nombre.toLowerCase().includes(q) ||
+          c.email.toLowerCase().includes(q) ||
+          c.telefono.includes(q) ||
+          (c.localidad ?? "").toLowerCase().includes(q) ||
+          c.destinoEnvio.toLowerCase().includes(q)
+      )
+    : clientesTodos;
+
+  if (clientesTodos.length === 0) return <p className="text-sm text-tx-bajo">Todavía no hay clientes.</p>;
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-rule">
-      <table className="w-full text-left text-sm">
-        <thead className="bg-verde-noche/60 text-xs uppercase tracking-wide text-dorado">
-          <tr>
-            <th className="p-3">Nombre</th>
-            <th className="p-3">Contacto</th>
-            <th className="p-3">Pedidos</th>
-            <th className="p-3">Total gastado</th>
-          </tr>
-        </thead>
-        <tbody>
-          {clientes.map((c) => (
-            <tr key={c.email} className="border-t border-rule">
-              <td className="p-3">{c.nombre}</td>
-              <td className="p-3 text-xs text-tx-medio">
-                {c.email}
-                <br />
-                {c.telefono}
-              </td>
-              <td className="p-3">{c.pedidos}</td>
-              <td className="p-3 font-mono text-dorado">{c.totalGastado.toFixed(2)} €</td>
+    <div className="flex flex-col gap-4">
+      <input
+        type="text"
+        value={filtro}
+        onChange={(e) => setFiltro(e.target.value)}
+        placeholder="Buscar por nombre, email, teléfono o localidad…"
+        className="w-full max-w-md rounded-md border border-rule bg-black/40 px-3 py-2 text-sm text-tx-crema focus:outline-none focus:border-dorado"
+      />
+
+      <div className="overflow-x-auto rounded-lg border border-rule">
+        <table className="w-full text-left text-sm">
+          <thead className="bg-verde-noche/60 text-xs uppercase tracking-wide text-dorado">
+            <tr>
+              <th className="p-3">Nombre</th>
+              <th className="p-3">Contacto</th>
+              <th className="p-3">Dirección</th>
+              <th className="p-3">Pedidos</th>
+              <th className="p-3">Total gastado</th>
+              <th className="p-3"></th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {clientes.map((c) => {
+              const abierto = expandido === c.email;
+              return (
+                <Fragment key={c.email}>
+                  <tr className="border-t border-rule">
+                    <td className="p-3">{c.nombre}</td>
+                    <td className="p-3 text-xs text-tx-medio">
+                      {c.email}
+                      <br />
+                      {c.telefono}
+                    </td>
+                    <td className="p-3 text-xs text-tx-medio">
+                      {c.direccion ? (
+                        <>
+                          {c.direccion}
+                          {c.localidad && `, ${c.localidad}`}
+                          <br />
+                          {c.codigoPostal} · {c.destinoEnvio}
+                        </>
+                      ) : (
+                        <span className="text-tx-bajo">Sin dirección registrada</span>
+                      )}
+                    </td>
+                    <td className="p-3">{c.pedidos.length}</td>
+                    <td className="p-3 font-mono text-dorado">{c.totalGastado.toFixed(2)} €</td>
+                    <td className="p-3">
+                      <button
+                        onClick={() => setExpandido(abierto ? null : c.email)}
+                        className="text-xs text-dorado hover:text-amber-300"
+                      >
+                        {abierto ? "Ocultar" : "Ver envíos"}
+                      </button>
+                    </td>
+                  </tr>
+                  {abierto && (
+                    <tr className="border-t border-rule bg-black/20">
+                      <td colSpan={6} className="p-3">
+                        <div className="flex flex-col gap-2">
+                          {c.pedidos.map((p) => (
+                            <div
+                              key={p.id}
+                              className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-rule p-2 text-xs"
+                            >
+                              <span className="text-tx-bajo">
+                                {new Date(p.created_at).toLocaleDateString("es-ES")}
+                              </span>
+                              <span className="text-tx-medio">
+                                {p.cajas_3x5l > 0 && `${p.cajas_3x5l}× 3x5L `}
+                                {p.cajas_6x2l > 0 && `${p.cajas_6x2l}× 6x2L`}
+                                {" · "}
+                                {p.total_litros}L
+                              </span>
+                              <span className="text-tx-medio">
+                                {p.direccion ? `${p.direccion}, ` : ""}
+                                {p.localidad ? `${p.localidad} ` : ""}({p.codigo_postal})
+                              </span>
+                              <span className="uppercase text-tx-bajo">{p.estado}</span>
+                              <span className="font-mono text-dorado">
+                                {p.total_estimado.toFixed(2)} €
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </Fragment>
+              );
+            })}
+            {clientes.length === 0 && (
+              <tr>
+                <td colSpan={6} className="p-3 text-xs text-tx-bajo">
+                  No se encuentra ningún cliente con ese criterio.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
