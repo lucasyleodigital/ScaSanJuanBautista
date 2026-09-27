@@ -185,7 +185,11 @@ export default function CierreV2() {
           </button>
 
           <a
-            href="mailto:sca.sanjuanbautistaonline@gmail.com"
+            href={`https://wa.me/34620022801?text=${encodeURIComponent(
+              "Hola, me gustaría más información sobre vuestro aceite."
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
             style={{
               padding: "14px 32px",
               backgroundColor: "transparent",
@@ -230,7 +234,7 @@ export default function CierreV2() {
               });
             }}
           >
-            Contactar Directamente
+            Escríbenos por WhatsApp
           </a>
         </div>
 
