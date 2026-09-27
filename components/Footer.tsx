@@ -21,7 +21,7 @@ export default function Footer() {
               alt="SCA San Juan Bautista de Peñolite"
               width={400}
               height={400}
-              className="mb-4 h-28 w-28 shrink-0 md:h-36 md:w-36"
+              className="mb-4 h-32 w-32 shrink-0 md:h-44 md:w-44"
             />
             <div className="mb-3 font-serif text-base text-tx-crema">
               San Juan Bautista de Peñolite
