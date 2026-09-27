@@ -82,6 +82,7 @@ const organizationJsonLd = {
   foundingDate: "1958",
   description: SEO_DESCRIPTION,
   taxID: "F23006992",
+  sameAs: ["https://www.facebook.com/p/SCA-San-Juan-Bautista-Pe%C3%B1olite-100063301534955/"],
   address: {
     "@type": "PostalAddress",
     streetAddress: "Calle Peñolite, 1",

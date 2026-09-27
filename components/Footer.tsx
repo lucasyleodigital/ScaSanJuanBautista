@@ -30,6 +30,15 @@ export default function Footer() {
               <span className="absolute inset-0 origin-bottom scale-y-0 bg-dorado transition-transform duration-350 ease-[cubic-bezier(.83,0,.17,1)] group-hover:scale-y-100" />
               <span className="relative">Solicitar Pedido</span>
             </a>
+            <a
+              href="https://www.facebook.com/p/SCA-San-Juan-Bautista-Pe%C3%B1olite-100063301534955/"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-cursor-active
+              className="mt-4 inline-block text-xs text-tx-bajo no-underline transition-colors hover:text-dorado"
+            >
+              Síguenos en Facebook
+            </a>
           </div>
           <FooterCol
             title="Navegación"
