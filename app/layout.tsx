@@ -6,6 +6,7 @@ import SmoothScroll from "@/components/SmoothScroll";
 import GrainOverlay from "@/components/GrainOverlay";
 import CustomCursor from "@/components/CustomCursor";
 import CookieConsent from "@/components/CookieConsent";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { AudioProvider } from "@/components/AudioEngine";
 
 const inter = Inter({
@@ -132,6 +133,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <SmoothScroll>{children}</SmoothScroll>
         </AudioProvider>
         <CookieConsent />
+        <GoogleAnalytics />
         <Analytics />
       </body>
     </html>
