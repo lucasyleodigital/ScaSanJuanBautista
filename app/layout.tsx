@@ -79,7 +79,7 @@ const organizationJsonLd = {
   url: SITE_URL,
   logo: `${SITE_URL}/images/logo/icon-512.png`,
   telephone: "+34953435316",
-  email: "sca.sanjuanbautistaonline@gmail.com",
+  email: "info@dehesapenolite.com",
   foundingDate: "1958",
   description: SEO_DESCRIPTION,
   taxID: "F23006992",

@@ -93,8 +93,8 @@ export default function Contacto() {
             <ContactRow label="Dirección" value="Carr. Peñolite, 29 · 23359 Peñolite, Jaén" />
             <ContactRow
               label="Email"
-              value="sanjuanbautista.sca@gmail.com"
-              href="mailto:sanjuanbautista.sca@gmail.com"
+              value="info@dehesapenolite.com"
+              href="mailto:info@dehesapenolite.com"
             />
             <ContactRow label="CIF" value="F23006992" />
             <ContactRow label="Fundada" value="23 de julio de 1958" />

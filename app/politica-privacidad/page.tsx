@@ -36,7 +36,7 @@ export default function PoliticaPrivacidadPage() {
         </li>
         <li>
           <strong>Contacto para asuntos de privacidad:</strong>{" "}
-          sca.sanjuanbautistaonline@gmail.com
+          info@dehesapenolite.com
         </li>
       </ul>
 
@@ -89,8 +89,8 @@ export default function PoliticaPrivacidadPage() {
         Puedes ejercer tus derechos de acceso, rectificación, supresión,
         oposición, limitación del tratamiento y portabilidad de tus datos
         escribiendo a{" "}
-        <a href="mailto:sca.sanjuanbautistaonline@gmail.com">
-          sca.sanjuanbautistaonline@gmail.com
+        <a href="mailto:info@dehesapenolite.com">
+          info@dehesapenolite.com
         </a>
         , indicando el derecho que deseas ejercer y adjuntando copia de un
         documento que acredite tu identidad. También puedes presentar una

@@ -862,8 +862,8 @@ export default function CalculadoraPedidoInteractive() {
                     <AlertCircle size={18} className="text-red-400 shrink-0 mt-0.5" />
                     <p className="text-xs text-tx-muted leading-relaxed">
                       No se ha podido enviar. Escríbenos a{" "}
-                      <a href="mailto:sca.sanjuanbautistaonline@gmail.com" className="text-dorado">
-                        sca.sanjuanbautistaonline@gmail.com
+                      <a href="mailto:pedidos@dehesapenolite.com" className="text-dorado">
+                        pedidos@dehesapenolite.com
                       </a>{" "}
                       o usa el botón de WhatsApp.
                     </p>

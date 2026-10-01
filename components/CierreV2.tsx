@@ -261,7 +261,7 @@ export default function CierreV2() {
               Email
             </div>
             <a
-              href="mailto:sca.sanjuanbautistaonline@gmail.com"
+              href="mailto:info@dehesapenolite.com"
               style={{
                 color: colors.txMedio,
                 textDecoration: "none",
@@ -285,7 +285,7 @@ export default function CierreV2() {
                 });
               }}
             >
-              sca.sanjuanbautistaonline@gmail.com
+              info@dehesapenolite.com
             </a>
           </div>
 
