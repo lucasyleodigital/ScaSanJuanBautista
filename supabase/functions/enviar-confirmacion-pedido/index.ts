@@ -1,11 +1,14 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 const EMAIL_EVA = "sca.sanjuanbautistaonline@gmail.com";
+const WHATSAPP_COOPERATIVA = "34620022801";
 const LOGO_URL = "https://dehesapenolite.com/images/logo/icon-512.png";
+const FACEBOOK_URL = "https://www.facebook.com/p/SCA-San-Juan-Bautista-Pe%C3%B1olite-100063301534955/";
 
 const DORADO = "#c8961e";
 const VERDE_NOCHE = "#0c1606";
 const CREMA = "#f0e8cc";
+const WHATSAPP_VERDE = "#25D366";
 
 async function enviarEmail(payload: Record<string, unknown>) {
   const res = await fetch("https://api.resend.com/emails", {
@@ -20,6 +23,28 @@ async function enviarEmail(payload: Record<string, unknown>) {
     console.error("Error de Resend:", await res.text());
   }
   return res.ok;
+}
+
+/** Normaliza un teléfono español (con o sin espacios/prefijo) a formato
+ * internacional sin símbolos, como lo pide la URL de wa.me. */
+function linkWhatsApp(telefono: string, mensaje: string) {
+  const digitos = telefono.replace(/\D/g, "");
+  const conPrefijo = digitos.startsWith("34") ? digitos : `34${digitos}`;
+  return `https://wa.me/${conPrefijo}?text=${encodeURIComponent(mensaje)}`;
+}
+
+function botonWhatsApp(href: string, texto: string) {
+  return `
+    <table role="presentation" cellpadding="0" cellspacing="0" style="margin:28px auto 0;">
+      <tr>
+        <td style="border-radius:8px; background-color:${WHATSAPP_VERDE};">
+          <a href="${href}" style="display:inline-block; padding:13px 30px; font-family:Arial,sans-serif; font-size:14px; font-weight:700; color:#ffffff; text-decoration:none; border-radius:8px;">
+            ${texto}
+          </a>
+        </td>
+      </tr>
+    </table>
+  `;
 }
 
 function filaResumen(label: string, valor: string, destacado = false) {
@@ -47,7 +72,7 @@ function resumenPedidoHtml(pedido: Record<string, any>) {
 }
 
 /** Envoltorio común de marca para ambos emails: cabecera oscura con logo,
- * cuerpo en crema, pie con el contacto oficial. */
+ * raya dorada bajo el título, cuerpo en crema, pie con contacto y Facebook. */
 function plantillaEmail(opts: { preheader: string; titulo: string; cuerpoHtml: string }) {
   return `
     <!DOCTYPE html>
@@ -57,34 +82,39 @@ function plantillaEmail(opts: { preheader: string; titulo: string; cuerpoHtml: s
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#e9e2c8; padding:32px 16px;">
           <tr>
             <td align="center">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px; background-color:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 2px 12px rgba(12,22,6,0.08);">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px; background-color:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 4px 20px rgba(12,22,6,0.12);">
                 <tr>
-                  <td style="background-color:${VERDE_NOCHE}; padding:28px 32px; text-align:center;">
-                    <img src="${LOGO_URL}" width="48" height="48" alt="Dehesa de Peñolite" style="display:block; margin:0 auto 10px;" />
-                    <div style="font-family:Georgia,'Times New Roman',serif; font-size:18px; letter-spacing:0.04em; color:${CREMA}; font-weight:700;">
+                  <td style="background-color:${VERDE_NOCHE}; background-image:linear-gradient(160deg, ${VERDE_NOCHE} 0%, #182a0c 100%); padding:32px 32px 28px; text-align:center;">
+                    <img src="${LOGO_URL}" width="52" height="52" alt="Dehesa de Peñolite" style="display:block; margin:0 auto 12px;" />
+                    <div style="font-family:Georgia,'Times New Roman',serif; font-size:19px; letter-spacing:0.05em; color:${CREMA}; font-weight:700;">
                       DEHESA DE PEÑOLITE
                     </div>
-                    <div style="font-family:Arial,sans-serif; font-size:11px; letter-spacing:0.12em; color:${DORADO}; text-transform:uppercase; margin-top:4px;">
+                    <div style="width:36px; height:1px; background-color:${DORADO}; margin:10px auto;"></div>
+                    <div style="font-family:Arial,sans-serif; font-size:11px; letter-spacing:0.14em; color:${DORADO}; text-transform:uppercase;">
                       D.O. Sierra de Segura · Desde 1958
                     </div>
                   </td>
                 </tr>
                 <tr>
-                  <td style="padding:36px 32px;">
-                    <h1 style="margin:0 0 16px; font-family:Georgia,'Times New Roman',serif; font-size:22px; color:${VERDE_NOCHE};">
+                  <td style="padding:36px 32px 8px;">
+                    <h1 style="margin:0 0 12px; font-family:Georgia,'Times New Roman',serif; font-size:22px; color:${VERDE_NOCHE};">
                       ${opts.titulo}
                     </h1>
+                    <div style="width:44px; height:3px; background-color:${DORADO}; border-radius:2px; margin:0 0 20px;"></div>
                     ${opts.cuerpoHtml}
                   </td>
                 </tr>
                 <tr>
-                  <td style="background-color:${CREMA}; padding:20px 32px; text-align:center;">
+                  <td style="background-color:${CREMA}; padding:22px 32px; text-align:center;">
                     <div style="font-family:Arial,sans-serif; font-size:12px; color:#6b6450;">
                       SCA San Juan Bautista de Peñolite · Calle Peñolite, 1, Jaén
                     </div>
                     <div style="font-family:Arial,sans-serif; font-size:12px; color:#6b6450; margin-top:4px;">
                       <a href="mailto:pedidos@dehesapenolite.com" style="color:${DORADO}; text-decoration:none;">pedidos@dehesapenolite.com</a>
                       · +34 953 435 316
+                    </div>
+                    <div style="font-family:Arial,sans-serif; font-size:11px; color:#9c9476; margin-top:10px;">
+                      <a href="${FACEBOOK_URL}" style="color:#9c9476; text-decoration:underline;">Síguenos en Facebook</a>
                     </div>
                   </td>
                 </tr>
@@ -111,6 +141,10 @@ Deno.serve(async (req: Request) => {
     }
 
     if (pedido.email) {
+      const whatsappCliente = linkWhatsApp(
+        WHATSAPP_COOPERATIVA,
+        `Hola, soy ${pedido.nombre} y acabo de hacer un pedido en la web (${pedido.total_litros}L).`,
+      );
       await enviarEmail({
         from: "Dehesa de Peñolite <pedidos@dehesapenolite.com>",
         to: [pedido.email],
@@ -127,12 +161,20 @@ Deno.serve(async (req: Request) => {
               Dirección de envío: ${pedido.direccion}, ${pedido.localidad}, ${pedido.codigo_postal}
             </p>
             <p style="margin:20px 0 0; font-family:Arial,sans-serif; font-size:14px; color:#333;">
-              Si tienes cualquier duda, responde directamente a este email.
+              Si tienes cualquier duda, responde directamente a este email o escríbenos por WhatsApp.
             </p>
+            ${botonWhatsApp(whatsappCliente, "Escríbenos por WhatsApp")}
           `,
         }),
       });
     }
+
+    const whatsappAlCliente = pedido.telefono
+      ? linkWhatsApp(
+          pedido.telefono,
+          `Hola ${pedido.nombre}, soy Eva de Dehesa de Peñolite, te escribo por tu pedido reciente.`,
+        )
+      : null;
 
     await enviarEmail({
       from: "Web Dehesa de Peñolite <pedidos@dehesapenolite.com>",
@@ -153,6 +195,7 @@ Deno.serve(async (req: Request) => {
           <p style="margin:20px 0 0; font-family:Arial,sans-serif; font-size:13px; color:#6b6450;">
             Revisa el pedido completo en el Panel de Eva.
           </p>
+          ${whatsappAlCliente ? botonWhatsApp(whatsappAlCliente, "Escribir al cliente por WhatsApp") : ""}
         `,
       }),
     });
