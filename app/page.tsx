@@ -14,6 +14,7 @@ import CalculadoraPedidoInteractive from "@/components/CalculadoraPedidoInteract
 import CierreV2 from "@/components/CierreV2";
 import Footer from "@/components/Footer";
 import PromoPopup from "@/components/PromoPopup";
+import StickyMobileCTA from "@/components/StickyMobileCTA";
 
 export default function Home() {
   return (
@@ -57,6 +58,7 @@ export default function Home() {
       </main>
       <Footer />
       <PromoPopup />
+      <StickyMobileCTA />
     </>
   );
 }

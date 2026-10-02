@@ -326,6 +326,32 @@ export default function ProductoV2() {
               </div>
             ))}
           </div>
+
+          <div style={{ textAlign: "center", marginTop: spacing.lg }}>
+            <button
+              type="button"
+              data-cursor-active
+              onClick={() =>
+                document.querySelector("#formulario-contacto")?.scrollIntoView({ behavior: "smooth" })
+              }
+              style={{
+                display: "inline-block",
+                padding: "14px 32px",
+                backgroundColor: colors.dorado,
+                color: colors.negro,
+                border: "none",
+                borderRadius: "4px",
+                fontFamily: typography.fontSans,
+                fontSize: "12px",
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+            >
+              Ver precios y pedir
+            </button>
+          </div>
         </div>
       </div>
     </section>

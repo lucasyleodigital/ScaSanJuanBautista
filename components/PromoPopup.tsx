@@ -57,6 +57,12 @@ export default function PromoPopup() {
     return () => clearTimeout(t);
   }, [promo]);
 
+  // Avisa a otros elementos fijos en pantalla (la barra de pedido en móvil)
+  // para que no se amontonen dos widgets a la vez en la parte inferior.
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("penolite:promo-visible", { detail: visible }));
+  }, [visible]);
+
   if (!promo || !visible) return null;
 
   const dismiss = () => {
