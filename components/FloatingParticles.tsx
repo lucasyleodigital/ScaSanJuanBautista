@@ -3,10 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Aceitunas doradas en suspensión — cada una es un SVG diminuto
+ * Aceitunas en suspensión — cada una es un SVG diminuto
  * (cuerpo + rabito + hojita) en vez del óvalo CSS anterior, para que
  * se reconozcan de verdad como aceitunas. Decoración pura, sin
  * significado narrativo.
+ *
+ * Nacen verde oliva y maduran mientras caen, como las de verdad: se
+ * mantienen verdes la mayor parte del recorrido y hacia el final viran
+ * a morado hasta quedar casi negras (momento en que ya se desvanecen).
  *
  * Movidas con requestAnimationFrame + estilo inline, NO con
  * animation-duration de CSS: Chrome/Edge, cuando el sistema tiene
@@ -27,6 +31,36 @@ function seeded(n: number, decimals = 4): number {
   const raw = x - Math.floor(x);
   const f = 10 ** decimals;
   return Math.round(raw * f) / f;
+}
+
+type RGB = [number, number, number];
+
+// Etapas de maduración del cuerpo y del brillo, de verde a negro-morado.
+const BODY_STOPS: RGB[] = [
+  [118, 146, 48], // verde oliva
+  [98, 54, 108], // morado
+  [46, 25, 54], // negro-morado
+];
+const SHINE_STOPS: RGB[] = [
+  [196, 222, 140],
+  [176, 142, 196],
+  [120, 96, 134],
+];
+
+/** 0 = verde, 1 = negro-morado. Verde hasta ~30% de la caída. */
+function ripeness(t: number): number {
+  const x = Math.min(Math.max((t - 0.3) / 0.65, 0), 1);
+  return x * x * (3 - 2 * x);
+}
+
+function mixStops(stops: RGB[], k: number): string {
+  const scaled = k * (stops.length - 1);
+  const i = Math.min(Math.floor(scaled), stops.length - 2);
+  const f = scaled - i;
+  const a = stops[i];
+  const b = stops[i + 1];
+  const c = a.map((v, n) => Math.round(v + (b[n] - v) * f));
+  return `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
 }
 
 interface Particle {
@@ -61,6 +95,8 @@ export default function FloatingParticles({
 }) {
   const particlesRef = useRef<Particle[]>(buildParticles(count));
   const spanRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const bodyRefs = useRef<(SVGEllipseElement | null)[]>([]);
+  const shineRefs = useRef<(SVGEllipseElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -102,6 +138,10 @@ export default function FloatingParticles({
 
         el.style.transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px)`;
         el.style.opacity = opacity.toFixed(3);
+
+        const k = ripeness(t);
+        bodyRefs.current[i]?.setAttribute("fill", mixStops(BODY_STOPS, k));
+        shineRefs.current[i]?.setAttribute("fill", mixStops(SHINE_STOPS, k));
       });
 
       raf = requestAnimationFrame(tick);
@@ -166,17 +206,37 @@ export default function FloatingParticles({
               viewBox="0 0 20 27"
               fill="none"
               style={{
-                filter: `drop-shadow(0 0 ${effectiveSize * 0.6}px rgba(200, 150, 30, ${effectiveOpacity * 0.7}))`,
+                filter: `drop-shadow(0 0 ${effectiveSize * 0.5}px rgba(120, 150, 55, ${effectiveOpacity * 0.55}))`,
               }}
             >
-              {/* Cuerpo */}
-              <ellipse cx="10" cy="16" rx="6.3" ry="9" fill={`rgba(200, 150, 30, ${effectiveOpacity})`} />
+              {/* Cuerpo: el color lo anima el bucle según la maduración */}
+              <ellipse
+                ref={(el) => {
+                  bodyRefs.current[i] = el;
+                }}
+                cx="10"
+                cy="16"
+                rx="6.3"
+                ry="9"
+                fill={mixStops(BODY_STOPS, 0)}
+                fillOpacity={effectiveOpacity}
+              />
               {/* Brillo */}
-              <ellipse cx="7.8" cy="11.5" rx="1.9" ry="2.6" fill={`rgba(240, 210, 150, ${effectiveOpacity * 0.8})`} />
+              <ellipse
+                ref={(el) => {
+                  shineRefs.current[i] = el;
+                }}
+                cx="7.8"
+                cy="11.5"
+                rx="1.9"
+                ry="2.6"
+                fill={mixStops(SHINE_STOPS, 0)}
+                fillOpacity={effectiveOpacity * 0.8}
+              />
               {/* Rabito */}
               <path
                 d="M10 7C10 7 10.3 4 12 2.5"
-                stroke={`rgba(120, 85, 20, ${effectiveOpacity})`}
+                stroke={`rgba(92, 78, 36, ${effectiveOpacity})`}
                 strokeWidth="1.1"
                 strokeLinecap="round"
                 fill="none"
@@ -187,7 +247,7 @@ export default function FloatingParticles({
                 cy="2.3"
                 rx="2.6"
                 ry="1.2"
-                fill={`rgba(122, 143, 62, ${effectiveOpacity * 0.9})`}
+                fill={`rgba(150, 178, 78, ${effectiveOpacity * 0.9})`}
                 transform="rotate(-24 14.2 2.3)"
               />
             </svg>
