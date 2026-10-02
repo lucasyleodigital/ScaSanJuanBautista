@@ -11,19 +11,25 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-interface Premio {
-  titulo: string;
+interface PremioArdilla {
+  categoria: string;
   campana: string;
 }
 
-const premios: Premio[] = [
-  { titulo: "Medalla de Oro de Andalucía 2022 — Economía y Empresa (Jaencoop Grupo)", campana: "2022" },
-  { titulo: "Premio Ardilla D.O. Sierra de Segura — Mejor Aceite de Oliva Virgen Extra", campana: "Campaña 2017/18" },
-  { titulo: "Premio Ardilla D.O. Sierra de Segura — Mejor Aceite de Oliva Virgen Extra", campana: "Campaña 2007/08" },
-  { titulo: "Premio Ardilla D.O. Sierra de Segura — Mayor Proporción de Aceite de Oliva Virgen Extra", campana: "Campaña 2018/19" },
-  { titulo: "Premio Ardilla D.O. Sierra de Segura — Mayor Proporción de Aceite Calificado", campana: "Campaña 2004/05" },
-  { titulo: "Premio Ardilla D.O. Sierra de Segura — 1er Accésit Mejor Depósito de Aceite Virgen Extra", campana: "Campaña 2007/08" },
-  { titulo: "Premio Ardilla D.O. Sierra de Segura — Accésit Mayor Proporción de Aceite de Oliva Virgen Extra", campana: "Campaña 2015/16" },
+const MEDALLA = {
+  titulo: "Medalla de Oro de Andalucía 2022",
+  detalle: "Economía y Empresa (Jaencoop Grupo)",
+};
+
+// Mismo premio, 6 campañas distintas — se listan juntas para no repetir el
+// nombre del premio 6 veces y disparar el scroll en móvil.
+const premiosArdilla: PremioArdilla[] = [
+  { categoria: "Mejor Aceite de Oliva Virgen Extra", campana: "Campaña 2017/18" },
+  { categoria: "Mejor Aceite de Oliva Virgen Extra", campana: "Campaña 2007/08" },
+  { categoria: "Mayor Proporción de Aceite de Oliva Virgen Extra", campana: "Campaña 2018/19" },
+  { categoria: "Mayor Proporción de Aceite Calificado", campana: "Campaña 2004/05" },
+  { categoria: "1er Accésit Mejor Depósito de Aceite Virgen Extra", campana: "Campaña 2007/08" },
+  { categoria: "Accésit Mayor Proporción de Aceite de Oliva Virgen Extra", campana: "Campaña 2015/16" },
 ];
 
 export default function PremiosV2() {
@@ -104,56 +110,130 @@ export default function PremiosV2() {
           nuestro aceite, jurado tras jurado, campaña tras campaña.
         </p>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(min(320px, 100%), 1fr))",
-            gap: spacing.md,
-          }}
-        >
-          {premios.map((premio, i) => (
-            <div
-              key={i}
-              className="premio-card"
+        <div style={{ display: "flex", flexDirection: "column", gap: spacing.md }}>
+          <div
+            className="premio-card"
+            style={{
+              display: "flex",
+              alignItems: "flex-start",
+              gap: spacing.sm,
+              maxWidth: "560px",
+              width: "100%",
+              margin: "0 auto",
+              background: `linear-gradient(135deg, ${colors.doradoSuave} 0%, transparent 100%)`,
+              border: `1px solid ${colors.rule}`,
+              borderRadius: "8px",
+              padding: spacing.md,
+            }}
+          >
+            <div style={{ color: colors.dorado, flexShrink: 0, marginTop: "2px" }}>
+              <Medal size={22} />
+            </div>
+            <div>
+              <p
+                style={{
+                  fontFamily: typography.fontSans,
+                  fontSize: "14px",
+                  color: colors.txCrema,
+                  lineHeight: "1.5",
+                  marginBottom: "4px",
+                }}
+              >
+                {MEDALLA.titulo} — {MEDALLA.detalle}
+              </p>
+              <p
+                style={{
+                  fontFamily: typography.fontSans,
+                  fontSize: "12px",
+                  color: colors.dorado,
+                  letterSpacing: "0.05em",
+                  textTransform: "uppercase",
+                }}
+              >
+                2022
+              </p>
+            </div>
+          </div>
+
+          <div
+            className="premio-card"
+            style={{
+              background: `linear-gradient(135deg, ${colors.doradoSuave} 0%, transparent 100%)`,
+              border: `1px solid ${colors.rule}`,
+              borderRadius: "8px",
+              padding: spacing.lg,
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: spacing.sm, marginBottom: "4px" }}>
+              <Award size={22} style={{ color: colors.dorado, flexShrink: 0 }} />
+              <h3
+                style={{
+                  fontFamily: typography.fontSerif,
+                  fontSize: "19px",
+                  color: colors.txCrema,
+                }}
+              >
+                Premio Ardilla D.O. Sierra de Segura
+              </h3>
+            </div>
+            <p
               style={{
-                display: "flex",
-                alignItems: "flex-start",
-                gap: spacing.sm,
-                background: `linear-gradient(135deg, ${colors.doradoSuave} 0%, transparent 100%)`,
-                border: `1px solid ${colors.rule}`,
-                borderRadius: "8px",
-                padding: spacing.md,
+                fontFamily: typography.fontSans,
+                fontSize: "12px",
+                color: colors.dorado,
+                letterSpacing: "0.05em",
+                textTransform: "uppercase",
+                marginBottom: spacing.sm,
+                marginLeft: "34px",
               }}
             >
-              <div style={{ color: colors.dorado, flexShrink: 0, marginTop: "2px" }}>
-                {i === 0 ? <Medal size={22} /> : <Award size={22} />}
-              </div>
-              <div>
-                <p
+              Premiados 6 veces en los últimos 20 años
+            </p>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(min(260px, 100%), 1fr))",
+                columnGap: spacing.lg,
+              }}
+            >
+              {premiosArdilla.map((premio, i) => (
+                <div
+                  key={i}
                   style={{
-                    fontFamily: typography.fontSans,
-                    fontSize: "14px",
-                    color: colors.txCrema,
-                    lineHeight: "1.5",
-                    marginBottom: "4px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    gap: spacing.sm,
+                    padding: "10px 0",
+                    borderBottom: `1px solid ${colors.rule}`,
                   }}
                 >
-                  {premio.titulo}
-                </p>
-                <p
-                  style={{
-                    fontFamily: typography.fontSans,
-                    fontSize: "12px",
-                    color: colors.dorado,
-                    letterSpacing: "0.05em",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  {premio.campana}
-                </p>
-              </div>
+                  <span
+                    style={{
+                      fontFamily: typography.fontSans,
+                      fontSize: "13px",
+                      color: colors.txCrema,
+                      lineHeight: "1.4",
+                    }}
+                  >
+                    {premio.categoria}
+                  </span>
+                  <span
+                    style={{
+                      fontFamily: typography.fontSans,
+                      fontSize: "11px",
+                      color: colors.dorado,
+                      letterSpacing: "0.04em",
+                      textTransform: "uppercase",
+                      whiteSpace: "nowrap",
+                      flexShrink: 0,
+                    }}
+                  >
+                    {premio.campana}
+                  </span>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </section>
