@@ -59,7 +59,15 @@ export const metadata: Metadata = {
     description: SOCIAL_DESCRIPTION,
     url: SITE_URL,
     siteName: "SCA San Juan Bautista de Peñolite",
-    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+    images: [
+      {
+        url: "/og-image-v2.jpg",
+        width: 1200,
+        height: 630,
+        type: "image/jpeg",
+        alt: "Sello de Dehesa de Peñolite",
+      },
+    ],
     locale: "es_ES",
     type: "website",
   },
@@ -67,7 +75,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: SOCIAL_TITLE,
     description: SOCIAL_DESCRIPTION,
-    images: ["/og-image.png"],
+    images: ["/og-image-v2.jpg"],
   },
 };
 

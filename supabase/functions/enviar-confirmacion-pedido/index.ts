@@ -2,7 +2,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 const EMAIL_EVA = "sca.sanjuanbautistaonline@gmail.com";
 const WHATSAPP_COOPERATIVA = "34620022801";
-const LOGO_URL = "https://dehesapenolite.com/images/logo/icon-512.png";
+const LOGO_URL = "https://dehesapenolite.com/images/logo/sello-email.png";
 const FACEBOOK_URL = "https://www.facebook.com/p/SCA-San-Juan-Bautista-Pe%C3%B1olite-100063301534955/";
 
 const DORADO = "#c8961e";
@@ -85,11 +85,11 @@ function plantillaEmail(opts: { preheader: string; titulo: string; cuerpoHtml: s
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px; background-color:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 4px 20px rgba(12,22,6,0.12);">
                 <tr>
                   <td style="background-color:${VERDE_NOCHE}; background-image:linear-gradient(160deg, ${VERDE_NOCHE} 0%, #182a0c 100%); padding:32px 32px 28px; text-align:center;">
-                    <img src="${LOGO_URL}" width="52" height="52" alt="Dehesa de Peñolite" style="display:block; margin:0 auto 12px;" />
-                    <div style="font-family:Georgia,'Times New Roman',serif; font-size:19px; letter-spacing:0.05em; color:${CREMA}; font-weight:700;">
+                    <img src="${LOGO_URL}" width="132" height="132" alt="Dehesa de Peñolite" style="display:block; margin:0 auto 12px;" />
+                    <div style="font-family:Georgia,'Times New Roman',serif; font-size:17px; letter-spacing:0.08em; color:${CREMA}; font-weight:700;">
                       DEHESA DE PEÑOLITE
                     </div>
-                    <div style="width:36px; height:1px; background-color:${DORADO}; margin:10px auto;"></div>
+                    <div style="width:36px; height:1px; background-color:${DORADO}; margin:10px auto 12px;"></div>
                     <div style="font-family:Arial,sans-serif; font-size:11px; letter-spacing:0.14em; color:${DORADO}; text-transform:uppercase;">
                       D.O. Sierra de Segura · Desde 1958
                     </div>
