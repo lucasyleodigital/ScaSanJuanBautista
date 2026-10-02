@@ -69,6 +69,24 @@ export default function HeroV2() {
     return () => ctx.revert();
   }, []);
 
+  // Altura del menú fijo en reposo, para que en móvil la foto empiece justo
+  // debajo de él. Mide una vez (y al redimensionar) en vez de observarlo:
+  // el menú se encoge 12px al pasar de 40px de scroll (py-5 → py-3.5) y
+  // seguirlo en vivo haría saltar el diseño del Hero.
+  useEffect(() => {
+    const nav = document.querySelector("nav");
+    if (!nav) return;
+    const root = document.documentElement;
+    const measure = () => {
+      const h = nav.offsetHeight + (window.scrollY > 40 ? 12 : 0);
+      root.style.setProperty("--nav-h", `${h}px`);
+    };
+    measure();
+    document.fonts?.ready.then(measure);
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
+
   return (
     <section
       id="inicio"
@@ -82,23 +100,45 @@ export default function HeroV2() {
       role="img"
       aria-label="Vista aérea del pueblo de Peñolite rodeado de olivares, Sierra de Segura, Jaén"
     >
-      {/* En móvil, "cover" sobre una foto panorámica dentro de un contenedor
-          tan alto (120vh) solo deja ver ~22% del ancho real de la foto —
-          se veía como un zoom exagerado sobre los tejados. Bajar la altura
-          mínima en móvil reduce cuánto hay que recortar para llenar el
-          alto, así se aprecia mucho más pueblo y valle alrededor. */}
+      {/* En móvil, "cover" sobre una foto panorámica (16:9) dentro de una
+          sección vertical solo deja ver un tercio del ancho real de la foto.
+          Aquí la foto se escala al ancho de la pantalla para verse entera,
+          como una banda justo debajo del menú fijo (--nav-h, medido arriba;
+          120px de respaldo), con un degradado hacia el fondo oscuro; el
+          texto queda debajo en vez de encima. */}
       <style>{`
         @media (max-width: 767px) {
           .hero-bg {
-            min-height: 78vh !important;
+            min-height: 0 !important;
+            align-items: flex-start !important;
+            padding-top: calc(var(--nav-h, 120px) + 56.25vw + 24px) !important;
+            padding-bottom: 96px !important;
+            background-size: 100% auto !important;
+            background-position: center var(--nav-h, 120px) !important;
+            background-repeat: no-repeat !important;
+          }
+          .hero-bg::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: calc(var(--nav-h, 120px) + 56.25vw - 72px);
+            height: 72px;
+            background: linear-gradient(180deg, rgba(6, 13, 3, 0) 0%, #060d03 100%);
+            z-index: 1;
+            pointer-events: none;
+          }
+          .hero-overlay {
+            opacity: 0.5 !important;
           }
         }
       `}</style>
+
       {/* Overlay cinematográfico: solo lo justo para que el texto se lea,
           sin tapar la foto real de Peñolite debajo (antes llegaba a 95%
           de opacidad + un desenfoque encima — se veía como niebla) */}
       <div
-        className="absolute inset-0 z-0"
+        className="hero-overlay absolute inset-0 z-0"
         style={{
           background: `linear-gradient(180deg, rgba(6, 13, 3, 0.4) 0%, rgba(6, 13, 3, 0.5) 50%, rgba(6, 13, 3, 0.7) 100%)`,
         }}
@@ -108,7 +148,7 @@ export default function HeroV2() {
           encima y que las aceitunas se vean, no debajo de la capa oscura */}
       <FloatingParticles count={18} mobileCount={7} />
 
-      <div className="relative z-20 text-center px-6 max-w-5xl mx-auto pt-36 md:pt-16">
+      <div className="relative z-20 text-center px-6 max-w-5xl mx-auto md:pt-16">
         {/* Eyebrow Badges */}
         <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full border border-dorado/40 bg-black/60 backdrop-blur-md mb-8">
           <Award className="w-4 h-4 text-dorado animate-pulse" />

@@ -19,7 +19,10 @@ export default function CierreV2() {
 
     const ctx = gsap.context(() => {
       // Animate title por carácter — una sola vez, siempre completa
-      const splitTitle = new SplitText(titleRef.current, { type: "chars" });
+      // "words" además de "chars": sin agrupar por palabras, en pantallas
+      // estrechas el navegador podía cortar la línea a mitad de palabra
+      // ("Cooper / ativa.").
+      const splitTitle = new SplitText(titleRef.current, { type: "words,chars" });
 
       gsap.from(splitTitle.chars, {
         scrollTrigger: {
@@ -62,16 +65,33 @@ export default function CierreV2() {
       role="img"
       aria-label="Agricultor de la cooperativa recogiendo aceitunas a mano"
     >
-      {/* El sujeto (manos + aceitunas) está a la derecha de la foto, no
-          centrado. Con background-position:center, en móvil "cover" solo
-          deja ver la franja central de la imagen — el olivar vacío del
-          fondo, sin las manos. Se desplaza el encuadre hacia donde está
-          el sujeto real. */}
+      {/* En móvil, "cover" sobre una foto panorámica dentro de una sección
+          tan alta (con toda la tarjeta de texto) solo deja ver ~18% del
+          ancho de la foto, y el sujeto (manos + aceitunas) quedaba fuera.
+          Aquí la foto se escala al ancho de la pantalla para verse entera,
+          como una banda arriba con degradado hacia el fondo oscuro, y la
+          tarjeta empieza justo debajo, solapando un poco el degradado. */}
       <style>{`
         @media (max-width: 767px) {
           .cierre-bg {
-            min-height: 82vh !important;
-            background-position: 74% 58% !important;
+            min-height: 0 !important;
+            align-items: flex-start !important;
+            padding-top: calc(54.55vw - 16px) !important;
+            padding-bottom: 72px !important;
+            background-size: 100% auto !important;
+            background-position: center top !important;
+            background-repeat: no-repeat !important;
+          }
+          .cierre-bg::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: calc(54.55vw - 88px);
+            height: 88px;
+            background: linear-gradient(180deg, rgba(6, 13, 3, 0) 0%, #060d03 100%);
+            z-index: 1;
+            pointer-events: none;
           }
         }
       `}</style>
