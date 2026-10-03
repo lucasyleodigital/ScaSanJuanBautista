@@ -3,6 +3,7 @@
 import { Fragment, useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase, DEFAULT_PRICING, type PricingConfig, type Pedido, type Promocion, type Provincia } from "@/lib/supabase";
+import InformesTab from "@/components/panel-eva/InformesTab";
 
 export default function PanelEvaPage() {
   const [session, setSession] = useState<Session | null>(null);
@@ -96,7 +97,7 @@ function LoginScreen() {
   );
 }
 
-type Tab = "pedidos" | "clientes" | "tarifas" | "envios" | "ofertas";
+type Tab = "pedidos" | "clientes" | "informes" | "tarifas" | "envios" | "ofertas";
 
 function Dashboard() {
   const [tab, setTab] = useState<Tab>("pedidos");
@@ -117,6 +118,7 @@ function Dashboard() {
         {([
           ["pedidos", "Pedidos"],
           ["clientes", "Clientes"],
+          ["informes", "Informes"],
           ["tarifas", "Tarifas"],
           ["envios", "Envíos"],
           ["ofertas", "Ofertas"],
@@ -138,6 +140,7 @@ function Dashboard() {
       <main className="p-6">
         {tab === "pedidos" && <PedidosTab />}
         {tab === "clientes" && <ClientesTab />}
+        {tab === "informes" && <InformesTab />}
         {tab === "tarifas" && <TarifasTab />}
         {tab === "envios" && <EnviosTab />}
         {tab === "ofertas" && <OfertasTab />}

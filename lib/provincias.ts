@@ -65,3 +65,36 @@ export function getProvinciaFromCP(codigoPostal: string): string | null {
   const prefijo = codigoPostal.trim().slice(0, 2);
   return PREFIJO_A_PROVINCIA[prefijo] ?? null;
 }
+
+// Comunidad autónoma de cada provincia (para agrupar listados por zonas más
+// amplias que la provincia). Los nombres de provincia son exactamente los de
+// PREFIJO_A_PROVINCIA, y hay una prueba que comprueba que no falta ninguna.
+const COMUNIDADES: Record<string, string[]> = {
+  "Andalucía": ["Almería", "Cádiz", "Córdoba", "Granada", "Huelva", "Jaén", "Málaga", "Sevilla"],
+  "Aragón": ["Huesca", "Teruel", "Zaragoza"],
+  "Asturias": ["Asturias"],
+  "Islas Baleares": ["Baleares"],
+  "Canarias": ["Las Palmas", "Santa Cruz de Tenerife"],
+  "Cantabria": ["Cantabria"],
+  "Castilla y León": ["Ávila", "Burgos", "León", "Palencia", "Salamanca", "Segovia", "Soria", "Valladolid", "Zamora"],
+  "Castilla-La Mancha": ["Albacete", "Ciudad Real", "Cuenca", "Guadalajara", "Toledo"],
+  "Cataluña": ["Barcelona", "Girona", "Lleida", "Tarragona"],
+  "Comunidad Valenciana": ["Alicante", "Castellón", "Valencia"],
+  "Extremadura": ["Badajoz", "Cáceres"],
+  "Galicia": ["A Coruña", "Lugo", "Ourense", "Pontevedra"],
+  "Comunidad de Madrid": ["Madrid"],
+  "Región de Murcia": ["Murcia"],
+  "Navarra": ["Navarra"],
+  "País Vasco": ["Álava", "Guipúzcoa", "Vizcaya"],
+  "La Rioja": ["La Rioja"],
+  "Ceuta": ["Ceuta"],
+  "Melilla": ["Melilla"],
+};
+
+export const COMUNIDADES_ORDENADAS = Object.keys(COMUNIDADES);
+
+export const PROVINCIA_A_COMUNIDAD: Record<string, string> = Object.fromEntries(
+  Object.entries(COMUNIDADES).flatMap(([comunidad, provincias]) =>
+    provincias.map((provincia) => [provincia, comunidad])
+  )
+);
