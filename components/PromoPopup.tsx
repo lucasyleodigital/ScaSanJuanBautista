@@ -152,7 +152,7 @@ export default function PromoPopup() {
         type="button"
         onClick={() => {
           dismiss();
-          document.querySelector("#productos")?.scrollIntoView({ behavior: "smooth" });
+          document.querySelector("#formulario-contacto")?.scrollIntoView({ behavior: "smooth" });
         }}
         data-cursor-active
         style={{
