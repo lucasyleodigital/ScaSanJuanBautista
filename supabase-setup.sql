@@ -151,3 +151,5 @@ grant select, update on public.envio_provincias to authenticated;
 alter table pedidos
   add column if not exists direccion text,
   add column if not exists localidad text;
+
+-- 2026-10-03: envío automático por peso (tarifa CEACERO) -> ejecutar supabase-envio-automatico.sql

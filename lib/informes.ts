@@ -1,5 +1,12 @@
 import { supabase, type Pedido } from "@/lib/supabase";
 import {
+  PESO_CAJA_3X5L_DEFECTO,
+  PESO_CAJA_6X2L_DEFECTO,
+  destinoSinEtiqueta,
+  esEnvioAConsultar,
+  pesoPedidoKg,
+} from "@/lib/envios";
+import {
   COMUNIDADES_ORDENADAS,
   PROVINCIAS_ORDENADAS,
   PROVINCIA_A_COMUNIDAD,
@@ -40,7 +47,8 @@ export interface Zona {
 }
 
 export function zonaDePedido(p: Pedido): Zona {
-  const destino = p.destino_envio.trim();
+  // Los pedidos con envío por presupuestar traen "Provincia · envío a consultar".
+  const destino = destinoSinEtiqueta(p.destino_envio);
   const d = destino.toLowerCase();
   if (d.includes("internacional") || d === "ue") {
     return { provincia: ZONA_INTERNACIONAL, comunidad: ZONA_INTERNACIONAL };
@@ -427,7 +435,7 @@ export function ordenarPedidosPorFecha(pedidos: Pedido[], masAntiguosPrimero: bo
 
 // ───────────────────────── Exportación (Excel y CSV) ─────────────────────────
 
-export type TipoColumna = "texto" | "entero" | "euro" | "fecha" | "fechahora";
+export type TipoColumna = "texto" | "entero" | "decimal" | "euro" | "fecha" | "fechahora";
 export type Valor = string | number | Date | null;
 
 export interface Columna<T> {
@@ -466,24 +474,46 @@ export const COLUMNAS_CLIENTES: Columna<ClienteResumen>[] = [
   { titulo: "Último pedido", ancho: 14, tipo: "fecha", valor: (c) => c.ultimoPedido },
 ];
 
-export const COLUMNAS_ENVIOS: Columna<Pedido>[] = [
-  { titulo: "Fecha", ancho: 17, tipo: "fechahora", valor: (p) => new Date(p.created_at) },
-  { ...COLUMNAS_PEDIDO_BASE.cliente, valor: (p) => p.nombre },
-  { ...COLUMNAS_PEDIDO_BASE.email, valor: (p) => p.email },
-  { ...COLUMNAS_PEDIDO_BASE.telefono, valor: (p) => p.telefono },
-  { ...COLUMNAS_PEDIDO_BASE.direccion, valor: (p) => p.direccion },
-  { ...COLUMNAS_PEDIDO_BASE.localidad, valor: (p) => p.localidad },
-  { ...COLUMNAS_PEDIDO_BASE.cp, valor: (p) => p.codigo_postal },
-  { ...COLUMNAS_PEDIDO_BASE.provincia, valor: (p) => zonaDePedido(p).provincia },
-  { ...COLUMNAS_PEDIDO_BASE.comunidad, valor: (p) => zonaDePedido(p).comunidad },
-  { titulo: "Cajas 3×5L", ancho: 11, tipo: "entero", valor: (p) => p.cajas_3x5l },
-  { titulo: "Cajas 6×2L", ancho: 11, tipo: "entero", valor: (p) => p.cajas_6x2l },
-  { titulo: "Litros", ancho: 9, tipo: "entero", valor: (p) => p.total_litros },
-  { titulo: "Portes (€)", ancho: 11, tipo: "euro", valor: (p) => p.portes },
-  { titulo: "Total (€)", ancho: 12, tipo: "euro", valor: (p) => p.total_estimado },
-  { titulo: "Estado", ancho: 12, tipo: "texto", valor: (p) => p.estado },
-  { titulo: "Código promo", ancho: 14, tipo: "texto", valor: (p) => p.codigo_promo },
-];
+/** Kilos que pesa cada tipo de caja (los edita Eva en Envíos). */
+export interface PesosCaja {
+  cajas3x5l: number;
+  cajas6x2l: number;
+}
+
+export const PESOS_CAJA_POR_DEFECTO: PesosCaja = {
+  cajas3x5l: PESO_CAJA_3X5L_DEFECTO,
+  cajas6x2l: PESO_CAJA_6X2L_DEFECTO,
+};
+
+/** Peso aproximado de un pedido (cajas × peso de cada caja; sin contar el embalaje extra). */
+export function pesoDePedido(p: Pedido, pesos: PesosCaja = PESOS_CAJA_POR_DEFECTO): number {
+  return pesoPedidoKg(p.cajas_3x5l, p.cajas_6x2l, pesos.cajas3x5l, pesos.cajas6x2l);
+}
+
+export function columnasEnvios(pesos: PesosCaja = PESOS_CAJA_POR_DEFECTO): Columna<Pedido>[] {
+  return [
+    { titulo: "Fecha", ancho: 17, tipo: "fechahora", valor: (p) => new Date(p.created_at) },
+    { ...COLUMNAS_PEDIDO_BASE.cliente, valor: (p) => p.nombre },
+    { ...COLUMNAS_PEDIDO_BASE.email, valor: (p) => p.email },
+    { ...COLUMNAS_PEDIDO_BASE.telefono, valor: (p) => p.telefono },
+    { ...COLUMNAS_PEDIDO_BASE.direccion, valor: (p) => p.direccion },
+    { ...COLUMNAS_PEDIDO_BASE.localidad, valor: (p) => p.localidad },
+    { ...COLUMNAS_PEDIDO_BASE.cp, valor: (p) => p.codigo_postal },
+    { ...COLUMNAS_PEDIDO_BASE.provincia, valor: (p) => zonaDePedido(p).provincia },
+    { ...COLUMNAS_PEDIDO_BASE.comunidad, valor: (p) => zonaDePedido(p).comunidad },
+    { titulo: "Cajas 3×5L", ancho: 11, tipo: "entero", valor: (p) => p.cajas_3x5l },
+    { titulo: "Cajas 6×2L", ancho: 11, tipo: "entero", valor: (p) => p.cajas_6x2l },
+    { titulo: "Litros", ancho: 9, tipo: "entero", valor: (p) => p.total_litros },
+    { titulo: "Peso aprox. (kg)", ancho: 15, tipo: "decimal", valor: (p) => pesoDePedido(p, pesos) },
+    { titulo: "Portes (€)", ancho: 11, tipo: "euro", valor: (p) => p.portes },
+    { titulo: "Total (€)", ancho: 12, tipo: "euro", valor: (p) => p.total_estimado },
+    { titulo: "Envío a consultar", ancho: 16, tipo: "texto", valor: (p) => (esEnvioAConsultar(p.destino_envio) ? "Sí" : "") },
+    { titulo: "Estado", ancho: 12, tipo: "texto", valor: (p) => p.estado },
+    { titulo: "Código promo", ancho: 14, tipo: "texto", valor: (p) => p.codigo_promo },
+  ];
+}
+
+export const COLUMNAS_ENVIOS: Columna<Pedido>[] = columnasEnvios();
 
 export interface TablaDetalle {
   titulos: string[];
@@ -548,7 +578,7 @@ function celdaCsv(valor: Valor, tipo: TipoColumna): string {
   let texto: string;
   if (valor === null || valor === undefined) texto = "";
   else if (valor instanceof Date) texto = tipo === "fechahora" ? fmtFechaHora(valor) : fmtFecha(valor);
-  else if (typeof valor === "number") texto = tipo === "euro" ? valor.toFixed(2).replace(".", ",") : String(valor).replace(".", ",");
+  else if (typeof valor === "number") texto = tipo === "euro" || tipo === "decimal" ? valor.toFixed(2).replace(".", ",") : String(valor).replace(".", ",");
   else texto = textoSeguroCsv(valor);
   return /[";\r\n]/.test(texto) ? `"${texto.replace(/"/g, '""')}"` : texto;
 }
@@ -597,7 +627,7 @@ function celdaExcel(valor: Valor, tipo: TipoColumna) {
     return { value: aFechaExcel(valor), type: Date, format: tipo === "fechahora" ? "dd/mm/yyyy hh:mm" : "dd/mm/yyyy", align: "left" as const };
   }
   if (typeof valor === "number") {
-    return { value: valor, type: Number, ...(tipo === "euro" ? { format: FORMATO_EURO } : {}) };
+    return { value: valor, type: Number, ...(tipo === "euro" ? { format: FORMATO_EURO } : tipo === "decimal" ? { format: "0.00" } : {}) };
   }
   return { value: valor, type: String };
 }

@@ -1,19 +1,21 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import type { Pedido } from "@/lib/supabase";
+import { supabase, type Pedido } from "@/lib/supabase";
+import { esEnvioAConsultar } from "@/lib/envios";
 import {
   AGRUPACION_ETIQUETAS,
   COLUMNAS_CLIENTES,
-  COLUMNAS_ENVIOS,
   COMUNIDADES_ORDENADAS,
   ESTADO_ETIQUETAS,
   ORDEN_CLIENTES_ETIQUETAS,
+  PESOS_CAJA_POR_DEFECTO,
   PROVINCIAS_ORDENADAS,
   ZONA_INTERNACIONAL,
   agruparClientes,
   agruparPedidos,
   calcularTotales,
+  columnasEnvios,
   construirDetalle,
   descargarCsv,
   descargarExcel,
@@ -24,6 +26,7 @@ import {
   mesesDisponibles,
   ordenarClientes,
   ordenarPedidosPorFecha,
+  pesoDePedido,
   resolverPeriodo,
   zonaDePedido,
   type Agrupacion,
@@ -31,6 +34,7 @@ import {
   type EstadoFiltro,
   type InformeExportable,
   type OrdenClientes,
+  type PesosCaja,
   type Totales,
 } from "@/lib/informes";
 
@@ -69,20 +73,39 @@ type Informe = "clientes" | "envios";
 /** Carga todos los pedidos (paginando) y muestra los informes. */
 export default function InformesTab() {
   const [pedidos, setPedidos] = useState<Pedido[] | null>(null);
+  const [pesos, setPesos] = useState<PesosCaja>(PESOS_CAJA_POR_DEFECTO);
   const [error, setError] = useState("");
 
   useEffect(() => {
     fetchTodosLosPedidos()
       .then(setPedidos)
       .catch((e: { message?: string }) => setError(e?.message ?? "No se han podido cargar los pedidos"));
+
+    // Pesos de las cajas que Eva fija en Envíos; si aún no existen, los de siempre.
+    supabase
+      .from("pricing_config")
+      .select("*")
+      .eq("id", 1)
+      .maybeSingle()
+      .then(({ data }) => {
+        const c3 = Number(data?.peso_caja_3x5l);
+        const c2 = Number(data?.peso_caja_6x2l);
+        if (c3 > 0 && c2 > 0) setPesos({ cajas3x5l: c3, cajas6x2l: c2 });
+      });
   }, []);
 
   if (error) return <p className="text-sm text-red-400">Error: {error}</p>;
   if (!pedidos) return <p className="text-sm text-tx-bajo">Cargando pedidos…</p>;
-  return <InformesVista pedidos={pedidos} />;
+  return <InformesVista pedidos={pedidos} pesos={pesos} />;
 }
 
-export function InformesVista({ pedidos }: { pedidos: Pedido[] }) {
+export function InformesVista({
+  pedidos,
+  pesos = PESOS_CAJA_POR_DEFECTO,
+}: {
+  pedidos: Pedido[];
+  pesos?: PesosCaja;
+}) {
   const [informe, setInforme] = useState<Informe>("clientes");
   const [periodo, setPeriodo] = useState("todo");
   const [desde, setDesde] = useState("");
@@ -111,6 +134,7 @@ export function InformesVista({ pedidos }: { pedidos: Pedido[] }) {
     [pedidos, periodo, desde, hasta, zona, estado, busqueda, informe]
   );
   const totales = useMemo(() => calcularTotales(filtrados), [filtrados]);
+  const pesoTotalKg = useMemo(() => filtrados.reduce((a, p) => a + pesoDePedido(p, pesos), 0), [filtrados, pesos]);
   const grupos = useMemo(() => agruparPedidos(filtrados, agrupacion), [filtrados, agrupacion]);
 
   const gruposClientes = useMemo(
@@ -168,7 +192,7 @@ export function InformesVista({ pedidos }: { pedidos: Pedido[] }) {
       resumenGrupos,
       tituloGrupo: TITULO_GRUPO[agrupacion],
       detalle: construirDetalle(
-        COLUMNAS_ENVIOS,
+        columnasEnvios(pesos),
         gruposEnvios.map((g) => ({ etiqueta: g.etiqueta, filas: g.envios })),
         agrupado,
         TITULO_GRUPO[agrupacion]
@@ -347,7 +371,7 @@ export function InformesVista({ pedidos }: { pedidos: Pedido[] }) {
         )}
       </section>
 
-      <Resumen totales={totales} tipo={informe} />
+      <Resumen totales={totales} tipo={informe} pesoKg={pesoTotalKg} />
 
       <div className="flex flex-wrap items-center gap-3">
         <button onClick={() => exportar("xlsx")} disabled={!hayDatos || !!exportando} className={BOTON}>
@@ -375,7 +399,7 @@ export function InformesVista({ pedidos }: { pedidos: Pedido[] }) {
         informe === "clientes" ? (
           <TablaClientes clientes={gruposClientes[0]?.clientes ?? []} />
         ) : (
-          <TablaEnvios envios={gruposEnvios[0]?.envios ?? []} />
+          <TablaEnvios envios={gruposEnvios[0]?.envios ?? []} pesos={pesos} />
         )
       ) : (
         <div className="flex flex-col gap-3">
@@ -392,9 +416,14 @@ export function InformesVista({ pedidos }: { pedidos: Pedido[] }) {
                   <span className="text-tx-medio">{entero(t.clientes)} clientes</span>
                   <span className="text-tx-medio">{entero(t.pedidos)} pedidos</span>
                   <span className="text-tx-medio">{entero(t.litros)} L</span>
+                  {informe === "envios" && (
+                    <span className="text-tx-medio">
+                      {entero(Math.round(g.pedidos.reduce((a, p) => a + pesoDePedido(p, pesos), 0)))} kg
+                    </span>
+                  )}
                   <span className="font-mono text-dorado">{eur(t.total)}</span>
                 </summary>
-                {"clientes" in g ? <TablaClientes clientes={g.clientes} /> : <TablaEnvios envios={g.envios} />}
+                {"clientes" in g ? <TablaClientes clientes={g.clientes} /> : <TablaEnvios envios={g.envios} pesos={pesos} />}
               </details>
             );
           })}
@@ -413,7 +442,7 @@ function Campo({ etiqueta, children }: { etiqueta: string; children: React.React
   );
 }
 
-function Resumen({ totales, tipo }: { totales: Totales; tipo: Informe }) {
+function Resumen({ totales, tipo, pesoKg }: { totales: Totales; tipo: Informe; pesoKg: number }) {
   const tarjetas: [string, string][] =
     tipo === "clientes"
       ? [
@@ -428,11 +457,12 @@ function Resumen({ totales, tipo }: { totales: Totales; tipo: Informe }) {
           ["Cajas 3×5L", entero(totales.cajas3x5l)],
           ["Cajas 6×2L", entero(totales.cajas6x2l)],
           ["Litros", entero(totales.litros)],
+          ["Peso aprox.", `${entero(Math.round(pesoKg))} kg`],
           ["Portes", eur(totales.portes)],
           ["Total", eur(totales.total)],
         ];
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+    <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))" }}>
       {tarjetas.map(([etiqueta, valor]) => (
         <div key={etiqueta} className="rounded-lg border border-rule bg-black/20 p-3">
           <div className="text-[11px] uppercase tracking-wide text-tx-bajo">{etiqueta}</div>
@@ -501,7 +531,7 @@ function TablaClientes({ clientes }: { clientes: ClienteResumen[] }) {
   );
 }
 
-function TablaEnvios({ envios }: { envios: Pedido[] }) {
+function TablaEnvios({ envios, pesos }: { envios: Pedido[]; pesos: PesosCaja }) {
   return (
     <div className="overflow-x-auto rounded-lg border border-rule">
       <table className="w-full text-left text-sm">
@@ -512,6 +542,7 @@ function TablaEnvios({ envios }: { envios: Pedido[] }) {
             <th className="p-3">Dirección de envío</th>
             <th className="p-3">Cajas</th>
             <th className="p-3">Litros</th>
+            <th className="p-3">Peso aprox.</th>
             <th className="p-3">Portes</th>
             <th className="p-3">Total</th>
             <th className="p-3">Estado</th>
@@ -537,7 +568,16 @@ function TablaEnvios({ envios }: { envios: Pedido[] }) {
                   {p.cajas_6x2l > 0 && <div>{p.cajas_6x2l}× 6×2L</div>}
                 </td>
                 <td className="p-3">{entero(p.total_litros)}</td>
-                <td className="p-3 font-mono text-tx-medio">{eur(p.portes)}</td>
+                <td className="p-3 text-xs text-tx-medio">
+                  {pesoDePedido(p, pesos).toLocaleString("es-ES", { maximumFractionDigits: 1 })} kg
+                </td>
+                <td className="p-3 font-mono text-tx-medio">
+                  {esEnvioAConsultar(p.destino_envio) ? (
+                    <span className="font-sans text-xs text-amber-300">a consultar</span>
+                  ) : (
+                    eur(p.portes)
+                  )}
+                </td>
                 <td className="p-3 font-mono text-dorado">{eur(p.total_estimado)}</td>
                 <td className={`p-3 text-xs uppercase ${COLOR_ESTADO[p.estado]}`}>{p.estado}</td>
               </tr>

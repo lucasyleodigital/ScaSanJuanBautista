@@ -58,8 +58,11 @@ export const PREFIJO_A_PROVINCIA: Record<string, string> = {
 };
 
 // Orden de las provincias para mostrarlas en el panel de Eva (mismo orden
-// que el prefijo, 01 a 52).
-export const PROVINCIAS_ORDENADAS = Object.values(PREFIJO_A_PROVINCIA);
+// que el prefijo, 01 a 52). Se ordena a mano: JavaScript pone primero las
+// claves que parecen números enteros ("10"…"52") y deja "01"…"09" al final.
+export const PROVINCIAS_ORDENADAS = Object.entries(PREFIJO_A_PROVINCIA)
+  .sort(([a], [b]) => Number(a) - Number(b))
+  .map(([, provincia]) => provincia);
 
 export function getProvinciaFromCP(codigoPostal: string): string | null {
   const prefijo = codigoPostal.trim().slice(0, 2);

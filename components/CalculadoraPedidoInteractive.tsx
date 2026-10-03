@@ -5,6 +5,15 @@ import { useAudio } from "./AudioEngine";
 import { supabase, DEFAULT_PRICING, type PricingConfig, type Promocion, type Provincia } from "@/lib/supabase";
 import { getProvinciaFromCP } from "@/lib/provincias";
 import {
+  ETIQUETA_A_CONSULTAR,
+  PESO_CAJA_3X5L_DEFECTO,
+  PESO_CAJA_6X2L_DEFECTO,
+  cotizarEnvio,
+  indexarTarifas,
+  pesoPedidoKg,
+  type FilaEnvioTarifa,
+} from "@/lib/envios";
+import {
   ShoppingBag,
   Send,
   PhoneCall,
@@ -40,6 +49,15 @@ export default function CalculadoraPedidoInteractive() {
   const [qty2L, setQty2L] = useState<number>(0);
   const [destino, setDestino] = useState<"espana" | "internacional">("espana");
   const [provincias, setProvincias] = useState<Provincia[] | null>(null);
+  // Envío automático por peso: null = comprobando si está activo; false = no
+  // lo está todavía (se usan los precios fijos por provincia de siempre).
+  const [tarifaPesoActiva, setTarifaPesoActiva] = useState<boolean | null>(null);
+  // Filas publicadas de la provincia detectada. Se piden solo las de esa
+  // provincia (unas 46) porque Supabase corta cada petición en 1.000 filas.
+  const [tarifaProvincia, setTarifaProvincia] = useState<{
+    provincia: string;
+    filas: FilaEnvioTarifa[] | null;
+  } | null>(null);
 
   const [contact, setContact] = useState<ContactData>({
     nombre: "",
@@ -94,6 +112,13 @@ export default function CalculadoraPedidoInteractive() {
       .then(({ data, error }) => {
         if (!error && data) setProvincias(data as Provincia[]);
       });
+
+    // ¿Hay precios por peso publicados? Si la tabla no existe o está vacía,
+    // el configurador sigue con los precios fijos de envio_provincias.
+    supabase
+      .from("envio_tarifas")
+      .select("provincia", { count: "exact", head: true })
+      .then(({ count, error }) => setTarifaPesoActiva(!error && (count ?? 0) > 0));
   }, []);
 
   // Price calculations
@@ -125,11 +150,56 @@ export default function CalculadoraPedidoInteractive() {
   // postal no resuelve una provincia real, el envío se considera
   // "desconocido" — no se muestra ni se suma un precio adivinado.
   const provinciaDetectada = destino === "espana" ? getProvinciaFromCP(contact.codigoPostal) : null;
-  const precioEnvioEspana = provinciaDetectada
-    ? provincias?.find((p) => p.provincia === provinciaDetectada)?.precio ?? pricing.envio_peninsula
-    : null;
+
+  // Envío por peso: se piden los precios publicados de la provincia detectada.
+  useEffect(() => {
+    if (!tarifaPesoActiva || !provinciaDetectada) return;
+    let cancelado = false;
+    supabase
+      .from("envio_tarifas")
+      .select("provincia, escalon_kg, precio")
+      .eq("provincia", provinciaDetectada)
+      .then(({ data, error }) => {
+        if (cancelado) return;
+        // Si la consulta falla, filas = null y se usan los precios fijos de siempre.
+        setTarifaProvincia({
+          provincia: provinciaDetectada,
+          filas: error ? null : ((data ?? []) as FilaEnvioTarifa[]),
+        });
+      });
+    return () => {
+      cancelado = true;
+    };
+  }, [tarifaPesoActiva, provinciaDetectada]);
+
+  const pesoCaja3x5L = pricing.peso_caja_3x5l ?? PESO_CAJA_3X5L_DEFECTO;
+  const pesoCaja6x2L = pricing.peso_caja_6x2l ?? PESO_CAJA_6X2L_DEFECTO;
+  const pesoKg = pesoPedidoKg(qty5L, qty2L, pesoCaja3x5L, pesoCaja6x2L);
+
+  // Con el envío por peso activo: precio según el peso real del pedido; si la
+  // provincia no tiene tarifa (Canarias, Ceuta, Melilla) o el peso se sale de
+  // ella, el envío se presupuesta aparte. Si no está activo o falla la
+  // consulta, precio fijo por provincia como siempre.
+  const filasProvincia =
+    provinciaDetectada && tarifaProvincia?.provincia === provinciaDetectada ? tarifaProvincia.filas : undefined;
+  const usaTarifaPeso = tarifaPesoActiva === true && filasProvincia !== null;
+  const calculandoEnvio = usaTarifaPeso && !!provinciaDetectada && filasProvincia === undefined;
+  const cotizacion =
+    usaTarifaPeso && provinciaDetectada && filasProvincia
+      ? cotizarEnvio(provinciaDetectada, pesoKg, indexarTarifas(filasProvincia))
+      : null;
+  const envioAConsultar = cotizacion?.tipo === "consultar";
+  const precioEnvioEspana = !provinciaDetectada
+    ? null
+    : usaTarifaPeso
+    ? cotizacion?.tipo === "precio"
+      ? cotizacion.precio
+      : null
+    : provincias?.find((p) => p.provincia === provinciaDetectada)?.precio ?? pricing.envio_peninsula;
   const destinoEnvioLabel =
-    destino === "espana" ? provinciaDetectada ?? "España" : "Internacional (UE)";
+    destino === "espana"
+      ? `${provinciaDetectada ?? "España"}${envioAConsultar ? ` · ${ETIQUETA_A_CONSULTAR}` : ""}`
+      : "Internacional (UE)";
   const envioConocido = destino === "internacional" || precioEnvioEspana !== null;
 
   // Shipping cost
@@ -142,7 +212,8 @@ export default function CalculadoraPedidoInteractive() {
         : (precioEnvioEspana as number)
       : pricing.envio_ue;
   const shippingCost = appliedPromo?.envio_gratis ? 0 : baseShippingCost;
-  const portesPendientes = rawSubtotal > 0 && !envioConocido;
+  const portesAConsultar = rawSubtotal > 0 && envioAConsultar;
+  const portesPendientes = rawSubtotal > 0 && !envioConocido && !envioAConsultar;
 
   const finalTotal = rawSubtotal - discountAmount - promoDiscountAmount + shippingCost;
   const pricePerLiterAvg = totalLitros > 0 ? (rawSubtotal / totalLitros).toFixed(2) : "0.00";
@@ -541,8 +612,14 @@ export default function CalculadoraPedidoInteractive() {
               </div>
               {destino === "espana" && (
                 <p className="mt-2 text-[11px] text-tx-muted">
-                  {provinciaDetectada && precioEnvioEspana !== null
-                    ? `Envío a ${provinciaDetectada}: ${precioEnvioEspana.toFixed(2)} €`
+                  {envioAConsultar
+                    ? `A ${provinciaDetectada} el envío se presupuesta aparte según el peso del pedido: te lo confirmamos antes de cerrarlo.`
+                    : calculandoEnvio
+                    ? "Calculando el envío…"
+                    : provinciaDetectada && precioEnvioEspana !== null
+                    ? `Envío a ${provinciaDetectada}: ${precioEnvioEspana.toFixed(2)} €${
+                        usaTarifaPeso && pesoKg > 0 ? ` · peso aprox. ${pesoKg.toFixed(1)} kg` : ""
+                      }`
                     : "Escribe tu código postal más abajo para calcular el envío exacto de tu provincia."}
                 </p>
               )}
@@ -788,7 +865,11 @@ export default function CalculadoraPedidoInteractive() {
                   <div className="flex justify-between text-tx-muted">
                     <span>Portes de Envío:</span>
                     <span className="text-tx-crema">
-                      {portesPendientes ? (
+                      {portesAConsultar ? (
+                        <span className="text-dorado text-xs normal-case">A consultar con la cooperativa</span>
+                      ) : calculandoEnvio ? (
+                        <span className="text-tx-muted text-xs normal-case">Calculando…</span>
+                      ) : portesPendientes ? (
                         <span className="text-tx-muted text-xs normal-case">Según código postal</span>
                       ) : shippingCost === 0 ? (
                         <span className="text-emerald-400 uppercase text-xs">GRATIS</span>
@@ -805,7 +886,9 @@ export default function CalculadoraPedidoInteractive() {
                         {finalTotal.toFixed(2)} €
                       </span>
                       <span className="block text-[10px] text-tx-muted">
-                        {portesPendientes ? "IVA incluido · portes aparte" : "IVA del Aceite Incluido"}
+                        {portesPendientes || portesAConsultar || calculandoEnvio
+                          ? "IVA incluido · portes aparte"
+                          : "IVA del Aceite Incluido"}
                       </span>
                     </div>
                   </div>

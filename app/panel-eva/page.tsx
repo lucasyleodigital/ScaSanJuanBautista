@@ -4,6 +4,8 @@ import { Fragment, useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase, DEFAULT_PRICING, type PricingConfig, type Pedido, type Promocion, type Provincia } from "@/lib/supabase";
 import InformesTab from "@/components/panel-eva/InformesTab";
+import EnviosPanel from "@/components/panel-eva/EnviosPanel";
+import { esEnvioAConsultar } from "@/lib/envios";
 
 export default function PanelEvaPage() {
   const [session, setSession] = useState<Session | null>(null);
@@ -142,7 +144,7 @@ function Dashboard() {
         {tab === "clientes" && <ClientesTab />}
         {tab === "informes" && <InformesTab />}
         {tab === "tarifas" && <TarifasTab />}
-        {tab === "envios" && <EnviosTab />}
+        {tab === "envios" && <EnviosPanel editorPreciosFijos={<EnviosTab />} />}
         {tab === "ofertas" && <OfertasTab />}
       </main>
     </div>
@@ -227,7 +229,12 @@ function PedidosTab() {
                   <div className="text-dorado">Código: {p.codigo_promo}</div>
                 )}
               </td>
-              <td className="p-3 text-xs uppercase text-tx-bajo">{p.destino_envio}</td>
+              <td
+                className={`p-3 text-xs uppercase ${esEnvioAConsultar(p.destino_envio) ? "text-amber-300" : "text-tx-bajo"}`}
+                title={esEnvioAConsultar(p.destino_envio) ? "Hay que presupuestar el envío con el cliente" : undefined}
+              >
+                {p.destino_envio}
+              </td>
               <td className="p-3 font-mono text-dorado">{p.total_estimado.toFixed(2)} €</td>
               <td className="p-3">
                 <select

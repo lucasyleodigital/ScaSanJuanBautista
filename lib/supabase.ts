@@ -19,6 +19,9 @@ export interface PricingConfig {
   envio_gratis_desde: number;
   descuento_50l_pct: number;
   descuento_100l_pct: number;
+  /** Peso real de cada caja (kg). Opcionales: no existen hasta ejecutar supabase-envio-automatico.sql. */
+  peso_caja_3x5l?: number;
+  peso_caja_6x2l?: number;
   updated_at: string;
 }
 
@@ -32,6 +35,8 @@ export const DEFAULT_PRICING: PricingConfig = {
   envio_gratis_desde: 150.0,
   descuento_50l_pct: 5,
   descuento_100l_pct: 10,
+  peso_caja_3x5l: 13.74,
+  peso_caja_6x2l: 10.98,
   updated_at: "",
 };
 
