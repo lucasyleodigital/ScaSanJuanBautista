@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { mixStops, suavizar, type RGB } from "@/lib/maduracion";
 
 /**
  * Aceitunas en suspensión — cada una es un SVG diminuto
@@ -33,8 +34,6 @@ function seeded(n: number, decimals = 4): number {
   return Math.round(raw * f) / f;
 }
 
-type RGB = [number, number, number];
-
 // Etapas de maduración del cuerpo y del brillo, de verde a negro-morado.
 const BODY_STOPS: RGB[] = [
   [118, 146, 48], // verde oliva
@@ -48,20 +47,7 @@ const SHINE_STOPS: RGB[] = [
 ];
 
 /** 0 = verde, 1 = negro-morado. Verde hasta ~30% de la caída. */
-function ripeness(t: number): number {
-  const x = Math.min(Math.max((t - 0.3) / 0.65, 0), 1);
-  return x * x * (3 - 2 * x);
-}
-
-function mixStops(stops: RGB[], k: number): string {
-  const scaled = k * (stops.length - 1);
-  const i = Math.min(Math.floor(scaled), stops.length - 2);
-  const f = scaled - i;
-  const a = stops[i];
-  const b = stops[i + 1];
-  const c = a.map((v, n) => Math.round(v + (b[n] - v) * f));
-  return `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
-}
+const ripeness = (t: number) => suavizar(t, 0.3, 0.95);
 
 interface Particle {
   left: number;
