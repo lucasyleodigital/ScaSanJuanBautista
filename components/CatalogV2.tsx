@@ -54,6 +54,10 @@ const productsJsonLd = products.map((product) => ({
     price: product.price.toFixed(2),
     priceCurrency: "EUR",
     availability: "https://schema.org/InStock",
+    seller: { "@type": "Organization", name: "SCA San Juan Bautista de Peñolite" },
+    acceptedPaymentMethod: [
+      "http://purl.org/goodrelations/v1#ByBankTransferInAdvance",
+    ],
     url: "https://www.dehesapenolite.com/#productos",
   },
 }));

@@ -34,7 +34,7 @@ const faqs: FaqItem[] = [
   {
     question: "¿Cómo se paga y cómo se cierra el pedido?",
     answer:
-      "Rellena el formulario con la cantidad que necesitas — te contestamos por email o teléfono para confirmar el presupuesto final y la forma de pago antes de cerrar el pedido.",
+      "Compras directamente a la cooperativa, sin tiendas ni intermediarios. Rellena el formulario con la cantidad que necesitas y te contestamos por email, teléfono o WhatsApp para confirmar el pedido. El pago se hace por Bizum o por transferencia bancaria, directamente a la cooperativa.",
   },
   {
     question: "¿Cómo debo conservar el aceite?",
