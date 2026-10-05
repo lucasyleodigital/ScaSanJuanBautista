@@ -47,6 +47,7 @@ const productsJsonLd = products.map((product) => ({
   "@type": "Product",
   name: `${product.title} — AOVE Picual D.O. Sierra de Segura`,
   description: product.description,
+  image: [`https://www.dehesapenolite.com/images/productos/${product.id}.webp`],
   brand: { "@type": "Brand", name: "SCA San Juan Bautista de Peñolite" },
   offers: {
     "@type": "Offer",
