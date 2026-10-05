@@ -26,9 +26,9 @@ const SITE_URL = "https://www.dehesapenolite.com";
 // exactas de marca/zona (Peñolite, Dehesa de Peñolite, Sierra de Segura,
 // Jaén) porque es literalmente lo que la gente teclea en Google/Bing.
 const SEO_TITLE =
-  "Dehesa de Peñolite — Aceite de Oliva Virgen Extra D.O. Sierra de Segura, Jaén";
+  "Comprar Aceite Dehesa de Peñolite — AOVE Picual D.O. Sierra de Segura";
 const SEO_DESCRIPTION =
-  "Aceite de oliva virgen extra Picual, Dehesa de Peñolite, D.O. Sierra de Segura, Jaén. Directo de la cooperativa desde 1958, sin intermediarios.";
+  "Compra aceite de oliva virgen extra Dehesa de Peñolite directo a la cooperativa: Picual D.O. Sierra de Segura, Jaén. Cajas de 15 y 12 litros con envío.";
 
 // Título y descripción para compartir en redes (Facebook/X/WhatsApp): aquí
 // el mensaje que más hace clicar es el diferenciador, no las palabras clave.
@@ -91,6 +91,21 @@ const organizationJsonLd = {
   foundingDate: "1958",
   description: SEO_DESCRIPTION,
   taxID: "F23006992",
+  // Se puede comprar en esta web: el pedido se envía con el configurador y la
+  // cooperativa lo confirma y cobra (Bizum o transferencia).
+  potentialAction: {
+    "@type": "OrderAction",
+    name: "Comprar aceite Dehesa de Peñolite",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: `${SITE_URL}/#pedido`,
+      actionPlatform: [
+        "http://schema.org/DesktopWebPlatform",
+        "http://schema.org/MobileWebPlatform",
+      ],
+    },
+    deliveryMethod: "http://purl.org/goodrelations/v1#DeliveryModeParcelService",
+  },
   sameAs: ["https://www.facebook.com/p/SCA-San-Juan-Bautista-Pe%C3%B1olite-100063301534955/"],
   address: {
     "@type": "PostalAddress",
