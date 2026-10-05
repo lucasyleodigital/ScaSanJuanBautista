@@ -53,7 +53,7 @@ const productsJsonLd = products.map((product) => ({
     price: product.price.toFixed(2),
     priceCurrency: "EUR",
     availability: "https://schema.org/InStock",
-    url: "https://web-cinematic-lucasyleo-projects.vercel.app/#productos",
+    url: "https://www.dehesapenolite.com/#productos",
   },
 }));
 

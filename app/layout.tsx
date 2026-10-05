@@ -20,7 +20,7 @@ const fraunces = Fraunces({
   axes: ["opsz", "SOFT", "WONK"],
 });
 
-const SITE_URL = "https://web-cinematic-lucasyleo-projects.vercel.app";
+const SITE_URL = "https://www.dehesapenolite.com";
 
 // Título y descripción indexados por buscadores: priorizan las búsquedas
 // exactas de marca/zona (Peñolite, Dehesa de Peñolite, Sierra de Segura,

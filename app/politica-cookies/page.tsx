@@ -3,6 +3,7 @@ import LegalPageLayout from "@/components/LegalPageLayout";
 
 export const metadata: Metadata = {
   title: "Política de Cookies | SCA San Juan Bautista de Peñolite",
+  alternates: { canonical: "/politica-cookies" },
   robots: { index: false, follow: true },
 };
 

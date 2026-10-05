@@ -3,6 +3,7 @@ import LegalPageLayout from "@/components/LegalPageLayout";
 
 export const metadata: Metadata = {
   title: "Aviso Legal | SCA San Juan Bautista de Peñolite",
+  alternates: { canonical: "/aviso-legal" },
   robots: { index: false, follow: true },
 };
 

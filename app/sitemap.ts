@@ -3,7 +3,7 @@ import type { MetadataRoute } from "next";
 export const dynamic = "force-static";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = "https://web-cinematic-lucasyleo-projects.vercel.app";
+  const base = "https://www.dehesapenolite.com";
 
   return [
     {

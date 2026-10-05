@@ -3,6 +3,7 @@ import LegalPageLayout from "@/components/LegalPageLayout";
 
 export const metadata: Metadata = {
   title: "Política de Privacidad | SCA San Juan Bautista de Peñolite",
+  alternates: { canonical: "/politica-privacidad" },
   robots: { index: false, follow: true },
 };
 
