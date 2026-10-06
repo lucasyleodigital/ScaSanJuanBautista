@@ -98,7 +98,7 @@ const organizationJsonLd = {
     name: "Comprar aceite Dehesa de Peñolite",
     target: {
       "@type": "EntryPoint",
-      urlTemplate: `${SITE_URL}/#pedido`,
+      urlTemplate: `${SITE_URL}/#formulario-contacto`,
       actionPlatform: [
         "http://schema.org/DesktopWebPlatform",
         "http://schema.org/MobileWebPlatform",

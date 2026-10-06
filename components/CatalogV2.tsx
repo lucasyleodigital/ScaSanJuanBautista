@@ -334,6 +334,22 @@ export default function CatalogV2() {
               >
                 Solicitar Presupuesto
               </button>
+              <a
+                href={`/${product.id === "caja-3x5l" ? "aceite-oliva-virgen-extra-garrafa-5-litros" : "aceite-oliva-virgen-extra-garrafa-2-litros"}`}
+                style={{
+                  display: "block",
+                  marginTop: spacing.md,
+                  textAlign: "center",
+                  fontFamily: typography.fontSans,
+                  fontSize: "12px",
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: colors.dorado,
+                  textDecoration: "none",
+                }}
+              >
+                Ver ficha del producto
+              </a>
             </div>
           ))}
         </div>

@@ -58,6 +58,8 @@ export default function Footer() {
               ["El Olivar", "/#olivar"],
               ["Productos", "/#productos"],
               ["Calidad", "/#calidad"],
+              ["Garrafa de 5 litros", "/aceite-oliva-virgen-extra-garrafa-5-litros"],
+              ["Garrafa de 2 litros", "/aceite-oliva-virgen-extra-garrafa-2-litros"],
             ]}
           />
           <FooterCol
