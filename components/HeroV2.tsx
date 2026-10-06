@@ -171,7 +171,7 @@ export default function HeroV2() {
           }}
           className="tracking-tight"
         >
-          500 Familias. Cero Intermediarios.
+          200 Familias. Cero Intermediarios.
         </h1>
 
         {/* Subtitle */}

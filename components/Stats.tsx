@@ -5,7 +5,7 @@ import { gsap } from "@/lib/gsap";
 import { isReducedMotion } from "@/hooks/useReducedMotion";
 
 const STATS = [
-  { target: 500, suffix: "+", label: "Familias olivareras" },
+  { target: 200, suffix: "", label: "Familias olivareras" },
   { target: 66, suffix: " años", label: "De tradición" },
   { target: 840, suffix: " m", label: "Altitud del olivar" },
   { target: 0.5, suffix: "°", prefix: "≤ ", decimals: 1, label: "Acidez máxima" },

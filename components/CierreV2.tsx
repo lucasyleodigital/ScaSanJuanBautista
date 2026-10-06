@@ -144,7 +144,7 @@ export default function CierreV2() {
             textShadow: "0 2px 12px rgba(0, 0, 0, 0.7)",
           }}
         >
-68 años vendiendo directo, desde antes de que "comprar directo" fuera una tendencia. 500 familias, un aceite, cero intermediarios. Cuando compras aquí, tu dinero llega a quien realmente lo cultivó — no se queda repartido por el camino.
+68 años vendiendo directo, desde antes de que "comprar directo" fuera una tendencia. 200 familias, un aceite, cero intermediarios. Cuando compras aquí, tu dinero llega a quien realmente lo cultivó — no se queda repartido por el camino.
         </p>
 
         {/* CTAs */}

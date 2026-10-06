@@ -5,7 +5,7 @@ const VALORES = [
   {
     icon: Handshake,
     title: "Cooperativismo real",
-    text: "Más de 500 familias socias deciden juntas, comparten riesgo y reparten el resultado con justicia.",
+    text: "Cerca de 200 familias socias deciden juntas, comparten riesgo y reparten el resultado con justicia.",
   },
   {
     icon: Leaf,
@@ -36,7 +36,7 @@ export default function Cooperativa() {
             Es un pueblo entero.
           </Reveal>
           <Reveal as="p" delay={0.1} className="mt-6 max-w-lg text-base leading-relaxed text-tx-medio-osc">
-            Detrás de cada botella hay más de 500 familias que han decidido,
+            Detrás de cada botella hay cerca de 200 familias que han decidido,
             durante 66 años, seguir haciendo las cosas juntas. La cooperativa
             no es un intermediario: es la forma en que Peñolite se organiza
             para sobrevivir y prosperar del olivar.
@@ -61,7 +61,7 @@ export default function Cooperativa() {
 
         <div className="flex flex-col gap-6">
           <Reveal className="bg-verde-oliva px-10 py-12 text-center text-crema">
-            <div className="font-serif text-[72px] leading-none text-dorado tabular-nums">500+</div>
+            <div className="font-serif text-[72px] leading-none text-dorado tabular-nums">200</div>
             <div className="mt-2 text-xs tracking-[0.15em] text-crema/60 uppercase">
               Familias socias
             </div>

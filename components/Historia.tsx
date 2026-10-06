@@ -101,7 +101,7 @@ export default function Historia() {
         >
           Lo que empezó como la unión de unas pocas familias de agricultores
           en Peñolite se convirtió en el corazón económico y social de todo
-          un pueblo. Hoy, más de 500 socios comparten la misma filosofía:
+          un pueblo. Hoy, cerca de 200 socios comparten la misma filosofía:
           hacer el mejor aceite posible, con respeto por la tradición y la
           tierra que lo produce.
         </Reveal>

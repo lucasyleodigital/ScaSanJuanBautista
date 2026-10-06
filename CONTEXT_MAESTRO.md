@@ -3,7 +3,7 @@
 
 ## 1. QUIÉN ES EL CLIENTE / QUÉ ES EL PROYECTO
 
-**Cliente:** SCA San Juan Bautista de Peñolite, cooperativa oleícola fundada el 23/07/1958 en Peñolite (Puente de Génave), Sierra de Segura, Jaén. 500 familias socias. D.O. Sierra de Segura. Variedad Picual 100%, olivar a 840m de altitud.
+**Cliente:** SCA San Juan Bautista de Peñolite, cooperativa oleícola fundada el 23/07/1958 en Peñolite (Puente de Génave), Sierra de Segura, Jaén. Unas 200 familias socias (cooperativa pequeña y familiar; dato confirmado por el cliente el 2026-10-06, antes la web decía 500). D.O. Sierra de Segura. Variedad Picual 100%, olivar a 840m de altitud.
 
 **Marca comercial real (impresa en las garrafas):** "Dehesa de Peñolite" — distinta de la razón social legal "SCA San Juan Bautista de Peñolite". Las dos conviven a propósito en la web: la razón social en textos legales/JSON-LD `name`, la marca comercial en `alternateName`, en el título SEO y en el sello del footer.
 

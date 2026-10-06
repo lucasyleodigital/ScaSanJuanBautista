@@ -243,7 +243,7 @@ export default function TerroirV2() {
                 lineHeight: "1.6",
               }}
             >
-              El 23 de julio de 1958, un grupo de familias de Peñolite dejó de vender su aceituna por separado y unió fuerzas. Hoy son 500. Cuando compras aquí, le compras a esas mismas familias — no a quien se pone en medio.
+              El 23 de julio de 1958, un grupo de familias de Peñolite dejó de vender su aceituna por separado y unió fuerzas. Hoy son cerca de 200. Cuando compras aquí, le compras a esas mismas familias — no a quien se pone en medio.
             </p>
           </div>
         </div>
@@ -259,7 +259,7 @@ export default function TerroirV2() {
           }}
         >
           {[
-            { label: "Socios", value: "500" },
+            { label: "Socios", value: "200" },
             { label: "Altitud", value: "840m" },
             { label: "Desde", value: "1958" },
           ].map((stat, i) => (

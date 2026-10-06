@@ -28,7 +28,7 @@ const specs: ProductSpec[] = [
 
 const benefits: { icon: ReactNode; text: string }[] = [
   { icon: <MapPin size={18} />, text: "Sabes qué cooperativa lo prensó y en qué sierra — no una etiqueta de \"mezcla de aceites de la Unión Europea\"" },
-  { icon: <Users size={18} />, text: "Tu dinero llega directo a las 500 familias que lo cultivan" },
+  { icon: <Users size={18} />, text: "Tu dinero llega directo a las 200 familias que lo cultivan" },
   { icon: <Wallet size={18} />, text: "Sin el margen del intermediario metido en el precio" },
   { icon: <Leaf size={18} />, text: "Sigue siendo aceite de oliva virgen extra de verdad, sin venderlo como si fuera una novedad" },
 ];

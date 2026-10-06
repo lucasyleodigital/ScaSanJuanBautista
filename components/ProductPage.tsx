@@ -148,7 +148,7 @@ export default function ProductPage({ slug }: { slug: string }) {
           <h2 className="mb-4 font-serif text-2xl text-tx-crema">Quién lo elabora</h2>
           <p className="max-w-3xl text-sm leading-relaxed text-tx-medio">
             La S.C.A. San Juan Bautista de Peñolite es una cooperativa fundada en 1958 en Peñolite (Puente de Génave),
-            en la Sierra de Segura, Jaén. Hoy la forman 500 familias socias y vende su aceite sin intermediarios: lo que
+            en la Sierra de Segura, Jaén. Hoy la forman unas 200 familias socias y vende su aceite sin intermediarios: lo que
             pagas llega a quien cultiva el olivar.{" "}
             <Link href="/#historia" className="text-dorado">
               Conoce la historia de la cooperativa
