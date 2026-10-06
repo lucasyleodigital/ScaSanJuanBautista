@@ -4,6 +4,8 @@ import React, { useEffect, useId, useRef, useState } from "react";
 import { useAudio } from "./AudioEngine";
 import { supabase, DEFAULT_PRICING, type PricingConfig, type Promocion, type Provincia } from "@/lib/supabase";
 import { getProvinciaFromCP } from "@/lib/provincias";
+import TurnstileWidget from "./TurnstileWidget";
+import { TURNSTILE_SITE_KEY } from "@/lib/turnstile";
 import {
   ETIQUETA_A_CONSULTAR,
   PESO_CAJA_3X5L_DEFECTO,
@@ -72,6 +74,11 @@ export default function CalculadoraPedidoInteractive() {
   const [sending, setSending] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [sendError, setSendError] = useState(false);
+  // Captcha (Cloudflare Turnstile): solo activo si hay clave del sitio configurada
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileResetKey, setTurnstileResetKey] = useState(0);
+  const [captchaFallo, setCaptchaFallo] = useState(false);
+  const captchaPendiente = Boolean(TURNSTILE_SITE_KEY) && !turnstileToken;
   const [pricing, setPricing] = useState<PricingConfig>(DEFAULT_PRICING);
   const [promoInput, setPromoInput] = useState("");
   const [appliedPromo, setAppliedPromo] = useState<Promocion | null>(null);
@@ -339,7 +346,7 @@ export default function CalculadoraPedidoInteractive() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!allContactValid || sending) return;
+    if (!allContactValid || sending || captchaPendiente) return;
 
     // Honeypot: si un bot rellenó este campo oculto, se descarta en silencio
     if (honeypotRef.current?.value) {
@@ -355,7 +362,7 @@ export default function CalculadoraPedidoInteractive() {
       // Eva en su panel) — si esto falla, se avisa al usuario. El email
       // es solo un aviso rápido: si falla, no se bloquea el pedido, que
       // ya ha quedado guardado.
-      const { error: dbError } = await supabase.from("pedidos").insert({
+      const pedido = {
         nombre: nombreCompleto,
         email: contact.email,
         telefono: contact.telefono,
@@ -372,8 +379,19 @@ export default function CalculadoraPedidoInteractive() {
         portes: Number(shippingCost.toFixed(2)),
         total_estimado: Number(finalTotal.toFixed(2)),
         codigo_promo: appliedPromo?.codigo ?? null,
-      });
-      if (dbError) throw dbError;
+      };
+      if (TURNSTILE_SITE_KEY) {
+        // Con captcha: el pedido se crea en el servidor, que comprueba el token
+        const { error: fnError } = await supabase.functions.invoke("crear-pedido", {
+          body: { token: turnstileToken, pedido },
+        });
+        if (fnError) throw fnError;
+        setTurnstileToken(null);
+        setTurnstileResetKey((k) => k + 1);
+      } else {
+        const { error: dbError } = await supabase.from("pedidos").insert(pedido);
+        if (dbError) throw dbError;
+      }
 
       fetch("https://api.web3forms.com/submit", {
         method: "POST",
@@ -425,6 +443,11 @@ export default function CalculadoraPedidoInteractive() {
     } catch {
       setSending(false);
       setSendError(true);
+      if (TURNSTILE_SITE_KEY) {
+        // El token solo vale una vez: pedir otro reto para poder reintentar
+        setTurnstileToken(null);
+        setTurnstileResetKey((k) => k + 1);
+      }
     }
   };
 
@@ -895,10 +918,25 @@ export default function CalculadoraPedidoInteractive() {
                 </div>
 
                 {/* Action Buttons */}
+                {TURNSTILE_SITE_KEY && (
+                  <div className="mb-3">
+                    <TurnstileWidget
+                      siteKey={TURNSTILE_SITE_KEY}
+                      onToken={setTurnstileToken}
+                      onError={() => setCaptchaFallo(true)}
+                      resetKey={turnstileResetKey}
+                    />
+                    {captchaFallo && !turnstileToken && (
+                      <p className="mt-2 text-center text-[11px] text-red-300">
+                        No se pudo cargar la comprobación anti-bots. Desactiva el bloqueador de anuncios o pide por WhatsApp.
+                      </p>
+                    )}
+                  </div>
+                )}
                 <div className="space-y-3">
                   <button
                     type="submit"
-                    disabled={!allContactValid || sending}
+                    disabled={!allContactValid || sending || captchaPendiente}
                     className="w-full py-4 px-4 bg-dorado hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-negro font-semibold rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg text-sm tracking-wide"
                     data-cursor="ENVIAR"
                   >
