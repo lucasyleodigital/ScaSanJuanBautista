@@ -9,11 +9,12 @@ import { getCookieConsent } from "./CookieConsent";
  * que volver a subir. Se oculta mientras el banner de cookies no se ha
  * decidido todavía, mientras el popup de oferta está visible (para no
  * amontonar dos elementos fijos a la vez) y una vez el visitante ya ha
- * llegado al propio formulario.
+ * llegado al propio formulario o al pie de página (para no tapar los créditos).
  */
 export default function StickyMobileCTA() {
   const [pastHero, setPastHero] = useState(false);
   const [enFormulario, setEnFormulario] = useState(false);
+  const [enPie, setEnPie] = useState(false);
   const [promoVisible, setPromoVisible] = useState(false);
   const [cookieDecidida, setCookieDecidida] = useState(false);
 
@@ -27,6 +28,7 @@ export default function StickyMobileCTA() {
 
     const hero = document.querySelector("#inicio");
     const formulario = document.querySelector("#formulario-contacto");
+    const pie = document.querySelector("footer");
 
     const heroObserver = new IntersectionObserver(
       ([entry]) => setPastHero(!entry.isIntersecting),
@@ -37,7 +39,13 @@ export default function StickyMobileCTA() {
       { threshold: 0.15 }
     );
 
+    const pieObserver = new IntersectionObserver(
+      ([entry]) => setEnPie(entry.isIntersecting),
+      { threshold: 0 }
+    );
+
     if (hero) heroObserver.observe(hero);
+    if (pie) pieObserver.observe(pie);
     if (formulario) formObserver.observe(formulario);
 
     return () => {
@@ -45,10 +53,11 @@ export default function StickyMobileCTA() {
       window.removeEventListener("penolite:promo-visible", onPromo);
       heroObserver.disconnect();
       formObserver.disconnect();
+      pieObserver.disconnect();
     };
   }, []);
 
-  const visible = pastHero && !enFormulario && !promoVisible && cookieDecidida;
+  const visible = pastHero && !enFormulario && !enPie && !promoVisible && cookieDecidida;
 
   return (
     <div
