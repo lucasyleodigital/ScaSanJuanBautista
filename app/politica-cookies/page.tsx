@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function PoliticaCookiesPage() {
   return (
-    <LegalPageLayout title="Política de Cookies" updated="21 de septiembre de 2026">
+    <LegalPageLayout title="Política de Cookies" updated="12 de octubre de 2026">
       <p>
         Al entrar en esta web te mostramos un aviso para que decidas qué
         cookies aceptas. Puedes cambiar tu decisión en cualquier momento
@@ -28,17 +28,40 @@ export default function PoliticaCookiesPage() {
         la web, no requieren tu consentimiento previo (artículo 22.2
         LSSI-CE).
       </p>
+      <p>
+        Además, el formulario de pedido incluye una comprobación anti-bots de
+        Cloudflare (Turnstile), necesaria para proteger el formulario de
+        envíos automáticos. No se utiliza con fines publicitarios ni de
+        seguimiento. Puedes ver más detalles en nuestra{" "}
+        <a href="/politica-privacidad">Política de Privacidad</a>.
+      </p>
 
       <h2>2. Cookies analíticas (solo si las aceptas)</h2>
       <p>
-        Actualmente no tenemos ninguna herramienta de analítica con cookies
-        instalada — la única analítica activa (Vercel Analytics) no usa
-        cookies ni identifica a los visitantes, por lo que no requiere
-        consentimiento. Cuando activemos Google Analytics u otra
-        herramienta similar, sus cookies solo se instalarán si marcas
-        &quot;Aceptar todo&quot; o activas la categoría
-        &quot;Analíticas&quot; en el aviso de cookies — nunca antes de que
-        lo autorices.
+        Utilizamos Google Analytics 4 (Google Ireland Limited) para conocer,
+        de forma agregada, cómo se usa la web: páginas visitadas, tiempo de
+        visita y procedencia aproximada del tráfico. Nos sirve para mejorar
+        el sitio. Solo se activa si marcas &quot;Aceptar todo&quot; o
+        activas la categoría &quot;Analíticas&quot; en el aviso de cookies;
+        nunca antes de que lo autorices, y puedes retirar tu consentimiento
+        en cualquier momento.
+      </p>
+      <ul>
+        <li>
+          <strong>Cookies:</strong> <code>_ga</code> y{" "}
+          <code>_ga_*</code> (identifican de forma anónima a un navegador
+          para distinguir visitas). Duración: hasta 2 años.
+        </li>
+        <li>
+          <strong>Titular:</strong> Google. Los datos pueden tratarse fuera
+          del Espacio Económico Europeo con las garantías previstas en el
+          RGPD.
+        </li>
+      </ul>
+      <p>
+        Además usamos Vercel Analytics, una medición de visitas básica que
+        no emplea cookies ni identifica a los visitantes, por lo que no
+        requiere consentimiento.
       </p>
 
       <h2>3. Cómo cambiar tu decisión</h2>
