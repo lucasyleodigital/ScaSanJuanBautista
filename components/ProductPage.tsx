@@ -16,7 +16,8 @@ export default function ProductPage({ slug }: { slug: string }) {
   const ficha = fichaPorSlug(slug);
   const otra = fichaPorSlug(ficha.otra.slug);
   const url = `${SITE_URL}/${ficha.slug}`;
-  const enlacePedido = "/#formulario-contacto";
+  // Lleva al configurador con una caja de este formato ya puesta
+  const enlacePedido = `/?${ficha.litrosPorGarrafa === 5 ? "cajas5l" : "cajas2l"}=1#formulario-contacto`;
 
   const productoJsonLd = {
     "@context": "https://schema.org",

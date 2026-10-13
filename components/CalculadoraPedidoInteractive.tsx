@@ -100,6 +100,26 @@ export default function CalculadoraPedidoInteractive() {
       window.removeEventListener("penolite:formato-seleccionado", onFormatoSeleccionado);
   }, []);
 
+  // Enlace de pedido precargado, para que un buscador, una IA o un mensaje
+  // puedan llevar al cliente directo al formulario con su pedido puesto:
+  //   /?cajas5l=2&cajas2l=1&cp=08001#formulario-contacto
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const cantidad = (clave: string) => {
+      const valor = params.get(clave);
+      if (valor === null || !/^\d{1,2}$/.test(valor)) return null;
+      return Math.min(50, Number(valor));
+    };
+    const c5 = cantidad("cajas5l");
+    const c2 = cantidad("cajas2l");
+    if (c5 !== null || c2 !== null) {
+      setQty5L(c5 ?? 0);
+      setQty2L(c2 ?? 0);
+    }
+    const cp = params.get("cp");
+    if (cp && /^\d{5}$/.test(cp)) setContact((prev) => ({ ...prev, codigoPostal: cp }));
+  }, []);
+
   // Tarifas en vivo: las lee Eva desde su panel y se reflejan aquí sin
   // tocar código. Si Supabase no responde, se usan los valores por
   // defecto para que el configurador nunca se quede roto.
