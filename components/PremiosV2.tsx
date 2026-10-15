@@ -21,15 +21,17 @@ const MEDALLA = {
   detalle: "Economía y Empresa (Jaencoop Grupo)",
 };
 
-// Mismo premio, 6 campañas distintas — se listan juntas para no repetir el
-// nombre del premio 6 veces y disparar el scroll en móvil.
+// Mismo premio en varias campañas: se listan juntos (de más reciente a más
+// antiguo) para no repetir el nombre del premio y disparar el scroll en móvil.
+// Textos según los diplomas originales de la cooperativa.
 const premiosArdilla: PremioArdilla[] = [
-  { categoria: "Mejor Aceite de Oliva Virgen Extra", campana: "Campaña 2017/18" },
+  { categoria: "Mayor Proporción de Aceite de Oliva Virgen Extra (almazaras de mediana producción)", campana: "Campaña 2018/19" },
+  { categoria: "Mejor Aceite de Oliva Virgen Extra (aceite Verde Segura, elaborado por la cooperativa)", campana: "Campaña 2017/18" },
+  { categoria: "Accésit Mayor Proporción de Aceite de Oliva Virgen Extra (almazaras de mediana producción)", campana: "Campaña 2015/16" },
   { categoria: "Mejor Aceite de Oliva Virgen Extra", campana: "Campaña 2007/08" },
-  { categoria: "Mayor Proporción de Aceite de Oliva Virgen Extra", campana: "Campaña 2018/19" },
+  { categoria: "1er Accésit Mayor Proporción de Aceite de Oliva Virgen Extra", campana: "Campaña 2007/08" },
+  { categoria: "1er Accésit Mejor Depósito de Aceite de Oliva Virgen Extra", campana: "Campaña 2007/08" },
   { categoria: "Mayor Proporción de Aceite Calificado", campana: "Campaña 2004/05" },
-  { categoria: "1er Accésit Mejor Depósito de Aceite Virgen Extra", campana: "Campaña 2007/08" },
-  { categoria: "Accésit Mayor Proporción de Aceite de Oliva Virgen Extra", campana: "Campaña 2015/16" },
 ];
 
 export default function PremiosV2() {
@@ -187,7 +189,7 @@ export default function PremiosV2() {
                 marginLeft: "34px",
               }}
             >
-              Premiados 6 veces en los últimos 20 años
+              7 premios entre 2005 y 2019
             </p>
             <div
               style={{
