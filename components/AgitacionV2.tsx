@@ -25,7 +25,7 @@ const dolores = [
   {
     icon: Clock,
     titulo: "Meses en un almacén antes de llegar a ti",
-    texto: "Cuanto más tiempo pasa entre la prensa y tu cocina, más aroma y polifenoles pierde el aceite por el camino.",
+    texto: "Cuanto más tiempo pasa entre la almazara y tu cocina, más aroma y polifenoles pierde el aceite por el camino.",
   },
   {
     icon: Layers,

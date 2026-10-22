@@ -22,15 +22,15 @@ const specs: ProductSpec[] = [
   { label: "Variedad", value: "Picual 100%", icon: <Leaf size={22} /> },
   { label: "DOP", value: "Sierra de Segura", icon: <Trophy size={22} /> },
   { label: "Altitud", value: "840 metros", icon: <Mountain size={22} /> },
-  { label: "Prensado", value: "En frío", icon: <Snowflake size={22} /> },
+  { label: "Extracción", value: "En frío", icon: <Snowflake size={22} /> },
   { label: "Aditivos", value: "Cero", icon: <CheckCircle2 size={22} /> },
 ];
 
 const benefits: { icon: ReactNode; text: string }[] = [
-  { icon: <MapPin size={18} />, text: "Sabes qué cooperativa lo prensó y en qué sierra — no una etiqueta de \"mezcla de aceites de la Unión Europea\"" },
-  { icon: <Users size={18} />, text: "Tu dinero llega directo a las 200 familias que lo cultivan" },
-  { icon: <Wallet size={18} />, text: "Sin el margen del intermediario metido en el precio" },
-  { icon: <Leaf size={18} />, text: "Sigue siendo aceite de oliva virgen extra de verdad, sin venderlo como si fuera una novedad" },
+  { icon: <Users size={18} />, text: "Tu compra llega a unas 200 familias de pequeños agricultores de Peñolite, sin intermediarios por medio" },
+  { icon: <Wallet size={18} />, text: "Pagas el aceite, no los márgenes de la distribución: un precio justo para ti y para quien lo cultiva" },
+  { icon: <MapPin size={18} />, text: "Compras a la cooperativa que lo elabora, con nombre y apellidos, no a una marca blanca" },
+  { icon: <Leaf size={18} />, text: "Cada pedido ayuda a que el olivar de montaña de la Sierra de Segura siga cultivándose" },
 ];
 
 export default function ProductoV2() {
@@ -127,7 +127,7 @@ export default function ProductoV2() {
             fontVariationSettings: '"wght" 500',
           }}
         >
-          Picual Puro: El Sabor que Vuelve
+          Picual de la Sierra: El Sabor que Vuelve
         </h2>
 
         <p
@@ -182,7 +182,7 @@ export default function ProductoV2() {
                 fontVariationSettings: '"wght" 600',
               }}
             >
-              Picual Puro de Montaña
+              Picual de Montaña, Auténtico y con Carácter
             </h3>
 
             <p

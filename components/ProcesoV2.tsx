@@ -35,8 +35,8 @@ const steps: ProcessStep[] = [
   },
   {
     number: 3,
-    title: "Prensado en Frío",
-    description: "Máximo 27°C. Sin calor. Sin presión química. El aceite mantiene toda su esencia, polifenoles intactos.",
+    title: "Extracción en Frío",
+    description: "Por debajo de 27 °C y solo por medios mecánicos, sin calor añadido. Así el aceite conserva sus aromas y sus polifenoles.",
     icon: <Cog size={24} />,
   },
   {

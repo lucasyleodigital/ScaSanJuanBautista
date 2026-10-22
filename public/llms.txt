@@ -27,6 +27,7 @@ Precios con IVA incluido; el envío se calcula según peso y provincia. La coope
 - Variedad: Picual 100%
 - Denominación de Origen Protegida: DOP Sierra de Segura
 - Altitud del olivar: 840 metros
+- Extracción: en frío, por debajo de 27 °C
 - Fundación: 1958
 - Socios: unas 200 familias
 - CIF: F23006992

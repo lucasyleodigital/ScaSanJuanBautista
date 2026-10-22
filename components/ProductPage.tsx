@@ -7,7 +7,7 @@ const DATOS_ACEITE: [string, string][] = [
   ["Variedad", "Picual 100%"],
   ["Denominación de Origen Protegida", "DOP Sierra de Segura"],
   ["Altitud del olivar", "840 metros"],
-  ["Extracción", "Prensado en frío, máximo 27 °C"],
+  ["Extracción", "En frío, por debajo de 27 °C"],
   ["Control", "Análisis de laboratorio externo en cada lote"],
   ["Envase", "Garrafas opacas, que protegen el aceite de la luz"],
 ];
