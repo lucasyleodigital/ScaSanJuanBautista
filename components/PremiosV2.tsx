@@ -175,7 +175,7 @@ export default function PremiosV2() {
                   color: colors.txCrema,
                 }}
               >
-                Premio Ardilla D.O. Sierra de Segura
+                Premio Ardilla DOP Sierra de Segura
               </h3>
             </div>
             <p

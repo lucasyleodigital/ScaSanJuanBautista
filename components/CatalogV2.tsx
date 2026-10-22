@@ -26,8 +26,8 @@ const products: ProductCard[] = [
     litersPerBottle: 5,
     totalLiters: 15,
     price: 85,
-    description: "15 litros de Picual puro, 3 garrafas de 5L. Directo de la cooperativa a tu cocina — sin nadie de por medio subiendo el precio. €5.67/L.",
-    highlight: "15 litros de Picual puro",
+    description: "15 litros de AOVE Picual DOP Sierra de Segura en 3 garrafas de 5 L. Directo de la cooperativa a tu cocina — sin nadie de por medio subiendo el precio. €5.67/L.",
+    highlight: "15 litros de Picual DOP",
   },
   {
     id: "caja-6x2l",
@@ -38,14 +38,14 @@ const products: ProductCard[] = [
     totalLiters: 12,
     price: 69,
     description: "12 litros en botellas de 2L, fáciles de manejar a diario. Mismo origen, mismo precio directo — sin intermediario que se lleve su parte. €5.75/L.",
-    highlight: "12 litros de Picual D.O.",
+    highlight: "12 litros de Picual DOP",
   },
 ];
 
 const productsJsonLd = products.map((product) => ({
   "@context": "https://schema.org",
   "@type": "Product",
-  name: `${product.title} — AOVE Picual D.O. Sierra de Segura`,
+  name: `${product.title} — AOVE Picual DOP Sierra de Segura`,
   description: product.description,
   image: [`https://www.dehesapenolite.com/images/productos/${product.id}.webp`],
   brand: { "@type": "Brand", name: "SCA San Juan Bautista de Peñolite" },
@@ -107,7 +107,7 @@ export default function CatalogV2() {
             lineHeight: "1.7",
           }}
         >
-          Sin intermediarios que suben el precio. Sin distribuidoras de por medio. Picual 100%, D.O. Sierra de Segura, directo de la cooperativa a tu cocina.
+          Sin intermediarios que suben el precio. Sin distribuidoras de por medio. Picual 100%, DOP Sierra de Segura, directo de la cooperativa a tu cocina.
         </p>
 
         {/* Productos */}

@@ -24,7 +24,7 @@ const faqs: FaqItem[] = [
   {
     question: "¿El aceite está certificado? ¿Qué garantías tiene?",
     answer:
-      "Sí. Es Picual 100% con Denominación de Origen Sierra de Segura. Cada lote pasa un análisis de laboratorio externo (polifenoles, acidez, pureza) antes de salir de la almazara.",
+      "Sí. Es Picual 100% con Denominación de Origen Protegida (DOP) Sierra de Segura. Cada lote pasa un análisis de laboratorio externo (polifenoles, acidez, pureza) antes de salir de la almazara.",
   },
   {
     question: "Tengo un restaurante o una empresa, ¿trabajáis con negocios?",

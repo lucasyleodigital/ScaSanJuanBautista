@@ -772,7 +772,7 @@ export default function CalculadoraPedidoInteractive() {
             <div className="grid grid-cols-3 gap-2 pt-4 border-t border-white/10 text-[11px] text-tx-muted">
               <div className="flex items-center gap-1.5">
                 <Award className="w-4 h-4 text-dorado shrink-0" />
-                <span>D.O. Sierra de Segura</span>
+                <span>DOP Sierra de Segura</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <Truck className="w-4 h-4 text-dorado shrink-0" />

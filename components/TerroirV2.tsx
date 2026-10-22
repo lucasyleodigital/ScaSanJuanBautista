@@ -198,7 +198,7 @@ export default function TerroirV2() {
                 lineHeight: "1.6",
               }}
             >
-              No es casualidad que el Picual sea la variedad de olivo más plantada del planeta. Pimienta fresca, hierbas silvestres, manzana verde. Un picante que se nota de verdad.
+              No es casualidad que el Picual sea la variedad de olivo más plantada del planeta. Tomate, tomatera, hoja de olivo, higuera y hierba recién cortada. Un picante que se nota de verdad.
             </p>
           </div>
 

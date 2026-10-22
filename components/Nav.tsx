@@ -51,7 +51,7 @@ export default function Nav() {
             San Juan Bautista de Peñolite
           </span>
           <span className="font-sans text-[8.5px] tracking-[0.22em] text-dorado uppercase opacity-80">
-            AOVE Picual · D.O. Sierra de Segura
+            AOVE Picual · DOP Sierra de Segura
           </span>
         </span>
       </a>

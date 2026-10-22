@@ -5,7 +5,7 @@ import { FICHAS, SITE_URL, fichaPorSlug, precioPorLitro } from "@/lib/catalogo-s
 
 const DATOS_ACEITE: [string, string][] = [
   ["Variedad", "Picual 100%"],
-  ["Denominación de origen", "D.O. Sierra de Segura"],
+  ["Denominación de Origen Protegida", "DOP Sierra de Segura"],
   ["Altitud del olivar", "840 metros"],
   ["Extracción", "Prensado en frío, máximo 27 °C"],
   ["Control", "Análisis de laboratorio externo en cada lote"],
@@ -22,7 +22,7 @@ export default function ProductPage({ slug }: { slug: string }) {
   const productoJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
-    name: `${ficha.nombreCorto} — AOVE Picual D.O. Sierra de Segura`,
+    name: `${ficha.nombreCorto} — AOVE Picual DOP Sierra de Segura`,
     description: ficha.descripcion,
     image: [`${SITE_URL}${ficha.imagen}`],
     brand: { "@type": "Brand", name: "Dehesa de Peñolite" },

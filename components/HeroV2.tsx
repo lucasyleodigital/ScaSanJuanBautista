@@ -153,7 +153,7 @@ export default function HeroV2() {
         <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full border border-dorado/40 bg-black/60 backdrop-blur-md mb-8">
           <Award className="w-4 h-4 text-dorado animate-pulse" />
           <span className="text-[10px] sm:text-xs font-mono tracking-[0.3em] uppercase text-dorado">
-            D.O. Sierra de Segura · 840m Altitud · Fundada 1958
+            DOP Sierra de Segura · 840m Altitud · Fundada 1958
           </span>
         </div>
 
@@ -188,7 +188,7 @@ export default function HeroV2() {
             textShadow: "0 2px 16px rgba(0, 0, 0, 0.9)",
           }}
         >
-          Aceite de Oliva Virgen Extra Dehesa de Peñolite. Picual 100% de montaña, D.O. Sierra de Segura, Jaén — con el aroma a tomillo silvestre de recién prensado.
+          Aceite de Oliva Virgen Extra Dehesa de Peñolite. Picual 100% de montaña, DOP Sierra de Segura, Jaén — con aromas a tomatera, higuera y hierba recién cortada.
         </p>
 
         {/* CTAs */}

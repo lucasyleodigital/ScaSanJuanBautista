@@ -68,7 +68,7 @@ export default function Hero() {
             visible ? "opacity-100" : "translate-y-4 opacity-0"
           }`}
         >
-          — D.O. Sierra de Segura · Jaén · 840 m —
+          — DOP Sierra de Segura · Jaén · 840 m —
         </p>
 
         <h1

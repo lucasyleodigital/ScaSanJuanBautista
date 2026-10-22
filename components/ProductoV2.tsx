@@ -20,7 +20,7 @@ interface ProductSpec {
 
 const specs: ProductSpec[] = [
   { label: "Variedad", value: "Picual 100%", icon: <Leaf size={22} /> },
-  { label: "D.O.", value: "Sierra de Segura", icon: <Trophy size={22} /> },
+  { label: "DOP", value: "Sierra de Segura", icon: <Trophy size={22} /> },
   { label: "Altitud", value: "840 metros", icon: <Mountain size={22} /> },
   { label: "Prensado", value: "En frío", icon: <Snowflake size={22} /> },
   { label: "Aditivos", value: "Cero", icon: <CheckCircle2 size={22} /> },
@@ -168,7 +168,7 @@ export default function ProductoV2() {
               boxShadow: "0 10px 30px rgba(200,150,30,0.25)",
             }}
             role="img"
-            aria-label="Garrafas de 5L y 2L de Aceite de Oliva Virgen Extra Dehesa de Peñolite, D.O. Sierra de Segura"
+            aria-label="Garrafas de 5L y 2L de Aceite de Oliva Virgen Extra Dehesa de Peñolite, DOP Sierra de Segura"
           />
 
           {/* Columna derecha: Especificaciones */}
@@ -275,7 +275,7 @@ export default function ProductoV2() {
                 }}
               >
                 <strong style={{ color: colors.dorado }}>Sensorial:</strong> Aroma
-                frutado con notas de manzana verde, tomate y hierba fresca.
+                frutado con notas de tomate, tomatera, hoja de olivo, higuera y hierba recién cortada.
                 Sabor intenso con amargo y picante característicos del Picual.
                 Textura fluida, sin aditivos ni conservantes.
               </p>

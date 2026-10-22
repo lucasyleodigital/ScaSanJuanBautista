@@ -6,7 +6,7 @@ import Reveal from "./Reveal";
 
 const CERTS = [
   {
-    label: "D.O. Sierra de Segura",
+    label: "DOP Sierra de Segura",
     num: "Cert. CA-02-013/25",
     detail:
       "La D.O. más antigua para aceite de oliva en España. Garantiza origen, variedad y proceso. Válida hasta julio de 2030.",

@@ -26,15 +26,15 @@ const SITE_URL = "https://www.dehesapenolite.com";
 // exactas de marca/zona (Peñolite, Dehesa de Peñolite, Sierra de Segura,
 // Jaén) porque es literalmente lo que la gente teclea en Google/Bing.
 const SEO_TITLE =
-  "Comprar Aceite Dehesa de Peñolite — AOVE Picual D.O. Sierra de Segura";
+  "Comprar Aceite Dehesa de Peñolite — AOVE Picual DOP Sierra de Segura";
 const SEO_DESCRIPTION =
-  "Compra aceite de oliva virgen extra Dehesa de Peñolite directo a la cooperativa: Picual D.O. Sierra de Segura, Jaén. Cajas de 15 y 12 litros con envío.";
+  "Compra aceite de oliva virgen extra Dehesa de Peñolite directo a la cooperativa: Picual DOP Sierra de Segura, Jaén. Cajas de 15 y 12 litros con envío.";
 
 // Título y descripción para compartir en redes (Facebook/X/WhatsApp): aquí
 // el mensaje que más hace clicar es el diferenciador, no las palabras clave.
 const SOCIAL_TITLE = "AOVE Picual Directo del Agricultor, Sin Intermediarios";
 const SOCIAL_DESCRIPTION =
-  "AOVE Picual 100%, D.O. Sierra de Segura, directo de la cooperativa desde 1958. Sin intermediarios: tu dinero llega a los agricultores, no a la distribución.";
+  "AOVE Picual 100%, DOP Sierra de Segura, directo de la cooperativa desde 1958. Sin intermediarios: tu dinero llega a los agricultores, no a la distribución.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -116,13 +116,13 @@ const organizationJsonLd = {
   },
   award: [
     "Medalla de Oro de Andalucía 2022 — Economía y Empresa (Jaencoop Grupo)",
-    "Premio Ardilla D.O. Sierra de Segura — Mejor Aceite de Oliva Virgen Extra (aceite Verde Segura, elaborado por la cooperativa), Campaña 2017/18",
-    "Premio Ardilla D.O. Sierra de Segura — Mejor Aceite de Oliva Virgen Extra, Campaña 2007/08",
-    "Premio Ardilla D.O. Sierra de Segura — Mayor Proporción de Aceite de Oliva Virgen Extra (almazaras de mediana producción), Campaña 2018/19",
-    "Premio Ardilla D.O. Sierra de Segura — Mayor Proporción de Aceite Calificado, Campaña 2004/05",
-    "Premio Ardilla D.O. Sierra de Segura — 1er Accésit Mejor Depósito de Aceite de Oliva Virgen Extra, Campaña 2007/08",
-    "Premio Ardilla D.O. Sierra de Segura — 1er Accésit Mayor Proporción de Aceite de Oliva Virgen Extra, Campaña 2007/08",
-    "Premio Ardilla D.O. Sierra de Segura — Accésit Mayor Proporción de Aceite de Oliva Virgen Extra (almazaras de mediana producción), Campaña 2015/16",
+    "Premio Ardilla DOP Sierra de Segura — Mejor Aceite de Oliva Virgen Extra (aceite Verde Segura, elaborado por la cooperativa), Campaña 2017/18",
+    "Premio Ardilla DOP Sierra de Segura — Mejor Aceite de Oliva Virgen Extra, Campaña 2007/08",
+    "Premio Ardilla DOP Sierra de Segura — Mayor Proporción de Aceite de Oliva Virgen Extra (almazaras de mediana producción), Campaña 2018/19",
+    "Premio Ardilla DOP Sierra de Segura — Mayor Proporción de Aceite Calificado, Campaña 2004/05",
+    "Premio Ardilla DOP Sierra de Segura — 1er Accésit Mejor Depósito de Aceite de Oliva Virgen Extra, Campaña 2007/08",
+    "Premio Ardilla DOP Sierra de Segura — 1er Accésit Mayor Proporción de Aceite de Oliva Virgen Extra, Campaña 2007/08",
+    "Premio Ardilla DOP Sierra de Segura — Accésit Mayor Proporción de Aceite de Oliva Virgen Extra (almazaras de mediana producción), Campaña 2015/16",
   ],
 };
 

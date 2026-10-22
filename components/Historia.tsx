@@ -24,7 +24,7 @@ const HITOS = [
   },
   {
     year: "2008",
-    head: "D.O. Sierra de Segura",
+    head: "DOP Sierra de Segura",
     text: "El aceite obtiene la Denominación de Origen más antigua del aceite español.",
   },
   {

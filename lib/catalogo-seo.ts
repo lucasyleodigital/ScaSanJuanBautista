@@ -47,10 +47,10 @@ export const FICHAS: FichaProducto[] = [
     slug: "aceite-oliva-virgen-extra-garrafa-5-litros",
     titulo: "Comprar Aceite de Oliva Virgen Extra 15 Litros (3 Garrafas de 5 L) | Dehesa de Peñolite",
     descripcion:
-      "Caja de 3 garrafas de 5 litros de AOVE Picual 100% D.O. Sierra de Segura, 85 €. Directo de la cooperativa de Peñolite, Jaén, con envío.",
+      "Caja de 3 garrafas de 5 litros de AOVE Picual 100% DOP Sierra de Segura, 85 €. Directo de la cooperativa de Peñolite, Jaén, con envío.",
     h1: "Aceite de oliva virgen extra en garrafa de 5 litros",
     entradilla:
-      "Caja de 3 garrafas de 5 litros: 15 litros de aceite de oliva virgen extra Picual, D.O. Sierra de Segura, directamente de la cooperativa que lo elabora en Peñolite (Jaén).",
+      "Caja de 3 garrafas de 5 litros: 15 litros de aceite de oliva virgen extra Picual, DOP Sierra de Segura, directamente de la cooperativa que lo elabora en Peñolite (Jaén).",
     nombreCorto: "Caja 3 garrafas × 5 L",
     imagen: "/images/productos/caja-3x5l.webp",
     imagenAlt: "Caja de 3 garrafas de 5 litros de aceite de oliva virgen extra Dehesa de Peñolite",
@@ -81,10 +81,10 @@ export const FICHAS: FichaProducto[] = [
     slug: "aceite-oliva-virgen-extra-garrafa-2-litros",
     titulo: "Comprar Aceite de Oliva Virgen Extra 12 Litros (6 Garrafas de 2 L) | Dehesa de Peñolite",
     descripcion:
-      "Caja de 6 garrafas de 2 litros de AOVE Picual 100% D.O. Sierra de Segura, 69 €. Directo de la cooperativa de Peñolite, Jaén, con envío.",
+      "Caja de 6 garrafas de 2 litros de AOVE Picual 100% DOP Sierra de Segura, 69 €. Directo de la cooperativa de Peñolite, Jaén, con envío.",
     h1: "Aceite de oliva virgen extra en garrafa de 2 litros",
     entradilla:
-      "Caja de 6 garrafas de 2 litros: 12 litros de aceite de oliva virgen extra Picual, D.O. Sierra de Segura, directamente de la cooperativa que lo elabora en Peñolite (Jaén).",
+      "Caja de 6 garrafas de 2 litros: 12 litros de aceite de oliva virgen extra Picual, DOP Sierra de Segura, directamente de la cooperativa que lo elabora en Peñolite (Jaén).",
     nombreCorto: "Caja 6 garrafas × 2 L",
     imagen: "/images/productos/caja-6x2l.webp",
     imagenAlt: "Caja de 6 garrafas de 2 litros de aceite de oliva virgen extra Dehesa de Peñolite",

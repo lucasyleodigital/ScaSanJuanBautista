@@ -91,7 +91,7 @@ function plantillaEmail(opts: { preheader: string; titulo: string; cuerpoHtml: s
                     </div>
                     <div style="width:36px; height:1px; background-color:${DORADO}; margin:10px auto 12px;"></div>
                     <div style="font-family:Arial,sans-serif; font-size:11px; letter-spacing:0.14em; color:${DORADO}; text-transform:uppercase;">
-                      D.O. Sierra de Segura · Desde 1958
+                      DOP Sierra de Segura · Desde 1958
                     </div>
                   </td>
                 </tr>

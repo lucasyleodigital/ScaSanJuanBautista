@@ -24,7 +24,7 @@ const steps: ProcessStep[] = [
     number: 1,
     title: "Cosecha en su Punto",
     description:
-      "Nuestros socios cosechan a mano y con maquinaria, según la parcela. Lo que no cambia nunca es el momento: solo aceituna madura, en su punto exacto.",
+      "Nuestros socios cosechan a mano y con maquinaria, según la parcela. Lo que no cambia nunca es el momento: solo fruta en su punto óptimo de maduración.",
     icon: <Leaf size={24} />,
   },
   {
@@ -47,8 +47,8 @@ const steps: ProcessStep[] = [
   },
   {
     number: 5,
-    title: "Envasado en Garrafa",
-    description: "Garrafas de 2 y 5 litros que protegen el aceite de la luz. Bajo pedido, también envasamos en otros formatos.",
+    title: "Envasado con Garantía",
+    description: "Con la mejor garantía y en el formato ideal para tu consumo: envases de 2 y 5 litros que protegen el aceite de la luz. Bajo pedido, también envasamos en otros formatos.",
     icon: <Droplet size={24} />,
   },
   {
@@ -329,7 +329,7 @@ export default function ProcesoV2() {
               lineHeight: "1.6",
             }}
           >
-            <strong style={{ color: colors.dorado }}>De la rama a la prensa, sin demora:</strong> minimizamos el tiempo entre
+            <strong style={{ color: colors.dorado }}>Del olivo a la almazara, sin demora:</strong> minimizamos el tiempo entre
             cosecha y molturación para preservar los polifenoles y aromas naturales del Picual de montaña.
           </p>
         </div>

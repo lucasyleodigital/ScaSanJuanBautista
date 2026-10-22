@@ -49,7 +49,7 @@ export default function Productos() {
           un solo aceite
         </Reveal>
         <Reveal as="p" delay={0.1} className="mt-6 max-w-xl text-base leading-relaxed text-tx-medio">
-          Virgen Extra Picual 100%, D.O. Sierra de Segura. El mismo aceite
+          Virgen Extra Picual 100%, DOP Sierra de Segura. El mismo aceite
           que los socios llevan a su mesa, ahora disponible para quien sepa
           apreciarlo.
         </Reveal>
