@@ -65,6 +65,8 @@ export default function TurnstileWidget({
         widgetId.current = window.turnstile.render(contenedor.current, {
           sitekey: siteKey,
           theme: "dark",
+          // Invisible para la mayoría: solo se muestra si Cloudflare necesita que la persona pulse la casilla
+          appearance: "interaction-only",
           language: "es",
           callback: (t: string) => callbacks.current.onToken(t),
           "expired-callback": () => callbacks.current.onToken(null),
