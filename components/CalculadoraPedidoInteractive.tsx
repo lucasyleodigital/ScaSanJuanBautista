@@ -74,6 +74,8 @@ export default function CalculadoraPedidoInteractive() {
   const [sending, setSending] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [sendError, setSendError] = useState(false);
+  // Motivo concreto que devuelve el servidor, para poder diagnosticar fallos
+  const [sendErrorDetalle, setSendErrorDetalle] = useState<string | null>(null);
   // Captcha (Cloudflare Turnstile): solo activo si hay clave del sitio configurada
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileResetKey, setTurnstileResetKey] = useState(0);
@@ -376,6 +378,7 @@ export default function CalculadoraPedidoInteractive() {
 
     setSending(true);
     setSendError(false);
+    setSendErrorDetalle(null);
 
     try {
       // El pedido en la base de datos es la fuente de verdad (lo que ve
@@ -405,7 +408,17 @@ export default function CalculadoraPedidoInteractive() {
         const { error: fnError } = await supabase.functions.invoke("crear-pedido", {
           body: { token: turnstileToken, pedido },
         });
-        if (fnError) throw fnError;
+        if (fnError) {
+          let detalle = fnError.message;
+          const respuesta = (fnError as { context?: Response }).context;
+          if (respuesta && typeof respuesta.json === "function") {
+            const cuerpo = await respuesta.json().catch(() => null);
+            detalle = `${respuesta.status}: ${cuerpo?.error ?? detalle}`;
+          }
+          console.error("crear-pedido:", detalle);
+          setSendErrorDetalle(detalle);
+          throw fnError;
+        }
         setTurnstileToken(null);
         setTurnstileResetKey((k) => k + 1);
       } else {
@@ -1007,6 +1020,9 @@ export default function CalculadoraPedidoInteractive() {
                         pedidos@dehesapenolite.com
                       </a>{" "}
                       o usa el botón de WhatsApp.
+                      {sendErrorDetalle && (
+                        <span className="mt-1 block text-[10px] opacity-70">Detalle: {sendErrorDetalle}</span>
+                      )}
                     </p>
                   </div>
                 )}
