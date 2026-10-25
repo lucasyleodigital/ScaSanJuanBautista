@@ -166,20 +166,10 @@ export default function ProductoV2() {
               border: `1px solid ${colors.rule}`,
               borderRadius: "12px",
               boxShadow: "0 10px 30px rgba(200,150,30,0.25)",
-              position: "relative",
             }}
             role="img"
             aria-label="Garrafas de 5L y 2L de Aceite de Oliva Virgen Extra Dehesa de Peñolite, DOP Sierra de Segura"
-          >
-            <img
-                  src="/images/logo/sello-dop.webp"
-                  alt="Sello de Denominación de Origen Protegida"
-                  width={160}
-                  height={160}
-                  loading="lazy"
-                  style={{ position: "absolute", right: "18px", bottom: "18px", width: "clamp(72px, 9vw, 104px)", height: "auto", filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.45))" }}
-                />
-          </div>
+          />
 
           {/* Columna derecha: Especificaciones */}
           <div>

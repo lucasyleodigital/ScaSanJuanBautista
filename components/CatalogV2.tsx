@@ -163,20 +163,10 @@ export default function CatalogV2() {
                   backgroundColor: colors.negro,
                   borderRadius: "8px",
                   marginBottom: spacing.lg,
-                  position: "relative",
                 }}
                 role="img"
                 aria-label={product.title}
-              >
-                <img
-                  src="/images/logo/sello-dop.webp"
-                  alt="Sello de Denominación de Origen Protegida"
-                  width={160}
-                  height={160}
-                  loading="lazy"
-                  style={{ position: "absolute", top: "12px", right: "12px", width: "72px", height: "auto", filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.45))" }}
-                />
-              </div>
+              />
 
               {/* Contenido */}
               <h3

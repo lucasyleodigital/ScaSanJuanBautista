@@ -30,6 +30,19 @@ export default function Footer() {
               Cooperativa de aceite de oliva virgen extra fundada en 1958 en
               Peñolite, Sierra de Segura, Jaén.
             </p>
+            <div className="mb-6 flex max-w-xs items-center gap-3">
+              <Image
+                src="/images/logo/sello-dop.webp"
+                alt="Sello de Denominación de Origen Protegida"
+                width={160}
+                height={160}
+                className="h-14 w-14 shrink-0"
+              />
+              <p className="text-[11px] leading-relaxed text-tx-bajo">
+                Aceite de oliva virgen extra con Denominación de Origen
+                Protegida Sierra de Segura.
+              </p>
+            </div>
             <div className="flex flex-wrap items-center gap-4">
               <a
                 href="/#formulario-contacto"
