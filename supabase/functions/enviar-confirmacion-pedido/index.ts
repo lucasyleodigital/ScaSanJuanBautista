@@ -2,6 +2,13 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 const EMAIL_EVA = "sca.sanjuanbautistaonline@gmail.com";
 const WHATSAPP_COOPERATIVA = "34620022801";
+
+// Datos de pago que se muestran al cliente en el email de confirmación.
+// El IBAN se lee de un secreto de Supabase (IBAN_COOPERATIVA) para no dejarlo
+// en el repositorio público. Si no está configurado, el email dice que se
+// enviará al confirmar el pedido.
+const BIZUM_COOPERATIVA = "620 022 801";
+const TITULAR_CUENTA = "SCA San Juan Bautista de Peñolite";
 const LOGO_URL = "https://dehesapenolite.com/images/logo/sello-email.png";
 const FACEBOOK_URL = "https://www.facebook.com/p/SCA-San-Juan-Bautista-Pe%C3%B1olite-100063301534955/";
 
@@ -60,13 +67,64 @@ function filaResumen(label: string, valor: string, destacado = false) {
   `;
 }
 
+/** El envío "a consultar" (Canarias, Ceuta, Melilla, pesos fuera de tarifa)
+ * no lleva portes en el total: hay que esperar a que la cooperativa los confirme. */
+function envioAConsultar(pedido: Record<string, any>) {
+  return String(pedido.destino_envio ?? "").includes("a consultar");
+}
+
+const euros = (v: unknown) => `${Number(v ?? 0).toFixed(2).replace(".", ",")} €`;
+
 function resumenPedidoHtml(pedido: Record<string, any>) {
+  const consultar = envioAConsultar(pedido);
   return `
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0;">
       ${filaResumen("Cajas de 3 garrafas × 5L", String(pedido.cajas_3x5l ?? 0))}
       ${filaResumen("Cajas de 6 garrafas × 2L", String(pedido.cajas_6x2l ?? 0))}
       ${filaResumen("Envío a", String(pedido.destino_envio ?? "-"))}
-      ${filaResumen("Total estimado", `${pedido.total_estimado} €`, true)}
+      ${filaResumen("Portes", consultar ? "A confirmar por la cooperativa" : euros(pedido.portes))}
+      ${filaResumen(consultar ? "Total (sin portes)" : "Total", euros(pedido.total_estimado), true)}
+    </table>
+  `;
+}
+
+/** Bloque "Cómo pagar" del email al cliente: Bizum y transferencia. */
+function comoPagarHtml(pedido: Record<string, any>) {
+  const consultar = envioAConsultar(pedido);
+  const concepto = `Pedido ${pedido.nombre ?? ""}`.trim();
+  const iban = (Deno.env.get("IBAN_COOPERATIVA") ?? "").trim();
+  const estiloLinea = "padding:12px 0 0; font-family:Arial,sans-serif; font-size:14px; line-height:1.6; color:#333;";
+  const transferencia = iban
+    ? `<strong>Transferencia bancaria</strong><br />
+          IBAN: <strong style="letter-spacing:0.03em;">${iban}</strong><br />
+          Titular: ${TITULAR_CUENTA}<br />
+          Concepto: ${concepto}`
+    : `<strong>Transferencia bancaria</strong><br />
+          Te enviamos el número de cuenta al confirmar tu pedido.`;
+  return `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:8px 0 0; background-color:#f6f1df; border:1px solid #e8ddc0; border-radius:8px;">
+      <tr>
+        <td style="padding:18px 20px;">
+          <div style="font-family:Georgia,serif; font-size:17px; color:${VERDE_NOCHE}; font-weight:700; margin-bottom:6px;">Cómo pagar</div>
+          <div style="font-family:Arial,sans-serif; font-size:13px; line-height:1.6; color:#6b6450;">
+            ${consultar
+              ? "Tu envío se presupuesta aparte: espera a que te confirmemos los portes antes de pagar."
+              : "Puedes pagar ya el total indicado arriba de cualquiera de estas dos formas:"}
+          </div>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr><td style="${estiloLinea}">
+              <strong>Bizum</strong> al <strong>${BIZUM_COOPERATIVA}</strong><br />
+              Concepto: ${concepto}
+            </td></tr>
+            <tr><td style="${estiloLinea}">
+              ${transferencia}
+            </td></tr>
+          </table>
+          <div style="font-family:Arial,sans-serif; font-size:13px; line-height:1.6; color:#6b6450; margin-top:12px;">
+            Cuando hayas pagado, avísanos por WhatsApp o respondiendo a este email y preparamos tu pedido en 24 horas.
+          </div>
+        </td>
+      </tr>
     </table>
   `;
 }
@@ -154,11 +212,15 @@ Deno.serve(async (req: Request) => {
           titulo: `Gracias por tu pedido, ${pedido.nombre}`,
           cuerpoHtml: `
             <p style="margin:0 0 8px; font-family:Arial,sans-serif; font-size:15px; line-height:1.6; color:#333;">
-              Hemos recibido correctamente tu pedido de <strong>${pedido.total_litros} litros</strong> de aceite de oliva virgen extra Picual. En breve nos pondremos en contacto contigo para confirmar el pago y el envío.
+              Hemos recibido correctamente tu pedido de <strong>${pedido.total_litros} litros</strong> de aceite de oliva virgen extra Picual, DOP Sierra de Segura. Aquí tienes el resumen y cómo hacer el pago.
             </p>
             ${resumenPedidoHtml(pedido)}
+            ${comoPagarHtml(pedido)}
             <p style="margin:16px 0 0; font-family:Arial,sans-serif; font-size:13px; color:#6b6450;">
               Dirección de envío: ${pedido.direccion}, ${pedido.localidad}, ${pedido.codigo_postal}
+            </p>
+            <p style="margin:8px 0 0; font-family:Arial,sans-serif; font-size:12px; color:#9c9476;">
+              Envío en 24 horas tras recibir el pago. Tienes 14 días desde que lo recibes para devolverlo: <a href="https://www.dehesapenolite.com/condiciones-de-venta" style="color:${DORADO};">condiciones de venta</a>.
             </p>
             <p style="margin:20px 0 0; font-family:Arial,sans-serif; font-size:14px; color:#333;">
               Si tienes cualquier duda, responde directamente a este email o escríbenos por WhatsApp.
