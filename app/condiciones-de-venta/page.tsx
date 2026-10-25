@@ -79,10 +79,11 @@ export default function CondicionesDeVentaPage() {
           a tu cargo.
         </li>
         <li>
-          <strong>Reembolso:</strong> te devolvemos el importe pagado,
-          incluidos los gastos del envío original, en un plazo máximo de 14
-          días naturales desde que nos comunicas tu decisión, por el mismo
-          medio de pago que usaste. Podemos esperar a recibir el producto
+          <strong>Reembolso:</strong> te devolvemos el importe del pedido y
+          los portes del envío original en un plazo máximo de 14 días
+          naturales desde que nos comunicas tu decisión, por el mismo medio
+          de pago que usaste. Los portes de la devolución no se reembolsan,
+          porque corren a tu cargo. Podemos esperar a recibir el producto
           antes de hacer el reembolso.
         </li>
         <li>
