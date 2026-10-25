@@ -87,15 +87,25 @@ export default function ProductPage({ slug }: { slug: string }) {
         </nav>
 
         <section className="grid items-center gap-10 md:grid-cols-2">
-          <Image
-            src={ficha.imagen}
-            alt={ficha.imagenAlt}
-            width={900}
-            height={900}
-            priority
-            unoptimized
-            className="h-auto w-full rounded-xl border border-rule"
-          />
+          <div className="relative">
+            <Image
+              src={ficha.imagen}
+              alt={ficha.imagenAlt}
+              width={900}
+              height={900}
+              priority
+              unoptimized
+              className="h-auto w-full rounded-xl border border-rule"
+            />
+            <Image
+              src="/images/logo/sello-dop.webp"
+              alt="Sello de Denominación de Origen Protegida"
+              width={160}
+              height={160}
+              unoptimized
+              className="absolute top-4 right-4 h-auto w-20 drop-shadow-lg md:w-24"
+            />
+          </div>
           <div>
             <h1 className="mb-4 font-serif text-3xl leading-tight text-tx-crema md:text-4xl">{ficha.h1}</h1>
             <p className="mb-6 text-sm leading-relaxed text-tx-medio md:text-base">{ficha.entradilla}</p>
