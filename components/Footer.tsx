@@ -87,6 +87,9 @@ export default function Footer() {
           <a href="/politica-privacidad" className="no-underline transition-colors hover:text-tx-crema">
             Política de Privacidad
           </a>
+          <a href="/condiciones-de-venta" className="no-underline transition-colors hover:text-tx-crema">
+            Condiciones de Venta
+          </a>
           <a href="/politica-cookies" className="no-underline transition-colors hover:text-tx-crema">
             Política de Cookies
           </a>

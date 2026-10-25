@@ -4,6 +4,7 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { colors, motion, typography, spacing } from "@/lib/design-tokens";
 import FloatingParticles from "./FloatingParticles";
+import { DETALLES_ENVIO, POLITICA_DEVOLUCION } from "@/lib/catalogo-seo";
 
 interface ProductCard {
   id: string;
@@ -58,6 +59,8 @@ const productsJsonLd = products.map((product) => ({
     acceptedPaymentMethod: [
       "http://purl.org/goodrelations/v1#ByBankTransferInAdvance",
     ],
+    hasMerchantReturnPolicy: POLITICA_DEVOLUCION,
+    shippingDetails: DETALLES_ENVIO,
     url: "https://www.dehesapenolite.com/#productos",
   },
 }));

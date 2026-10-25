@@ -789,7 +789,7 @@ export default function CalculadoraPedidoInteractive() {
               </div>
               <div className="flex items-center gap-1.5">
                 <Truck className="w-4 h-4 text-dorado shrink-0" />
-                <span>Envío en 24/48h</span>
+                <span>Enviado en 24 h</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <ShieldCheck className="w-4 h-4 text-dorado shrink-0" />
@@ -1029,6 +1029,13 @@ export default function CalculadoraPedidoInteractive() {
 
                 <p className="text-center text-[11px] text-tx-muted mt-4">
                   Atención directa de la cooperativa en Peñolite, Jaén. Envío embalado para evitar roturas en el transporte.
+                </p>
+                <p className="text-center text-[11px] text-tx-muted mt-2">
+                  Al enviar el pedido aceptas las{" "}
+                  <a href="/condiciones-de-venta" className="text-dorado underline-offset-2 hover:underline">
+                    condiciones de venta
+                  </a>
+                  . Tienes 14 días desde que lo recibes para devolverlo.
                 </p>
               </>
             )}

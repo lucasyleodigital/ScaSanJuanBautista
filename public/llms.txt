@@ -59,6 +59,13 @@ Precios con IVA incluido; el envío se calcula según peso y provincia. La coope
 - Formas de pago: Bizum o transferencia bancaria, directamente a la cooperativa.
 - Envío por transporte a toda España; Canarias, Ceuta y Melilla se presupuestan aparte según el peso.
 
+## Envíos y devoluciones
+
+- Preparación: el pedido se prepara y se envía en 24 horas desde que se confirma y se recibe el pago.
+- Entrega: entre 24 horas y 6 o 7 días según la zona. El coste se calcula por peso y provincia en el configurador.
+- Devoluciones: 14 días naturales desde la recepción para desistir sin dar motivos; los gastos de devolución corren a cargo del cliente, salvo producto dañado o erróneo. Los envases precintados abiertos no se admiten por higiene.
+- Condiciones completas: https://www.dehesapenolite.com/condiciones-de-venta
+
 ## Páginas
 
 - [Página principal](/): historia de la cooperativa, terroir, proceso de elaboración, catálogo y formulario de pedido

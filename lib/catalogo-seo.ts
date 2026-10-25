@@ -3,6 +3,28 @@
 
 export const SITE_URL = "https://www.dehesapenolite.com";
 
+// Devoluciones y envío para los datos estructurados de las ofertas (Google).
+// Deben coincidir con /condiciones-de-venta.
+export const POLITICA_DEVOLUCION = {
+  "@type": "MerchantReturnPolicy",
+  applicableCountry: "ES",
+  returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+  merchantReturnDays: 14,
+  returnMethod: "https://schema.org/ReturnByMail",
+  returnFees: "https://schema.org/ReturnFeesCustomerResponsibility",
+  merchantReturnLink: `${"https://www.dehesapenolite.com"}/condiciones-de-venta`,
+};
+
+export const DETALLES_ENVIO = {
+  "@type": "OfferShippingDetails",
+  shippingDestination: { "@type": "DefinedRegion", addressCountry: "ES" },
+  deliveryTime: {
+    "@type": "ShippingDeliveryTime",
+    handlingTime: { "@type": "QuantitativeValue", minValue: 0, maxValue: 1, unitCode: "DAY" },
+    transitTime: { "@type": "QuantitativeValue", minValue: 1, maxValue: 7, unitCode: "DAY" },
+  },
+};
+
 export interface FichaProducto {
   slug: string;
   /** Título de la pestaña y de Google. */
@@ -31,9 +53,14 @@ const PREGUNTAS_COMUNES = [
       "Compras directamente a la cooperativa. Envías el pedido desde la web y te lo confirmamos por email, teléfono o WhatsApp. El pago se hace por Bizum o por transferencia bancaria, directamente a la cooperativa.",
   },
   {
-    pregunta: "¿Cuánto cuesta el envío?",
+    pregunta: "¿Cuánto cuesta el envío y cuánto tarda?",
     respuesta:
-      "Se calcula según el peso del pedido y la provincia de entrega, y lo ves en el configurador antes de enviar el pedido. Para Canarias, Ceuta y Melilla el envío se presupuesta aparte: escríbenos y te lo confirmamos.",
+      "El coste se calcula según el peso del pedido y la provincia de entrega, y lo ves en el configurador antes de enviar el pedido. Preparamos y enviamos el pedido en 24 horas desde que lo confirmamos y recibimos el pago, y llega en un plazo de entre 24 horas y 6 o 7 días según la zona. Para Canarias, Ceuta y Melilla el envío se presupuesta aparte.",
+  },
+  {
+    pregunta: "¿Puedo devolver el pedido?",
+    respuesta:
+      "Sí. Tienes 14 días naturales desde que lo recibes para desistir de la compra sin dar motivos. Los gastos de la devolución corren a tu cargo, salvo que el producto llegue dañado o no sea lo que pediste. Los envases precintados que se hayan abierto no se pueden devolver por razones de higiene. Tienes todos los detalles en las condiciones de venta.",
   },
   {
     pregunta: "¿Cómo debo conservar el aceite?",

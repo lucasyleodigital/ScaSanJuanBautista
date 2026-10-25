@@ -19,7 +19,12 @@ const faqs: FaqItem[] = [
   {
     question: "¿Enviáis a toda España? ¿Hacéis envíos internacionales?",
     answer:
-      "Sí, enviamos a toda la España peninsular. El plazo y el coste dependen del volumen del pedido — te lo confirmamos al recibir tu solicitud. Para Baleares, Canarias o envíos internacionales, contáctanos directamente.",
+      "Sí. Preparamos y enviamos el pedido en 24 horas desde que lo confirmamos y recibimos el pago, y llega en un plazo de entre 24 horas y 6 o 7 días según la zona. El coste del envío se calcula según el peso y la provincia, y lo ves en el configurador. Canarias, Ceuta y Melilla se presupuestan aparte, y también enviamos a otros países de la Unión Europea.",
+  },
+  {
+    question: "¿Puedo devolver el pedido?",
+    answer:
+      "Sí. Tienes 14 días naturales desde que lo recibes para desistir de la compra sin dar motivos. Los gastos de la devolución corren a tu cargo, salvo que el producto llegue dañado o no sea lo que pediste. Los envases precintados que se hayan abierto no se pueden devolver por razones de higiene. Tienes todos los detalles en las condiciones de venta.",
   },
   {
     question: "¿El aceite está certificado? ¿Qué garantías tiene?",

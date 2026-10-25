@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import Footer from "./Footer";
-import { FICHAS, SITE_URL, fichaPorSlug, precioPorLitro } from "@/lib/catalogo-seo";
+import { DETALLES_ENVIO, FICHAS, POLITICA_DEVOLUCION, SITE_URL, fichaPorSlug, precioPorLitro } from "@/lib/catalogo-seo";
 
 const DATOS_ACEITE: [string, string][] = [
   ["Variedad", "Picual 100%"],
@@ -34,6 +34,8 @@ export default function ProductPage({ slug }: { slug: string }) {
       url,
       seller: { "@type": "Organization", name: "SCA San Juan Bautista de Peñolite" },
       acceptedPaymentMethod: ["http://purl.org/goodrelations/v1#ByBankTransferInAdvance"],
+      hasMerchantReturnPolicy: POLITICA_DEVOLUCION,
+      shippingDetails: DETALLES_ENVIO,
     },
   };
 
@@ -118,7 +120,8 @@ export default function ProductPage({ slug }: { slug: string }) {
               Calcular envío y hacer el pedido
             </a>
             <p className="mt-4 text-xs leading-relaxed text-tx-bajo">
-              Compras directamente a la cooperativa. Te confirmamos el pedido y se paga por Bizum o transferencia.
+              Compras directamente a la cooperativa. Te confirmamos el pedido y se paga por Bizum o transferencia. Lo enviamos en 24 horas y tienes 14 días para devolverlo:{" "}
+              <a href="/condiciones-de-venta" className="text-dorado">condiciones de venta</a>.
             </p>
           </div>
         </section>
