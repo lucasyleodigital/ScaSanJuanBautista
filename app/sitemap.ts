@@ -21,6 +21,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     ...FICHAS.map((f) => ({
       url: `${SITE_URL}/${f.slug}`,
+      images: [`${SITE_URL}${f.imagen}`],
       lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.8,
