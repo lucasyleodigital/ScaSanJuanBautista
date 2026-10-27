@@ -18,6 +18,15 @@ export const POLITICA_DEVOLUCION = {
 export const DETALLES_ENVIO = {
   "@type": "OfferShippingDetails",
   shippingDestination: { "@type": "DefinedRegion", addressCountry: "ES" },
+  // Una caja a la península según provincia (escalón de 20 kg de envio_tarifas):
+  // de Jaén/Granada/Córdoba a la zona norte y oeste. Baleares y el resto se
+  // presupuestan aparte. Revisar si cambia la tarifa.
+  shippingRate: {
+    "@type": "MonetaryAmount",
+    minValue: 11.5,
+    maxValue: 16.6,
+    currency: "EUR",
+  },
   deliveryTime: {
     "@type": "ShippingDeliveryTime",
     handlingTime: { "@type": "QuantitativeValue", minValue: 0, maxValue: 1, unitCode: "DAY" },
