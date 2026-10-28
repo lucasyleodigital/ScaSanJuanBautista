@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/dist/ScrollTrigger";
-import { Award, Medal } from "lucide-react";
+import { Award } from "lucide-react";
 import { colors, motion, typography, spacing } from "@/lib/design-tokens";
 import FloatingParticles from "./FloatingParticles";
 
@@ -15,11 +15,6 @@ interface PremioArdilla {
   categoria: string;
   campana: string;
 }
-
-const MEDALLA = {
-  titulo: "Medalla de Oro de Andalucía 2022",
-  detalle: "Economía y Empresa (Jaencoop Grupo)",
-};
 
 // Mismo premio en varias campañas: se listan juntos (de más reciente a más
 // antiguo) para no repetir el nombre del premio y disparar el scroll en móvil.
@@ -113,50 +108,6 @@ export default function PremiosV2() {
         </p>
 
         <div style={{ display: "flex", flexDirection: "column", gap: spacing.md }}>
-          <div
-            className="premio-card"
-            style={{
-              display: "flex",
-              alignItems: "flex-start",
-              gap: spacing.sm,
-              maxWidth: "560px",
-              width: "100%",
-              margin: "0 auto",
-              background: `linear-gradient(135deg, ${colors.doradoSuave} 0%, transparent 100%)`,
-              border: `1px solid ${colors.rule}`,
-              borderRadius: "8px",
-              padding: spacing.md,
-            }}
-          >
-            <div style={{ color: colors.dorado, flexShrink: 0, marginTop: "2px" }}>
-              <Medal size={22} />
-            </div>
-            <div>
-              <p
-                style={{
-                  fontFamily: typography.fontSans,
-                  fontSize: "14px",
-                  color: colors.txCrema,
-                  lineHeight: "1.5",
-                  marginBottom: "4px",
-                }}
-              >
-                {MEDALLA.titulo} — {MEDALLA.detalle}
-              </p>
-              <p
-                style={{
-                  fontFamily: typography.fontSans,
-                  fontSize: "12px",
-                  color: colors.dorado,
-                  letterSpacing: "0.05em",
-                  textTransform: "uppercase",
-                }}
-              >
-                2022
-              </p>
-            </div>
-          </div>
-
           <div
             className="premio-card"
             style={{

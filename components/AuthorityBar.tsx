@@ -1,10 +1,9 @@
 "use client";
 
-import { Medal, Award, CalendarDays, Users } from "lucide-react";
+import { Award, CalendarDays, Users } from "lucide-react";
 import { colors, typography, spacing } from "@/lib/design-tokens";
 
 const items = [
-  { icon: Medal, label: "Medalla de Oro Andalucía 2022" },
   { icon: Award, label: "7 Premios Ardilla DOP Sierra de Segura" },
   { icon: CalendarDays, label: "Cooperativa desde 1958" },
   { icon: Users, label: "200 Familias Socias" },
