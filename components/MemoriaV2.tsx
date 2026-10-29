@@ -57,7 +57,7 @@ const EPOCAS: Epoca[] = [
         ancho: 1152,
         alto: 648,
         titulo: "Se aprendía mirando",
-        texto: "Una vara, una red y los niños atentos. Así se heredaba el olivar: de mano en mano y de campaña en campaña.",
+        texto: "Una vara, unos mantones y los niños atentos. Así se heredaba el olivar: de mano en mano y de campaña en campaña.",
       },
     ],
   },
