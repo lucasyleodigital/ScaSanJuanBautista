@@ -34,9 +34,9 @@ export default function Footer() {
               <Image
                 src="/images/logo/sello-dop-sierra-segura.webp"
                 alt="Denominación de Origen Protegida Sierra de Segura"
-                width={688}
-                height={272}
-                className="h-auto w-56 shrink-0 rounded-md"
+                width={724}
+                height={269}
+                className="h-auto w-64 shrink-0"
               />
               <p className="text-[11px] leading-relaxed text-tx-bajo">
                 Aceite de oliva virgen extra con Denominación de Origen

@@ -8,6 +8,7 @@ import { useAudio } from "./AudioEngine";
 const LINKS = [
   { href: "#historia", label: "Historia" },
   { href: "#olivar", label: "El Olivar" },
+  { href: "#memoria", label: "Memoria" },
   { href: "#productos", label: "Productos" },
   { href: "#calidad", label: "Calidad" },
   { href: "#cooperativa", label: "Cooperativa" },
@@ -56,9 +57,9 @@ export default function Nav() {
         </span>
       </a>
 
-      <ul className="hidden items-center gap-8 md:flex">
+      <ul className="hidden items-center gap-6 md:flex lg:gap-8">
         {LINKS.map((l) => (
-          <li key={l.href}>
+          <li key={l.href} className="whitespace-nowrap">
             <a
               href={l.href}
               data-cursor-active
