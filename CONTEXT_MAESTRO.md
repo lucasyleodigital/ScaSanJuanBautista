@@ -9,7 +9,7 @@
 
 **Datos oficiales:**
 - CIF: F23006992
-- Dirección: Carretera Peñolite, 25, Peñolite (Puente de Génave), Jaén
+- Dirección: Ctra. Peñolite, 25, Peñolite (Puente de Génave), Jaén
 - Email oficial en la web (activo desde 2026-10-01): info@dehesapenolite.com (general/legal) · pedidos@dehesapenolite.com (pedidos, from de los emails automáticos) · contacto@dehesapenolite.com — los 3 son reglas de Cloudflare Email Routing que reenvían a Gmails reales
 - Email real de Eva (sin cambios, usado como destino interno, no se muestra en la web): sca.sanjuanbautistaonline@gmail.com
 - Teléfono fijo: +34 953 435 316

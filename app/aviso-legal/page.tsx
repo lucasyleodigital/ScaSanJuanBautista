@@ -26,7 +26,7 @@ export default function AvisoLegalPage() {
           <strong>CIF:</strong> F23006992
         </li>
         <li>
-          <strong>Domicilio social:</strong> Carretera Peñolite, 25, Peñolite
+          <strong>Domicilio social:</strong> Ctra. Peñolite, 25, Peñolite
           (Puente de Génave), Jaén
         </li>
         <li>
