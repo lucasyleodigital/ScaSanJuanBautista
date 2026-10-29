@@ -15,7 +15,7 @@ export default function CondicionesDeVentaPage() {
       <p>
         Estas condiciones se aplican a los pedidos que se hacen en
         www.dehesapenolite.com. El vendedor es SCA San Juan Bautista de
-        Peñolite (CIF F23006992), Calle Peñolite, 1, Peñolite (Puente de
+        Peñolite (CIF F23006992), Carretera Peñolite, 25, Peñolite (Puente de
         Génave), Jaén. Contacto: <a href="mailto:pedidos@dehesapenolite.com">pedidos@dehesapenolite.com</a>{" "}
         · +34 953 435 316 · WhatsApp +34 620 022 801.
       </p>
@@ -109,8 +109,8 @@ export default function CondicionesDeVentaPage() {
       </p>
       <div className="placeholder-box">
         <p>
-          A la atención de SCA San Juan Bautista de Peñolite, Calle Peñolite,
-          1, Peñolite (Puente de Génave), Jaén ·
+          A la atención de SCA San Juan Bautista de Peñolite, Carretera Peñolite,
+          25, Peñolite (Puente de Génave), Jaén ·
           pedidos@dehesapenolite.com:
         </p>
         <p>

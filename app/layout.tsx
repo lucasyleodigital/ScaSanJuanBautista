@@ -109,7 +109,7 @@ const organizationJsonLd = {
   sameAs: ["https://www.facebook.com/p/SCA-San-Juan-Bautista-Pe%C3%B1olite-100063301534955/"],
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Calle Peñolite, 1",
+    streetAddress: "Carretera Peñolite, 25",
     addressLocality: "Peñolite (Puente de Génave)",
     addressRegion: "Jaén",
     addressCountry: "ES",

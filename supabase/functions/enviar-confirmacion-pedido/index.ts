@@ -165,7 +165,7 @@ function plantillaEmail(opts: { preheader: string; titulo: string; cuerpoHtml: s
                 <tr>
                   <td style="background-color:${CREMA}; padding:22px 32px; text-align:center;">
                     <div style="font-family:Arial,sans-serif; font-size:12px; color:#6b6450;">
-                      SCA San Juan Bautista de Peñolite · Calle Peñolite, 1, Jaén
+                      SCA San Juan Bautista de Peñolite · Carretera Peñolite, 25, Jaén
                     </div>
                     <div style="font-family:Arial,sans-serif; font-size:12px; color:#6b6450; margin-top:4px;">
                       <a href="mailto:pedidos@dehesapenolite.com" style="color:${DORADO}; text-decoration:none;">pedidos@dehesapenolite.com</a>

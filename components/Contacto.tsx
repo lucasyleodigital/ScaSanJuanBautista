@@ -90,7 +90,7 @@ export default function Contacto() {
       <section id="contacto" className="relative bg-negro px-6 py-24 text-tx-crema md:px-10">
         <div className="mx-auto grid max-w-[1100px] grid-cols-1 items-start gap-14 md:grid-cols-2">
           <Reveal className="flex flex-col gap-7">
-            <ContactRow label="Dirección" value="Carr. Peñolite, 29 · 23359 Peñolite, Jaén" />
+            <ContactRow label="Dirección" value="Carr. Peñolite, 25 · 23359 Peñolite, Jaén" />
             <ContactRow
               label="Email"
               value="info@dehesapenolite.com"

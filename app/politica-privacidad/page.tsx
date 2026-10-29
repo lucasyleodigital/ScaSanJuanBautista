@@ -32,7 +32,7 @@ export default function PoliticaPrivacidadPage() {
           <strong>CIF:</strong> F23006992
         </li>
         <li>
-          <strong>Domicilio:</strong> Calle Peñolite, 1, Peñolite (Puente de
+          <strong>Domicilio:</strong> Carretera Peñolite, 25, Peñolite (Puente de
           Génave), Jaén
         </li>
         <li>
